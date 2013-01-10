@@ -1,0 +1,20 @@
+# Linux
+# backup files
+*~
+ 
+# Windows
+# thumbnails
+Thumbs.db
+ 
+# Mac OS X
+# metadata
+.DS_Store
+# thumbnails
+._*
+
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
