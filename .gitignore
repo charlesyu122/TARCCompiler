@@ -18,3 +18,7 @@ Thumbs.db
 *.jar
 *.war
 *.ear
+
+#Others
+nbproject/private/
+build/

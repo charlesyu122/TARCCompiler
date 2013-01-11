@@ -4,12 +4,20 @@
  */
 package tarccompiler;
 
+import files.ReadFile;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 /**
  *
  * @author charles_yu102
  */
 public class CompilerGUI extends javax.swing.JFrame {
 
+    // Attributes
+    File file;
+    
     /**
      * Creates new form CompilerGUI
      */
@@ -26,6 +34,7 @@ public class CompilerGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        fcOpenFile = new javax.swing.JFileChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
         fileTree = new javax.swing.JTree();
         btnCompile = new javax.swing.JButton();
@@ -52,10 +61,11 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TARC Compiler");
+        setLocation(new java.awt.Point(200, 0));
 
         jScrollPane1.setViewportView(fileTree);
 
-        btnCompile.setFont(new java.awt.Font("Lucida Grande", 0, 12));
+        btnCompile.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
         btnCompile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/compile.png"))); // NOI18N
         btnCompile.setText("Compile Code");
         btnCompile.addActionListener(new java.awt.event.ActionListener() {
@@ -64,29 +74,36 @@ public class CompilerGUI extends javax.swing.JFrame {
             }
         });
 
-        btnOpenFile.setFont(new java.awt.Font("Lucida Grande", 0, 12));
+        btnOpenFile.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
         btnOpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/open.png"))); // NOI18N
         btnOpenFile.setText("Open File");
+        btnOpenFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOpenFileActionPerformed(evt);
+            }
+        });
 
-        btnNewFile.setFont(new java.awt.Font("Lucida Grande", 0, 12));
+        btnNewFile.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
         btnNewFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/new.png"))); // NOI18N
         btnNewFile.setText("New File");
 
         taCode.setBackground(new java.awt.Color(51, 51, 51));
         taCode.setColumns(20);
+        taCode.setFont(new java.awt.Font("Monaco", 0, 12)); // NOI18N
         taCode.setForeground(new java.awt.Color(51, 204, 0));
         taCode.setRows(5);
+        taCode.setCaretColor(new java.awt.Color(255, 255, 0));
         jScrollPane2.setViewportView(taCode);
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 762, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
         );
 
         tpCode.addTab("[No Name]", jPanel3);
@@ -102,7 +119,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
+            .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 762, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -149,17 +166,18 @@ public class CompilerGUI extends javax.swing.JFrame {
                 .add(btnOpenFile)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnCompile)
-                .add(0, 413, Short.MAX_VALUE))
+                .add(0, 0, Short.MAX_VALUE))
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(tpOutput, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 687, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, tpCode))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 139, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(805, Short.MAX_VALUE)
-                .add(labelStatus)
+                    .add(layout.createSequentialGroup()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(tpOutput)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, tpCode))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 139, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(labelStatus)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -193,6 +211,41 @@ public class CompilerGUI extends javax.swing.JFrame {
         // Instantiate classes for source code compilation here
     }//GEN-LAST:event_btnCompileActionPerformed
 
+    private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed
+        // TODO add your handling code here:
+        FileNameExtensionFilter ft = new FileNameExtensionFilter("TARC Codes", "tarc");
+        fcOpenFile.addChoosableFileFilter(ft);
+        
+        int returnVal = fcOpenFile.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            this.file = fcOpenFile.getSelectedFile();
+            taCode.setText(file.toString());
+            
+            // Retrieve filename
+            String filename = parseFileName(file.toString());
+            
+            // Adjust codes tabbed pane
+            if(tpCode.getTabCount() == 1 && tpCode.getTitleAt(0).equals("[No Name]")){
+                tpCode.setTitleAt(0, filename);
+                ReadFile rf = new ReadFile(this.file);
+                taCode.setText(rf.read());
+            }else{
+                // Open another tab
+            }
+            
+  
+
+        }
+    }//GEN-LAST:event_btnOpenFileActionPerformed
+
+    public String parseFileName(String file){
+        String filename = "";
+        String delim = "/";
+        String[] files = file.split(delim);
+        filename = files[files.length-1];
+        return filename;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -231,6 +284,7 @@ public class CompilerGUI extends javax.swing.JFrame {
     private javax.swing.JButton btnCompile;
     private javax.swing.JButton btnNewFile;
     private javax.swing.JButton btnOpenFile;
+    private javax.swing.JFileChooser fcOpenFile;
     private javax.swing.JTree fileTree;
     private javax.swing.JMenuItem itemNewFile;
     private javax.swing.JMenuItem itemQuit;
