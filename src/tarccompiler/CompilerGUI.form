@@ -15,23 +15,29 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="New File"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="itemNewFileActionPerformed"/>
+              </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="itemSave">
+            <MenuItem class="javax.swing.JMenuItem" name="itemOpenFile">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Open File..."/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="itemOpenFileActionPerformed"/>
+              </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="itemSaveAs">
+            <MenuItem class="javax.swing.JMenuItem" name="itemSave">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="itemQuit">
+            <MenuItem class="javax.swing.JMenuItem" name="itemSaveAs">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save As..."/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem6">
+            <MenuItem class="javax.swing.JMenuItem" name="itemQuit">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Quit"/>
               </Properties>
@@ -85,7 +91,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnCompile" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+              <Component id="btnCloseFile" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
           </Group>
           <Group type="102" attributes="0">
@@ -115,7 +121,7 @@
                   <Component id="btnNewFile" alignment="3" max="32767" attributes="0"/>
                   <Component id="btnOpenFile" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnCompile" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnCloseFile" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -186,6 +192,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="New File"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNewFileActionPerformed"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JTabbedPane" name="tpCode">
 
@@ -226,9 +235,6 @@
                       <Color blue="33" green="33" red="33" type="rgb"/>
                     </Property>
                     <Property name="columns" type="int" value="20"/>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Monaco" size="12" style="0"/>
-                    </Property>
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="0" green="cc" red="33" type="rgb"/>
                     </Property>
@@ -297,7 +303,7 @@
         </Container>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="jButton1">
+    <Component class="javax.swing.JButton" name="btnCloseFile">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/tarccompiler/resources/close.png"/>

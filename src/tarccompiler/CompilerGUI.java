@@ -5,8 +5,13 @@
 package tarccompiler;
 
 import files.ReadFile;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -49,14 +54,14 @@ public class CompilerGUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         taOutput = new javax.swing.JTextArea();
-        jButton1 = new javax.swing.JButton();
+        btnCloseFile = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         itemNewFile = new javax.swing.JMenuItem();
+        itemOpenFile = new javax.swing.JMenuItem();
         itemSave = new javax.swing.JMenuItem();
         itemSaveAs = new javax.swing.JMenuItem();
         itemQuit = new javax.swing.JMenuItem();
-        jMenuItem6 = new javax.swing.JMenuItem();
         menuAbout = new javax.swing.JMenu();
         menuHelp = new javax.swing.JMenu();
 
@@ -87,10 +92,14 @@ public class CompilerGUI extends javax.swing.JFrame {
         btnNewFile.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
         btnNewFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/new.png"))); // NOI18N
         btnNewFile.setText("New File");
+        btnNewFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewFileActionPerformed(evt);
+            }
+        });
 
         taCode.setBackground(new java.awt.Color(51, 51, 51));
         taCode.setColumns(20);
-        taCode.setFont(new java.awt.Font("Monaco", 0, 12)); // NOI18N
         taCode.setForeground(new java.awt.Color(51, 204, 0));
         taCode.setRows(5);
         taCode.setCaretColor(new java.awt.Color(255, 255, 0));
@@ -129,25 +138,35 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         tpOutput.addTab("Output:", jPanel1);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/close.png"))); // NOI18N
-        jButton1.setText("Close File");
+        btnCloseFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/close.png"))); // NOI18N
+        btnCloseFile.setText("Close File");
 
         menuFile.setText("File");
 
         itemNewFile.setText("New File");
+        itemNewFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemNewFileActionPerformed(evt);
+            }
+        });
         menuFile.add(itemNewFile);
 
-        itemSave.setText("Open File...");
+        itemOpenFile.setText("Open File...");
+        itemOpenFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemOpenFileActionPerformed(evt);
+            }
+        });
+        menuFile.add(itemOpenFile);
+
+        itemSave.setText("Save");
         menuFile.add(itemSave);
 
-        itemSaveAs.setText("Save");
+        itemSaveAs.setText("Save As...");
         menuFile.add(itemSaveAs);
 
-        itemQuit.setText("Save As...");
+        itemQuit.setText("Quit");
         menuFile.add(itemQuit);
-
-        jMenuItem6.setText("Quit");
-        menuFile.add(jMenuItem6);
 
         menuBar.add(menuFile);
 
@@ -171,7 +190,7 @@ public class CompilerGUI extends javax.swing.JFrame {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnCompile)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jButton1)
+                .add(btnCloseFile)
                 .add(0, 0, Short.MAX_VALUE))
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -194,7 +213,7 @@ public class CompilerGUI extends javax.swing.JFrame {
                     .add(btnNewFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(btnOpenFile)
                     .add(btnCompile)
-                    .add(jButton1))
+                    .add(btnCloseFile))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(layout.createSequentialGroup()
@@ -220,6 +239,54 @@ public class CompilerGUI extends javax.swing.JFrame {
 
     private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed
         // TODO add your handling code here:
+        openFile();
+    }//GEN-LAST:event_btnOpenFileActionPerformed
+
+    private void btnNewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewFileActionPerformed
+        // TODO add your handling code here:
+        newFile();
+    }//GEN-LAST:event_btnNewFileActionPerformed
+
+    private void itemNewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemNewFileActionPerformed
+        // TODO add your handling code here:
+        newFile();
+    }//GEN-LAST:event_itemNewFileActionPerformed
+
+    private void itemOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemOpenFileActionPerformed
+        // TODO add your handling code here:
+        openFile();
+    }//GEN-LAST:event_itemOpenFileActionPerformed
+
+    // Methods
+    
+    private String parseFileName(String file){
+        String filename = "";
+        String delim = "/";
+        String[] files = file.split(delim);
+        filename = files[files.length-1];
+        return filename;
+    }
+    
+    private void newFile(){
+        if(tpCode.getTabCount() == 1 && tpCode.getTitleAt(0).equals("[No Name]")){
+            // No need to add tab
+        }else {
+            // Add a new tab
+            JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+
+            JTextArea newCodeArea = new JTextArea();
+            newCodeArea.setBackground(new Color(51,51,51));
+            newCodeArea.setForeground(new Color(51,204,0));
+            newCodeArea.setCaretColor(new Color(255,255,0));
+            JScrollPane scroll = new JScrollPane(newCodeArea);
+            panel.add(scroll, BorderLayout.CENTER);
+
+            tpCode.addTab("[No Name]", panel);
+        }
+    }
+    
+    private void openFile(){
         FileNameExtensionFilter ft = new FileNameExtensionFilter("TARC Codes", "tarc");
         fcOpenFile.addChoosableFileFilter(ft);
         
@@ -238,19 +305,8 @@ public class CompilerGUI extends javax.swing.JFrame {
                 taCode.setText(rf.read());
             }else{
                 // Open another tab
-            }
-            
-  
-
+            }   
         }
-    }//GEN-LAST:event_btnOpenFileActionPerformed
-
-    public String parseFileName(String file){
-        String filename = "";
-        String delim = "/";
-        String[] files = file.split(delim);
-        filename = files[files.length-1];
-        return filename;
     }
     
     /**
@@ -288,17 +344,17 @@ public class CompilerGUI extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCloseFile;
     private javax.swing.JButton btnCompile;
     private javax.swing.JButton btnNewFile;
     private javax.swing.JButton btnOpenFile;
     private javax.swing.JFileChooser fcOpenFile;
     private javax.swing.JTree fileTree;
     private javax.swing.JMenuItem itemNewFile;
+    private javax.swing.JMenuItem itemOpenFile;
     private javax.swing.JMenuItem itemQuit;
     private javax.swing.JMenuItem itemSave;
     private javax.swing.JMenuItem itemSaveAs;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
