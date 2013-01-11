@@ -52,11 +52,10 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TARC Compiler");
-        setLocation(new java.awt.Point(100, 0));
 
         jScrollPane1.setViewportView(fileTree);
 
-        btnCompile.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
+        btnCompile.setFont(new java.awt.Font("Lucida Grande", 0, 12));
         btnCompile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/compile.png"))); // NOI18N
         btnCompile.setText("Compile Code");
         btnCompile.addActionListener(new java.awt.event.ActionListener() {
@@ -65,11 +64,11 @@ public class CompilerGUI extends javax.swing.JFrame {
             }
         });
 
-        btnOpenFile.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
+        btnOpenFile.setFont(new java.awt.Font("Lucida Grande", 0, 12));
         btnOpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/open.png"))); // NOI18N
         btnOpenFile.setText("Open File");
 
-        btnNewFile.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
+        btnNewFile.setFont(new java.awt.Font("Lucida Grande", 0, 12));
         btnNewFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/new.png"))); // NOI18N
         btnNewFile.setText("New File");
 
@@ -87,7 +86,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
         );
 
         tpCode.addTab("[No Name]", jPanel3);
@@ -107,7 +106,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+            .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
         );
 
         tpOutput.addTab("Output:", jPanel1);
@@ -150,15 +149,17 @@ public class CompilerGUI extends javax.swing.JFrame {
                 .add(btnOpenFile)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnCompile)
-                .add(0, 0, Short.MAX_VALUE))
+                .add(0, 413, Short.MAX_VALUE))
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(tpCode)
-                    .add(tpOutput))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 143, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, labelStatus))
+                    .add(tpOutput, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 687, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, tpCode))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 139, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(805, Short.MAX_VALUE)
+                .add(labelStatus)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -170,17 +171,17 @@ public class CompilerGUI extends javax.swing.JFrame {
                     .add(btnOpenFile)
                     .add(btnCompile))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(15, 15, 15)
-                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 586, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(labelStatus))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(layout.createSequentialGroup()
                         .add(tpCode, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 442, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(tpOutput, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 166, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(8, Short.MAX_VALUE))
+                        .add(tpOutput))
+                    .add(layout.createSequentialGroup()
+                        .add(15, 15, 15)
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 564, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(labelStatus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
