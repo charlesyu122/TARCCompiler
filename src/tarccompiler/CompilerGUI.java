@@ -49,6 +49,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         taOutput = new javax.swing.JTextArea();
+        jButton1 = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         itemNewFile = new javax.swing.JMenuItem();
@@ -128,6 +129,9 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         tpOutput.addTab("Output:", jPanel1);
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/close.png"))); // NOI18N
+        jButton1.setText("Close File");
+
         menuFile.setText("File");
 
         itemNewFile.setText("New File");
@@ -166,6 +170,8 @@ public class CompilerGUI extends javax.swing.JFrame {
                 .add(btnOpenFile)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnCompile)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jButton1)
                 .add(0, 0, Short.MAX_VALUE))
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -187,7 +193,8 @@ public class CompilerGUI extends javax.swing.JFrame {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(btnNewFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(btnOpenFile)
-                    .add(btnCompile))
+                    .add(btnCompile)
+                    .add(jButton1))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(layout.createSequentialGroup()
@@ -290,6 +297,7 @@ public class CompilerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem itemQuit;
     private javax.swing.JMenuItem itemSave;
     private javax.swing.JMenuItem itemSaveAs;
+    private javax.swing.JButton jButton1;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
