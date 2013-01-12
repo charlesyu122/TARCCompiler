@@ -8,6 +8,7 @@ import files.ReadFile;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.File;
+import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,13 +22,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class CompilerGUI extends javax.swing.JFrame {
 
     // Attributes
-    File file;
+    ArrayList<TARCFile> tarcFiles;
     
     /**
      * Creates new form CompilerGUI
      */
     public CompilerGUI() {
         initComponents();
+        tarcFiles = new ArrayList<TARCFile>();
+        tarcFiles.add(new TARCFile(taCode));
     }
 
     /**
@@ -140,6 +143,11 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         btnCloseFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/close.png"))); // NOI18N
         btnCloseFile.setText("Close File");
+        btnCloseFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseFileActionPerformed(evt);
+            }
+        });
 
         menuFile.setText("File");
 
@@ -257,55 +265,95 @@ public class CompilerGUI extends javax.swing.JFrame {
         openFile();
     }//GEN-LAST:event_itemOpenFileActionPerformed
 
+    private void btnCloseFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseFileActionPerformed
+        // TODO add your handling code here:
+        /*
+        int selectedTabIndex = tpCode.getSelectedIndex();
+        if(tpCode.getTitleAt(selectedTabIndex).equals("[No Name]")){
+            tpCode.remove(selectedTabIndex);
+        }
+        */      
+    }//GEN-LAST:event_btnCloseFileActionPerformed
+
     // Methods
     
     private String parseFileName(String file){
-        String filename = "";
+        String filename;
         String delim = "/";
         String[] files = file.split(delim);
         filename = files[files.length-1];
         return filename;
     }
     
+    private JPanel createNewCodeArea(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        JTextArea newCodeArea = new JTextArea();
+        newCodeArea.setBackground(new Color(51,51,51));
+        newCodeArea.setForeground(new Color(51,204,0));
+        newCodeArea.setCaretColor(new Color(255,255,0));
+        JScrollPane scroll = new JScrollPane(newCodeArea);
+        panel.add(scroll, BorderLayout.CENTER);
+        // Add textarea to list of tarc files
+        this.tarcFiles.add(new TARCFile(newCodeArea));
+        return panel;
+    }
+    
+    private int checkOpenedFiles(File file){
+        int index = -1;
+        for(int i = 0; index == -1 && i<tarcFiles.size(); i++){
+            if(tarcFiles.get(i).file != null && tarcFiles.get(i).file.toString().equals(file.toString())){
+                index = i;
+            }
+        }
+        return index;        
+    }
+    
     private void newFile(){
-        if(tpCode.getTabCount() == 1 && tpCode.getTitleAt(0).equals("[No Name]")){
+        if( tpCode.getTitleAt(tpCode.getTabCount()-1).equals("[No Name]") ){
             // No need to add tab
         }else {
             // Add a new tab
-            JPanel panel = new JPanel();
-            panel.setLayout(new BorderLayout());
-
-            JTextArea newCodeArea = new JTextArea();
-            newCodeArea.setBackground(new Color(51,51,51));
-            newCodeArea.setForeground(new Color(51,204,0));
-            newCodeArea.setCaretColor(new Color(255,255,0));
-            JScrollPane scroll = new JScrollPane(newCodeArea);
-            panel.add(scroll, BorderLayout.CENTER);
-
+            JPanel panel = this.createNewCodeArea();
             tpCode.addTab("[No Name]", panel);
+            tpCode.setSelectedIndex(tpCode.getTabCount()-1);
         }
     }
     
     private void openFile(){
+        File file;
         FileNameExtensionFilter ft = new FileNameExtensionFilter("TARC Codes", "tarc");
         fcOpenFile.addChoosableFileFilter(ft);
         
         int returnVal = fcOpenFile.showOpenDialog(this);
         if(returnVal == JFileChooser.APPROVE_OPTION){
-            this.file = fcOpenFile.getSelectedFile();
-            taCode.setText(file.toString());
+            file = fcOpenFile.getSelectedFile();
             
             // Retrieve filename
             String filename = parseFileName(file.toString());
             
-            // Adjust codes tabbed pane
-            if(tpCode.getTabCount() == 1 && tpCode.getTitleAt(0).equals("[No Name]")){
-                tpCode.setTitleAt(0, filename);
-                ReadFile rf = new ReadFile(this.file);
-                taCode.setText(rf.read());
+            // Check opened files
+            int indexCheck = checkOpenedFiles(file);
+            System.out.println(indexCheck);
+            if(indexCheck == -1){
+                // Adjust codes tabbed pane
+                int position = tpCode.getSelectedIndex();
+                if(tpCode.getTitleAt(position).equals("[No Name]")){
+                    tpCode.setTitleAt(position, filename);
+                }else{
+                    // Open another tab
+                    JPanel panel = this.createNewCodeArea();
+                    tpCode.addTab(filename, panel);
+                    position = tpCode.getTabCount()-1;
+                    tpCode.setSelectedIndex(position);                
+                }   
+                // Display code in latest text area
+                ReadFile rf = new ReadFile(file);
+                this.tarcFiles.get(position).areaCode.setText(rf.read());
+                this.tarcFiles.get(position).setFile(file);
             }else{
-                // Open another tab
-            }   
+                tpCode.setSelectedIndex(indexCheck);
+            }
         }
     }
     
