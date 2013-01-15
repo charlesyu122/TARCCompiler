@@ -68,7 +68,6 @@ public class CompilerGUI extends javax.swing.JFrame {
         itemNewFile = new javax.swing.JMenuItem();
         itemOpenFile = new javax.swing.JMenuItem();
         itemSave = new javax.swing.JMenuItem();
-        itemSaveAs = new javax.swing.JMenuItem();
         itemQuit = new javax.swing.JMenuItem();
         menuAbout = new javax.swing.JMenu();
         menuHelp = new javax.swing.JMenu();
@@ -165,6 +164,7 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         menuFile.setText("File");
 
+        itemNewFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         itemNewFile.setText("New File");
         itemNewFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -173,6 +173,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         });
         menuFile.add(itemNewFile);
 
+        itemOpenFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         itemOpenFile.setText("Open File...");
         itemOpenFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -181,6 +182,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         });
         menuFile.add(itemOpenFile);
 
+        itemSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         itemSave.setText("Save");
         itemSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -189,15 +191,13 @@ public class CompilerGUI extends javax.swing.JFrame {
         });
         menuFile.add(itemSave);
 
-        itemSaveAs.setText("Save As...");
-        itemSaveAs.addActionListener(new java.awt.event.ActionListener() {
+        itemQuit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        itemQuit.setText("Quit");
+        itemQuit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                itemSaveAsActionPerformed(evt);
+                itemQuitActionPerformed(evt);
             }
         });
-        menuFile.add(itemSaveAs);
-
-        itemQuit.setText("Quit");
         menuFile.add(itemQuit);
 
         menuBar.add(menuFile);
@@ -324,10 +324,13 @@ public class CompilerGUI extends javax.swing.JFrame {
         saveFile();
     }//GEN-LAST:event_itemSaveActionPerformed
 
-    private void itemSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSaveAsActionPerformed
+    private void itemQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemQuitActionPerformed
         // TODO add your handling code here:
-        saveFile();
-    }//GEN-LAST:event_itemSaveAsActionPerformed
+        int quit = JOptionPane.showConfirmDialog(null,"Are you sure you want to quit","Quit TARC Compiler", JOptionPane.YES_NO_CANCEL_OPTION);
+        if(quit == JOptionPane.YES_OPTION){
+            System.exit(1);
+        }
+    }//GEN-LAST:event_itemQuitActionPerformed
 
     // Methods
     
@@ -484,7 +487,6 @@ public class CompilerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem itemOpenFile;
     private javax.swing.JMenuItem itemQuit;
     private javax.swing.JMenuItem itemSave;
-    private javax.swing.JMenuItem itemSaveAs;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
