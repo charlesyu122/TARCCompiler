@@ -4,10 +4,14 @@
  */
 package tarccompiler;
 
+import files.FileNode;
+import files.FileSelectorModel;
 import files.ReadFile;
 import files.WriteFile;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
@@ -15,8 +19,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTree;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.TreePath;
 
 /**
  *
@@ -34,6 +40,8 @@ public class CompilerGUI extends javax.swing.JFrame {
         initComponents();
         tarcFiles = new ArrayList<TARCFile>();
         tarcFiles.add(new TARCFile(taCode));
+        // Initialize file tree
+        initFileTree();
     }
 
     /**
@@ -48,7 +56,8 @@ public class CompilerGUI extends javax.swing.JFrame {
         fcOpenFile = new javax.swing.JFileChooser();
         fcSaveAs = new javax.swing.JFileChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
-        fileTree = new javax.swing.JTree();
+        fileTree = fileTree = new JTree(new FileSelectorModel("/Users/charles_yu102/Documents"));
+        ;
         btnCompile = new javax.swing.JButton();
         btnOpenFile = new javax.swing.JButton();
         btnNewFile = new javax.swing.JButton();
@@ -270,13 +279,17 @@ public class CompilerGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         // Instantiate classes for source code compilation here
-        
-        displayOpenedFiles();
     }//GEN-LAST:event_btnCompileActionPerformed
 
     private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed
         // TODO add your handling code here:
-        openFile();
+        FileNameExtensionFilter ft = new FileNameExtensionFilter("TARC Codes", "tarc");
+        fcOpenFile.addChoosableFileFilter(ft);
+        
+        int returnVal = fcOpenFile.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            openFile(fcOpenFile.getSelectedFile());
+        }
     }//GEN-LAST:event_btnOpenFileActionPerformed
 
     private void btnNewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewFileActionPerformed
@@ -291,7 +304,13 @@ public class CompilerGUI extends javax.swing.JFrame {
 
     private void itemOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemOpenFileActionPerformed
         // TODO add your handling code here:
-        openFile();
+        FileNameExtensionFilter ft = new FileNameExtensionFilter("TARC Codes", "tarc");
+        fcOpenFile.addChoosableFileFilter(ft);
+        
+        int returnVal = fcOpenFile.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            openFile(fcOpenFile.getSelectedFile());
+        }
     }//GEN-LAST:event_itemOpenFileActionPerformed
 
     private void btnCloseFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseFileActionPerformed
@@ -334,12 +353,45 @@ public class CompilerGUI extends javax.swing.JFrame {
 
     // Methods
     
+    private void initFileTree(){
+        fileTree.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent me) {
+                int selRow = fileTree.getRowForLocation(me.getX(), me.getY());
+                TreePath selPath = fileTree.getPathForLocation(me.getX(), me.getY());
+                if(selRow != -1){
+                    if(me.getClickCount() == 2){ // Double click
+                        FileNode selectedNode = (FileNode) fileTree.getLastSelectedPathComponent();
+                        File filepath = new File(selectedNode.getAbsolutePath());
+                        if(isTarcCode(parseFileName(filepath.toString()))){
+                            // open TARC file
+                            openFile(filepath);
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Can only open TARC Codes.");
+                        }
+                    }
+                }
+            }
+            
+        });
+    }
+    
     private String parseFileName(String file){
         String filename;
         String delim = "/";
         String[] files = file.split(delim);
         filename = files[files.length-1];
         return filename;
+    }
+    
+    private Boolean isTarcCode(String filename){
+        Boolean tarcCheck = false;
+        String ext = filename.substring(filename.lastIndexOf('.')+1, filename.length());
+        if(ext.equals("tarc")){
+           tarcCheck = true;
+        }
+        return tarcCheck;
     }
     
     private JPanel createNewCodeArea(){
@@ -377,39 +429,31 @@ public class CompilerGUI extends javax.swing.JFrame {
         }
     }
     
-    private void openFile(){
-        File file;
-        FileNameExtensionFilter ft = new FileNameExtensionFilter("TARC Codes", "tarc");
-        fcOpenFile.addChoosableFileFilter(ft);
-        
-        int returnVal = fcOpenFile.showOpenDialog(this);
-        if(returnVal == JFileChooser.APPROVE_OPTION){
-            file = fcOpenFile.getSelectedFile();
+    private void openFile(File file){
             
-            // Retrieve filename
-            String filename = parseFileName(file.toString());
+        // Retrieve filename
+        String filename = parseFileName(file.toString());
             
-            // Check opened files
-            int indexCheck = checkOpenedFiles(file);
-            if(indexCheck == -1){
-                // Adjust codes tabbed pane
-                int position = tpCode.getSelectedIndex();
-                if(tpCode.getTitleAt(position).equals("[No Name]")){
-                    tpCode.setTitleAt(position, filename);
-                }else{
-                    // Open another tab
-                    JPanel panel = this.createNewCodeArea();
-                    tpCode.addTab(filename, panel);
-                    position = tpCode.getTabCount()-1;
-                    tpCode.setSelectedIndex(position);                
-                }   
-                // Display code in latest text area
-                ReadFile rf = new ReadFile(file);
-                this.tarcFiles.get(position).areaCode.setText(rf.read());
-                this.tarcFiles.get(position).setFile(file);
+        // Check opened files
+        int indexCheck = checkOpenedFiles(file);
+        if(indexCheck == -1){
+            // Adjust codes tabbed pane
+            int position = tpCode.getSelectedIndex();
+            if(tpCode.getTitleAt(position).equals("[No Name]")){
+                tpCode.setTitleAt(position, filename);
             }else{
-                tpCode.setSelectedIndex(indexCheck);
-            }
+                // Open another tab
+                JPanel panel = this.createNewCodeArea();
+                tpCode.addTab(filename, panel);
+                position = tpCode.getTabCount()-1;
+                tpCode.setSelectedIndex(position);                
+            }   
+            // Display code in latest text area
+            ReadFile rf = new ReadFile(file);
+            this.tarcFiles.get(position).areaCode.setText(rf.read());
+            this.tarcFiles.get(position).setFile(file);
+        }else{
+            tpCode.setSelectedIndex(indexCheck);
         }
     }
     
