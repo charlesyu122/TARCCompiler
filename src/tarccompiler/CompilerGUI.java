@@ -110,6 +110,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         taCode.setColumns(20);
         taCode.setForeground(new java.awt.Color(51, 204, 0));
         taCode.setRows(5);
+        taCode.setTabSize(4);
         taCode.setCaretColor(new java.awt.Color(255, 255, 0));
         jScrollPane2.setViewportView(taCode);
 
@@ -269,6 +270,8 @@ public class CompilerGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         // Instantiate classes for source code compilation here
+        
+        displayOpenedFiles();
     }//GEN-LAST:event_btnCompileActionPerformed
 
     private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed
@@ -293,12 +296,22 @@ public class CompilerGUI extends javax.swing.JFrame {
 
     private void btnCloseFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseFileActionPerformed
         // TODO add your handling code here:
-        /*
+        // Get selected file and code
         int selectedTabIndex = tpCode.getSelectedIndex();
-        if(tpCode.getTitleAt(selectedTabIndex).equals("[No Name]")){
-            tpCode.remove(selectedTabIndex);
+            if(tpCode.getTabCount()!=1){
+            if(tarcFiles.get(selectedTabIndex).file == null && tarcFiles.get(selectedTabIndex).areaCode.getText().equals("")){ 
+                // Empty file
+            } else{
+                // Prompt to save or not
+                int save = JOptionPane.showConfirmDialog(null,"Do you want to save before closing?","Close TARC Code", JOptionPane.YES_NO_CANCEL_OPTION);
+                if(save == JOptionPane.YES_OPTION){
+                    saveFile();
+                }
+            }
+           // Close file
+           tpCode.remove(selectedTabIndex);
+           tarcFiles.remove(selectedTabIndex);
         }
-        */      
     }//GEN-LAST:event_btnCloseFileActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
@@ -417,6 +430,11 @@ public class CompilerGUI extends javax.swing.JFrame {
         WriteFile wf = new WriteFile(file,code);
         wf.write();
         JOptionPane.showMessageDialog(this, "Your code was successfully saved.");
+    }
+    
+    // For debugging
+    private void displayOpenedFiles(){
+        System.out.println("File opened: "+tarcFiles.size());
     }
     
     /**
