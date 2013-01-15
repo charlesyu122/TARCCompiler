@@ -5,14 +5,17 @@
 package tarccompiler;
 
 import files.ReadFile;
+import files.WriteFile;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -43,6 +46,7 @@ public class CompilerGUI extends javax.swing.JFrame {
     private void initComponents() {
 
         fcOpenFile = new javax.swing.JFileChooser();
+        fcSaveAs = new javax.swing.JFileChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
         fileTree = new javax.swing.JTree();
         btnCompile = new javax.swing.JButton();
@@ -58,6 +62,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         taOutput = new javax.swing.JTextArea();
         btnCloseFile = new javax.swing.JButton();
+        btnSave = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         itemNewFile = new javax.swing.JMenuItem();
@@ -149,6 +154,14 @@ public class CompilerGUI extends javax.swing.JFrame {
             }
         });
 
+        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tarccompiler/resources/save.png"))); // NOI18N
+        btnSave.setText("Save Code");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
+
         menuFile.setText("File");
 
         itemNewFile.setText("New File");
@@ -168,9 +181,19 @@ public class CompilerGUI extends javax.swing.JFrame {
         menuFile.add(itemOpenFile);
 
         itemSave.setText("Save");
+        itemSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemSaveActionPerformed(evt);
+            }
+        });
         menuFile.add(itemSave);
 
         itemSaveAs.setText("Save As...");
+        itemSaveAs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemSaveAsActionPerformed(evt);
+            }
+        });
         menuFile.add(itemSaveAs);
 
         itemQuit.setText("Quit");
@@ -195,6 +218,8 @@ public class CompilerGUI extends javax.swing.JFrame {
                 .add(btnNewFile)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnOpenFile)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(btnSave)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnCompile)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -221,7 +246,8 @@ public class CompilerGUI extends javax.swing.JFrame {
                     .add(btnNewFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(btnOpenFile)
                     .add(btnCompile)
-                    .add(btnCloseFile))
+                    .add(btnCloseFile)
+                    .add(btnSave))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(layout.createSequentialGroup()
@@ -274,6 +300,21 @@ public class CompilerGUI extends javax.swing.JFrame {
         }
         */      
     }//GEN-LAST:event_btnCloseFileActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // TODO add your handling code here:
+        saveFile();
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void itemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSaveActionPerformed
+        // TODO add your handling code here:
+        saveFile();
+    }//GEN-LAST:event_itemSaveActionPerformed
+
+    private void itemSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSaveAsActionPerformed
+        // TODO add your handling code here:
+        saveFile();
+    }//GEN-LAST:event_itemSaveAsActionPerformed
 
     // Methods
     
@@ -334,7 +375,6 @@ public class CompilerGUI extends javax.swing.JFrame {
             
             // Check opened files
             int indexCheck = checkOpenedFiles(file);
-            System.out.println(indexCheck);
             if(indexCheck == -1){
                 // Adjust codes tabbed pane
                 int position = tpCode.getSelectedIndex();
@@ -355,6 +395,28 @@ public class CompilerGUI extends javax.swing.JFrame {
                 tpCode.setSelectedIndex(indexCheck);
             }
         }
+    }
+    
+    private void saveFile(){
+        // Get selected file and code
+        int selectedIndex = tpCode.getSelectedIndex();
+        File file = tarcFiles.get(selectedIndex).file;
+        String code = tarcFiles.get(selectedIndex).areaCode.getText();
+        
+        if(file == null){ // For Save As
+            FileFilter ft = new FileNameExtensionFilter("TARC Codes","tarc");
+            fcSaveAs.addChoosableFileFilter(ft);
+        
+            int returnVal = fcSaveAs.showSaveDialog(this);
+            if(returnVal == JFileChooser.APPROVE_OPTION){
+                file = fcSaveAs.getSelectedFile();
+            }
+            // Display name
+            tpCode.setTitleAt(selectedIndex, parseFileName(file.toString()));
+        }
+        WriteFile wf = new WriteFile(file,code);
+        wf.write();
+        JOptionPane.showMessageDialog(this, "Your code was successfully saved.");
     }
     
     /**
@@ -396,7 +458,9 @@ public class CompilerGUI extends javax.swing.JFrame {
     private javax.swing.JButton btnCompile;
     private javax.swing.JButton btnNewFile;
     private javax.swing.JButton btnOpenFile;
+    private javax.swing.JButton btnSave;
     private javax.swing.JFileChooser fcOpenFile;
+    private javax.swing.JFileChooser fcSaveAs;
     private javax.swing.JTree fileTree;
     private javax.swing.JMenuItem itemNewFile;
     private javax.swing.JMenuItem itemOpenFile;
