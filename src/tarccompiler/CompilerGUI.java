@@ -57,7 +57,8 @@ public class CompilerGUI extends javax.swing.JFrame {
         fcSaveAs = new javax.swing.JFileChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
         fileTree = fileTree = new JTree(new FileSelectorModel("/Users/charles_yu102/Documents"));
-        ;
+        // For Windows:
+        // fileTree = new JTree(new FileSelectorModel("C://"));
         btnCompile = new javax.swing.JButton();
         btnOpenFile = new javax.swing.JButton();
         btnNewFile = new javax.swing.JButton();
@@ -81,9 +82,14 @@ public class CompilerGUI extends javax.swing.JFrame {
         menuAbout = new javax.swing.JMenu();
         menuHelp = new javax.swing.JMenu();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("TARC Compiler");
         setLocation(new java.awt.Point(200, 0));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jScrollPane1.setViewportView(fileTree);
 
@@ -316,20 +322,23 @@ public class CompilerGUI extends javax.swing.JFrame {
     private void btnCloseFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseFileActionPerformed
         // TODO add your handling code here:
         // Get selected file and code
+        int save = -1;
         int selectedTabIndex = tpCode.getSelectedIndex();
             if(tpCode.getTabCount()!=1){
             if(tarcFiles.get(selectedTabIndex).file == null && tarcFiles.get(selectedTabIndex).areaCode.getText().equals("")){ 
                 // Empty file
             } else{
                 // Prompt to save or not
-                int save = JOptionPane.showConfirmDialog(null,"Do you want to save before closing?","Close TARC Code", JOptionPane.YES_NO_CANCEL_OPTION);
+                save = JOptionPane.showConfirmDialog(null,"Do you want to save before closing?","Close TARC Code", JOptionPane.YES_NO_CANCEL_OPTION);
                 if(save == JOptionPane.YES_OPTION){
                     saveFile();
                 }
             }
-           // Close file
-           tpCode.remove(selectedTabIndex);
-           tarcFiles.remove(selectedTabIndex);
+            if(save == JOptionPane.YES_OPTION || save == JOptionPane.NO_OPTION){
+                // Close file
+                tpCode.remove(selectedTabIndex);
+                tarcFiles.remove(selectedTabIndex);
+            }
         }
     }//GEN-LAST:event_btnCloseFileActionPerformed
 
@@ -350,6 +359,14 @@ public class CompilerGUI extends javax.swing.JFrame {
             System.exit(1);
         }
     }//GEN-LAST:event_itemQuitActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        int quit = JOptionPane.showConfirmDialog(null,"Are you sure you want to quit","Quit TARC Compiler", JOptionPane.YES_NO_CANCEL_OPTION);
+        if(quit == JOptionPane.YES_OPTION){
+            System.exit(1);
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     // Methods
     
