@@ -238,7 +238,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane2" alignment="0" pref="414" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" alignment="0" pref="396" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -260,7 +260,7 @@
                       <Color blue="0" green="cc" red="33" type="rgb"/>
                     </Property>
                     <Property name="rows" type="int" value="5"/>
-                    <Property name="tabSize" type="int" value="4"/>
+                    <Property name="tabSize" type="int" value="2"/>
                     <Property name="caretColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="0" green="ff" red="ff" type="rgb"/>
                     </Property>

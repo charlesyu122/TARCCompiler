@@ -123,7 +123,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         taCode.setColumns(20);
         taCode.setForeground(new java.awt.Color(51, 204, 0));
         taCode.setRows(5);
-        taCode.setTabSize(4);
+        taCode.setTabSize(2);
         taCode.setCaretColor(new java.awt.Color(255, 255, 0));
         jScrollPane2.setViewportView(taCode);
 
@@ -135,7 +135,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
         );
 
         tpCode.addTab("[No Name]", jPanel3);
