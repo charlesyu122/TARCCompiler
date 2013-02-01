@@ -56,9 +56,9 @@ public class CompilerGUI extends javax.swing.JFrame {
         fcOpenFile = new javax.swing.JFileChooser();
         fcSaveAs = new javax.swing.JFileChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
-        fileTree = fileTree = new JTree(new FileSelectorModel("/Users/charles_yu102/Documents"));
+        fileTree = // fileTree = new JTree(new FileSelectorModel("/Users/charles_yu102/Documents"));
         // For Windows:
-        // fileTree = new JTree(new FileSelectorModel("C://"));
+        fileTree = new JTree(new FileSelectorModel("C://"));
         btnCompile = new javax.swing.JButton();
         btnOpenFile = new javax.swing.JButton();
         btnNewFile = new javax.swing.JButton();
@@ -84,7 +84,6 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("TARC Compiler");
-        setLocation(new java.awt.Point(200, 0));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -136,7 +135,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
         );
 
         tpCode.addTab("[No Name]", jPanel3);
@@ -285,6 +284,9 @@ public class CompilerGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         // Instantiate classes for source code compilation here
+        int position = tpCode.getSelectedIndex();
+        LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).areaCode.getText());
+        lexicalAnalyzer.getLexemes();
     }//GEN-LAST:event_btnCompileActionPerformed
 
     private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed
