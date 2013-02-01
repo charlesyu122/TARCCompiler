@@ -8,14 +8,14 @@ package datamodels;
  *
  * @author charles
  */
-public class SymbolTable {
+public class SymbolTableModel {
     // Attributes
-    private String token;    // keyword, op, ...
-    private String tokenValue;    // token value
-    private String datatype; // token datatype
+    public String token;         // keyword, op, ...
+    public String tokenValue;    // token value
+    public String datatype;      // token datatype
     
     // Constructor
-    public SymbolTable(String token, String value, String datatype){
+    public SymbolTableModel(String token, String value, String datatype){
         this.token = token;
         this.tokenValue = value;
         this.datatype = datatype;

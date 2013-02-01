@@ -4,10 +4,11 @@
  */
 package tarccompiler;
 
-import database.KeywordValuePairs;
 import datamodels.Token;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import storage.SymbolTable;
+import storage.TokenValuePairs;
 
 /**
  *
@@ -16,21 +17,23 @@ import java.util.StringTokenizer;
 public class LexicalAnalyzer {
     
     // Attributes
-    private KeywordValuePairs kvp;
+    private TokenValuePairs tvp;
     private String sourceCode;
-    ArrayList<String> lexemes;
-    ArrayList<Token> tokens;
+    ArrayList<String> lexemes;     // Parsed from the source code
+    ArrayList<Token> tokens;       // List of tokens to be given to the parser
+    SymbolTable symbolTable;
        
     // Constructor
-    public LexicalAnalyzer(String sourceCode){
-       this.kvp = new KeywordValuePairs();
+    public LexicalAnalyzer(String sourceCode, SymbolTable symbolTable){
+       this.tvp = new TokenValuePairs();
        this.sourceCode = sourceCode;
        this.lexemes = new ArrayList<String>();
        this.tokens = new ArrayList<Token>();
+       this.symbolTable = symbolTable;
     }
     
+    // Methods
     public void getLexemes(){
-        
         // Remove spaces from source code
         String spaceDelims = "[ \t\n]+";
         String[] codes = this.sourceCode.split(spaceDelims);
@@ -47,33 +50,9 @@ public class LexicalAnalyzer {
                     lexemes.add(word);
                 }                
             }
-        }
-        
-        // Display obtained lexemes to check
-        //this.displayLexemes();
-        
-        
+        }   
     }
     
-    public ArrayList<Token> evaluate(){
-        ArrayList<Token> tokens = new ArrayList<Token>();
-        int last = 0;
-        Token temp = new Token();
-        //this.tokens.add(temp);
-        for(int i=0; i<this.lexemes.size(); i++){
-            if(kvp.getType(lexemes.get(i)) != null) {
-                temp.token = kvp.getType(lexemes.get(i));
-                temp.tokenPtr = null;         
-            }
-            else{
-                temp.token = this.lexemes.get(i);
-                temp.tokenPtr = last++;
-            }
-                
-            tokens.add(temp);
-        }
-        return tokens;
-    }
     public Boolean checkDoubleDelim(String curDelim){
         Boolean check = false;
         String lastDelim = lexemes.get(lexemes.size()-1);
@@ -85,10 +64,33 @@ public class LexicalAnalyzer {
         return check;
     }
     
-    private void displayLexemes(){
+    public ArrayList<Token> getTokensFormSymbolTable(){
+        // Check every lexeme type
         for(int i=0; i<this.lexemes.size(); i++){
-            System.out.println("Lexeme "+(i+1)+": "+lexemes.get(i));
+            String curLexeme = lexemes.get(i);
+            Token container = new Token();
+            String type = tvp.getType(curLexeme);
+            if(type != null) {                           // Keyword
+                container.setToken(type);      
+            } else if(isNumeric(curLexeme)){             // Digit
+                container.setToken("num");
+                container.setTokenPtr(Integer.parseInt(curLexeme));
+            } else{                                      // Identifier
+                symbolTable.insert("id", curLexeme);
+                container.setToken("id");
+                container.setTokenPtr(symbolTable.getLast());
+            }
+            this.tokens.add(container);
         }
+        return this.tokens;
     }
 
+    private boolean isNumeric(String lexeme){
+        try{
+            Integer num = Integer.parseInt(lexeme);
+        }catch(NumberFormatException e){
+            return false;
+        }
+        return true;
+    }
 }

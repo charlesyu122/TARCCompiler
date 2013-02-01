@@ -6,16 +6,35 @@ package tarccompiler;
 
 import datamodels.Token;
 import java.util.ArrayList;
+import storage.SymbolTable;
 /**
  *
  * @author charles_yu102
  */
 public class Parser {
     
-    Parser(ArrayList<Token> tokens){
-      for(int i=0; i<tokens.size(); i++){
-            System.out.println("Lexeme "+(i+1)+": "+tokens.get(i));
-        }  
+    // Attributes
+    ArrayList<Token> tokens;
+    SymbolTable symbolTable;
+    
+    // Constructor
+    public Parser(ArrayList<Token> tokens, SymbolTable table){
+      this.tokens = tokens;  
+      this.symbolTable = table;
     }
     
+    // Methods
+    public void displayTokens(){
+        System.out.println("Tokens received");
+        for(int i=0; i < tokens.size(); i++){
+            System.out.println("Token: "+tokens.get(i).getToken()+" ptr: "+tokens.get(i).getTokenPtr());
+        }
+    }
+    
+    public void displaySymTable(){
+        System.out.println("Symbol Table:");
+        for(int i=0; i < symbolTable.table.size(); i++){
+            System.out.println("Token: "+symbolTable.table.get(i).token+" Value: "+symbolTable.table.get(i).tokenValue+" DType: "+symbolTable.table.get(i).datatype);
+        }
+    }
 }

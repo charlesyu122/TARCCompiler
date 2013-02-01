@@ -2,20 +2,20 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package database;
+package storage;
 
 import java.util.HashMap;
 /**
  *
  * @author charles
  */
-public class KeywordValuePairs {
+public class TokenValuePairs {
     
-    
+    // Attributes
     HashMap<String,String> terms; // contains value-keyword
     
-    //constructor
-    public KeywordValuePairs(){
+    // Constructor
+    public TokenValuePairs(){
         
             terms = new HashMap<String,String>();
             terms.put("#main", "keyword");
@@ -24,36 +24,46 @@ public class KeywordValuePairs {
             terms.put("if", "keyword");
             terms.put("else", "keyword");
             terms.put("end", "keyword");
+            terms.put("while", "keyword");
+            terms.put("null", "keyword");
             
             terms.put("#int", "datatypes");
             terms.put("#char", "datatypes");
             terms.put("#bool", "datatypes");
             terms.put("#arr", "datatypes");
             
-            terms.put("<", "relop");
-            terms.put(">", "relop");
-            terms.put("==", "relop");
-            terms.put("<=", "relop");
-            terms.put(">=", "relop");
-            terms.put("!=", "relop");
+            terms.put("+", "arth_op");
+            terms.put("-", "arth_op");
+            terms.put("*", "arth_op");
+            terms.put("/", "arth_op");
+            terms.put("%", "arth_op");
             
-            terms.put("&", "logop");
-            terms.put("|", "logop");
-            terms.put("!", "logop");
+            terms.put("<", "rel_op");
+            terms.put(">", "rel_op");
+            terms.put("==", "rel_op");
+            terms.put("!=", "rel_op");
+            terms.put("<=", "rel_op");
+            terms.put(">=", "rel_op");
             
-            terms.put("=", "assop");
-            terms.put("++", "assop");
-            terms.put("--", "assop");
+            terms.put("&", "log_op");
+            terms.put("|", "log_op");
+            terms.put("!", "log_op");
+            
+            terms.put("=", "assign");
+            terms.put("++", "un_op");
+            terms.put("--", "un_op");
                      
-            terms.put("(", "otherop");
-            terms.put(")", "otherop");
-            terms.put("{", "otherop");
-            terms.put("}", "otherop");
+            terms.put("(", "open_par");
+            terms.put(")", "close_par");
+            terms.put("{", "open_br");
+            terms.put("}", "close_br");
+            terms.put(";", "semi");
+            terms.put(",", "comma");
+            
+            terms.put("//", "comment");
     }
     
     public String getType(String value){
-        String type;
-        type = this.terms.get(value).toString();
-        return type;
+        return this.terms.get(value);
     }
 }

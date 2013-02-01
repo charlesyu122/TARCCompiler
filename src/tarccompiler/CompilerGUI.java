@@ -4,6 +4,7 @@
  */
 package tarccompiler;
 
+import datamodels.Token;
 import files.FileNode;
 import files.FileSelectorModel;
 import files.ReadFile;
@@ -23,6 +24,7 @@ import javax.swing.JTree;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.TreePath;
+import storage.SymbolTable;
 
 /**
  *
@@ -32,16 +34,17 @@ public class CompilerGUI extends javax.swing.JFrame {
 
     // Attributes
     ArrayList<TARCFile> tarcFiles;
+    SymbolTable symbolTable;
     
-    /**
-     * Creates new form CompilerGUI
-     */
+    // Constructor
     public CompilerGUI() {
         initComponents();
         tarcFiles = new ArrayList<TARCFile>();
         tarcFiles.add(new TARCFile(taCode));
         // Initialize file tree
         initFileTree();
+        // Initialize attributes for compilation
+        this.symbolTable = new SymbolTable();
     }
 
     /**
@@ -286,9 +289,13 @@ public class CompilerGUI extends javax.swing.JFrame {
         
         // Instantiate classes for source code compilation here
         int position = tpCode.getSelectedIndex();
-        LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).areaCode.getText());
+        LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).areaCode.getText(), this.symbolTable);
         lexicalAnalyzer.getLexemes();
-        Parser parser = new Parser(lexicalAnalyzer.evaluate());
+        ArrayList<Token> tokensForParser = lexicalAnalyzer.getTokensFormSymbolTable();
+        Parser parser = new Parser(tokensForParser, symbolTable);
+        parser.displayTokens();
+        parser.displaySymTable();
+        
     }//GEN-LAST:event_btnCompileActionPerformed
 
     private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed
