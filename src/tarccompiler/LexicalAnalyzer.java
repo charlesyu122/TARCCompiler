@@ -63,4 +63,5 @@ public class LexicalAnalyzer {
             System.out.println("Lexeme "+(i+1)+": "+lexemes.get(i));
         }
     }
+
 }
