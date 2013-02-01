@@ -4,6 +4,7 @@
  */
 package tarccompiler;
 
+import datamodels.Token;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -16,11 +17,13 @@ public class LexicalAnalyzer {
     // Attributes
     private String sourceCode;
     ArrayList<String> lexemes;
+    ArrayList<Token> tokens;
     
     // Constructor
     public LexicalAnalyzer(String sourceCode){
        this.sourceCode = sourceCode;
        this.lexemes = new ArrayList<String>();
+       this.tokens = new ArrayList<Token>();
     }
     
     public void getLexemes(){
@@ -45,6 +48,10 @@ public class LexicalAnalyzer {
         
         // Display obtained lexemes to check
         this.displayLexemes();
+        
+        // Sample on how to add
+        Token temp = new Token("keyword", "#void");
+        this.tokens.add(temp);
     }
     
     public Boolean checkDoubleDelim(String curDelim){
