@@ -288,6 +288,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         int position = tpCode.getSelectedIndex();
         LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).areaCode.getText());
         lexicalAnalyzer.getLexemes();
+        Parser parser = new Parser(lexicalAnalyzer.evaluate());
     }//GEN-LAST:event_btnCompileActionPerformed
 
     private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed

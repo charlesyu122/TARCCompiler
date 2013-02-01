@@ -4,6 +4,7 @@
  */
 package tarccompiler;
 
+import database.KeywordValuePairs;
 import datamodels.Token;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -15,12 +16,14 @@ import java.util.StringTokenizer;
 public class LexicalAnalyzer {
     
     // Attributes
+    private KeywordValuePairs kvp;
     private String sourceCode;
     ArrayList<String> lexemes;
     ArrayList<Token> tokens;
-    
+       
     // Constructor
     public LexicalAnalyzer(String sourceCode){
+       this.kvp = new KeywordValuePairs();
        this.sourceCode = sourceCode;
        this.lexemes = new ArrayList<String>();
        this.tokens = new ArrayList<Token>();
@@ -47,13 +50,30 @@ public class LexicalAnalyzer {
         }
         
         // Display obtained lexemes to check
-        this.displayLexemes();
+        //this.displayLexemes();
         
-        // Sample on how to add
-        Token temp = new Token("keyword", "#void");
-        this.tokens.add(temp);
+        
     }
     
+    public ArrayList<Token> evaluate(){
+        ArrayList<Token> tokens = new ArrayList<Token>();
+        int last = 0;
+        Token temp = new Token();
+        //this.tokens.add(temp);
+        for(int i=0; i<this.lexemes.size(); i++){
+            if(kvp.getType(lexemes.get(i)) != null) {
+                temp.token = kvp.getType(lexemes.get(i));
+                temp.tokenPtr = null;         
+            }
+            else{
+                temp.token = this.lexemes.get(i);
+                temp.tokenPtr = last++;
+            }
+                
+            tokens.add(temp);
+        }
+        return tokens;
+    }
     public Boolean checkDoubleDelim(String curDelim){
         Boolean check = false;
         String lastDelim = lexemes.get(lexemes.size()-1);

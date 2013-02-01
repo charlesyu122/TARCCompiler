@@ -11,30 +11,13 @@ package datamodels;
 public class Token {
     
     // Attributes
-    public String token;    // keyword, op, ...
-    public String tokenVal; // token attribute
+    public String token;    // identifier
+    public Integer tokenPtr; // pointer to the symbol table
     
-    // Constructor
-    public Token(String token, String value){
+    // Constructors
+    public Token(){}
+    public Token(String token, Integer pointer){
         this.token = token;
-        this.tokenVal = value;
-    }
-    
-    // Setters
-    public void setToken(String token){
-        this.token = token;
-    }
-    
-    public void setTokenValue(String val){
-        this.tokenVal = val;
-    }
-    
-    // Getters
-    public String getToken(){
-        return this.token;
-    }
-    
-    public String getTokenValue(){
-        return this.tokenVal;
+        this.tokenPtr = pointer;
     }
 }
