@@ -12,10 +12,12 @@ import java.util.ArrayList;
  * @author User
  */
 public class LookUpTable {
+    // Attributes
     ArrayList<LookUpTableModel> parserTable;
     
+    // Constructor
     public LookUpTable(){
-        parserTable = new ArrayList<LookUpTableModel>();
+        this.parserTable = new ArrayList<LookUpTableModel>();
     }
     
     /*

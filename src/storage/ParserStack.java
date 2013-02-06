@@ -11,13 +11,15 @@ import java.util.Stack;
  * @author User
  */
 public class ParserStack {
+    // Attributes
     Stack<String> stack;
     
-    //<editor-fold defaultstate="collapsed" desc="Constructor and Mutators">
+    // Constructor
     public ParserStack(){
         this.stack = new Stack<String>();
     }
     
+    // Methods
     public void setStack(Stack stack){
         this.stack = stack;
     }
@@ -25,7 +27,6 @@ public class ParserStack {
     public Stack getStack(){
         return stack;
     }
-    //</editor-fold>
     
     public void push(String val){
         stack.add(val);
@@ -37,7 +38,5 @@ public class ParserStack {
     
     public void divide(){
         stack.pop();
-        
-        //divide a terminal into its subterminals
     }
 }

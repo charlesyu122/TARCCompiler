@@ -11,18 +11,21 @@ import java.util.ArrayList;
  *
  * @author User
  */
-public class Production {
+public final class Production {
+    
+    // Attributes
     ArrayList<ProductionModel> productionTable;
     ProductionModel productionModel;
     
+    // Constructor
     public Production(){
         productionTable = new ArrayList<ProductionModel>();
         this.populateProductionTable();
     }
     
+    // Populates grammar productions
     public void populateProductionTable(){
         
-        //productions
         productionModel = new ProductionModel();        
         productionModel.setTerminal("<PROGRAM>");
         productionModel.addProductions("<FUNCTION LIST>");

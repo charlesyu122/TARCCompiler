@@ -11,29 +11,31 @@ import java.util.ArrayList;
  * @author User
  */
 public class ProductionModel {
+    
+    // Attributes
     private ArrayList<String> productions;
     private String terminal;
     
-    //<editor-fold defaultstate="collapsed" desc="Constructor and Mutators">
+    // Constructor
     public ProductionModel(){
         this.terminal = null;
         this.productions = new ArrayList<String>();
     }
     
+    // Methods
     public void setTerminal(String terminal){
         this.terminal = terminal;
+    }
+    
+    public String getTerminal(){
+        return terminal;
     }
     
     public void addProductions(String product){
         productions.add(product);
     }
     
-    public ArrayList<String> getProduct(){
+    public ArrayList<String> getProduction(){
         return productions;
     }
-    
-    public String getTerminal(){
-        return terminal;
-    }
-    //</editor-fold>
 }

@@ -9,16 +9,20 @@ package datamodels;
  * @author User
  */
 public class LookUpTableModel {
-    private String terminal, nonTerminal, data;
+    
+    // Attributes
+    private String terminal;
+    private String nonTerminal;
+    private String data;
             
+    // Constructor
     public LookUpTableModel(String terminal, String nonTerminal, String data){
-        //both were found at the header part of our grass.
         this.terminal = terminal;   
         this.nonTerminal = nonTerminal;
         this.data = data;
     }
             
-    //<editor-fold defaultstate="fold" desc="Mutators">
+    // Setters and Getters
     public void setTerminal(String terminal){
         this.terminal = terminal;
     }
@@ -42,5 +46,4 @@ public class LookUpTableModel {
     public String getData(){
         return data;
     }
-    //</editor-fold>  
 }
