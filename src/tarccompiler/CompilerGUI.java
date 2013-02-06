@@ -295,6 +295,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         Parser parser = new Parser(tokensForParser, symbolTable);
         parser.displayTokens();
         parser.displaySymTable();
+        parser.functionList();
         
     }//GEN-LAST:event_btnCompileActionPerformed
 
@@ -335,9 +336,10 @@ public class CompilerGUI extends javax.swing.JFrame {
         // Get selected file and code
         int save = -1;
         int selectedTabIndex = tpCode.getSelectedIndex();
-            if(tpCode.getTabCount()!=1){
+        if(tpCode.getTabCount()!=1){
             if(tarcFiles.get(selectedTabIndex).file == null && tarcFiles.get(selectedTabIndex).areaCode.getText().equals("")){ 
                 // Empty file
+                save = 0;
             } else{
                 // Prompt to save or not
                 save = JOptionPane.showConfirmDialog(null,"Do you want to save before closing?","Close TARC Code", JOptionPane.YES_NO_CANCEL_OPTION);
