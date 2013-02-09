@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package tarccompiler;
+package datamodels;
 
 import java.io.File;
 import javax.swing.JTextArea;
@@ -13,8 +13,8 @@ import javax.swing.JTextArea;
  */
 public class TARCFile {
     
-    File file;
-    JTextArea areaCode;
+    private File file;
+    private JTextArea areaCode;
     
     // constructors
     public TARCFile(JTextArea area){
@@ -25,12 +25,21 @@ public class TARCFile {
         this.areaCode = area;
     }
     
+    // Setters and Getters
     public void setFile(File file){
         this.file = file;
     }
     
     public void setCode(JTextArea area){
         this.areaCode = area;
+    }
+    
+    public File getFile(){
+        return this.file;
+    }
+    
+    public JTextArea getCode(){
+        return this.areaCode;
     }
     
 }

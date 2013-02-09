@@ -29,7 +29,7 @@ public class Parser {
     public void displayTokens(){
         System.out.println("Tokens received");
         for(int i=0; i < tokens.size(); i++){
-            System.out.println("Token: "+tokens.get(i).getToken()+" ptr: "+tokens.get(i).getTokenPtr());
+            System.out.println("Token: "+tokens.get(i).getToken()+" TokenInfo: "+tokens.get(i).getTokenInfo());
         }
     }
     

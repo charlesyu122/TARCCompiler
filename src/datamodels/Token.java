@@ -9,13 +9,14 @@ public class Token {
     
     // Attributes
     String token;     // identifier
-    Integer tokenPtr; // index pointer to the symbol table
+    String tokenInfo; // index pointer to the symbol table if token is id
+                      // token value if token is int or char;
     
     // Constructors
     public Token(){}
-    public Token(String token, Integer pointer){
+    public Token(String token, String info){
         this.token = token;
-        this.tokenPtr = pointer;
+        this.tokenInfo = info;
     }
     
     // Setters
@@ -23,8 +24,8 @@ public class Token {
         this.token = token;
     }
     
-    public void setTokenPtr(int ptr){
-        this.tokenPtr = ptr;
+    public void setTokenInfo(String info){
+        this.tokenInfo = info;
     }
     
     // Getters
@@ -32,7 +33,7 @@ public class Token {
         return this.token;
     }
     
-    public Integer getTokenPtr(){
-        return this.tokenPtr;
+    public String getTokenInfo(){
+        return this.tokenInfo;
     }
 }

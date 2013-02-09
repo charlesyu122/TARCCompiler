@@ -4,6 +4,7 @@
  */
 package tarccompiler;
 
+import datamodels.TARCFile;
 import datamodels.Token;
 import files.FileNode;
 import files.FileSelectorModel;
@@ -289,7 +290,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         
         // Instantiate classes for source code compilation here
         int position = tpCode.getSelectedIndex();
-        LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).areaCode.getText(), this.symbolTable);
+        LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).getCode().getText(), this.symbolTable);
         lexicalAnalyzer.getLexemes();
         ArrayList<Token> tokensForParser = lexicalAnalyzer.getTokensFormSymbolTable();
         Parser parser = new Parser(tokensForParser, symbolTable);
@@ -337,7 +338,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         int save = -1;
         int selectedTabIndex = tpCode.getSelectedIndex();
         if(tpCode.getTabCount()!=1){
-            if(tarcFiles.get(selectedTabIndex).file == null && tarcFiles.get(selectedTabIndex).areaCode.getText().equals("")){ 
+            if(tarcFiles.get(selectedTabIndex).getFile() == null && tarcFiles.get(selectedTabIndex).getCode().getText().equals("")){ 
                 // Empty file
                 save = 0;
             } else{
@@ -431,6 +432,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         newCodeArea.setBackground(new Color(51,51,51));
         newCodeArea.setForeground(new Color(51,204,0));
         newCodeArea.setCaretColor(new Color(255,255,0));
+        newCodeArea.setTabSize(2);
         JScrollPane scroll = new JScrollPane(newCodeArea);
         panel.add(scroll, BorderLayout.CENTER);
         // Add textarea to list of tarc files
@@ -441,7 +443,7 @@ public class CompilerGUI extends javax.swing.JFrame {
     private int checkOpenedFiles(File file){
         int index = -1;
         for(int i = 0; index == -1 && i<tarcFiles.size(); i++){
-            if(tarcFiles.get(i).file != null && tarcFiles.get(i).file.toString().equals(file.toString())){
+            if(tarcFiles.get(i).getFile() != null && tarcFiles.get(i).getFile().toString().equals(file.toString())){
                 index = i;
             }
         }
@@ -480,7 +482,7 @@ public class CompilerGUI extends javax.swing.JFrame {
             }   
             // Display code in latest text area
             ReadFile rf = new ReadFile(file);
-            this.tarcFiles.get(position).areaCode.setText(rf.read());
+            this.tarcFiles.get(position).getCode().setText(rf.read());
             this.tarcFiles.get(position).setFile(file);
         }else{
             tpCode.setSelectedIndex(indexCheck);
@@ -490,8 +492,8 @@ public class CompilerGUI extends javax.swing.JFrame {
     private void saveFile(){
         // Get selected file and code
         int selectedIndex = tpCode.getSelectedIndex();
-        File file = tarcFiles.get(selectedIndex).file;
-        String code = tarcFiles.get(selectedIndex).areaCode.getText();
+        File file = tarcFiles.get(selectedIndex).getFile();
+        String code = tarcFiles.get(selectedIndex).getCode().getText();
         
         if(file == null){ // For Save As
             FileFilter ft = new FileNameExtensionFilter("TARC Codes","tarc");

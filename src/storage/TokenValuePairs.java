@@ -29,7 +29,7 @@ public class TokenValuePairs {
             
             terms.put("#int", "datatypes");
             terms.put("#char", "datatypes");
-            terms.put("#bool", "datatypes");
+            terms.put("#boolean", "datatypes");
             terms.put("#arr", "datatypes");
             
             terms.put("+", "arth_op");
@@ -59,6 +59,12 @@ public class TokenValuePairs {
             terms.put("}", "close_br");
             terms.put(";", "semi");
             terms.put(",", "comma");
+            terms.put("'", "appos");
+            
+            terms.put("#getInt", "input");
+            terms.put("#getChar", "input");
+            terms.put("#getBool", "input");
+            terms.put("#puts", "output");
             
             terms.put("//", "comment");
     }
