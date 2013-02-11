@@ -6,6 +6,7 @@ package tarccompiler;
 
 import datamodels.Token;
 import java.util.ArrayList;
+import storage.LookUpTable;
 import storage.SymbolTable;
 /**
  *
@@ -16,13 +17,13 @@ public class Parser {
     // Attributes
     ArrayList<Token> tokens;
     SymbolTable symbolTable;
-    private int predictToken;
+    LookUpTable lookUpTable;
     
     // Constructor
     public Parser(ArrayList<Token> tokens, SymbolTable table){
       this.tokens = tokens;  
       this.symbolTable = table;
-      this.predictToken = 0;
+      this.lookUpTable = new LookUpTable();
     }
     
     //<editor-fold defaultstate="collapsed" desc="Debugging Methods">
@@ -39,12 +40,8 @@ public class Parser {
             System.out.println("Token: "+symbolTable.table.get(i).token+" Value: "+symbolTable.table.get(i).tokenValue+" DType: "+symbolTable.table.get(i).datatype);
         }
     }
-    
     //</editor-fold>
     
     public void functionList(){
-        if(tokens.get(predictToken).getToken().equals("#func")){
-            
-        }
     }
 }
