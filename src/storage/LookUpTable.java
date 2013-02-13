@@ -11,7 +11,7 @@ package storage;
  */
 public class LookUpTable {
     // Attributes
-    private String[] terminals, nonTerminals;
+    public String[] terminals, nonTerminals;
     private String[][] table;
     
     // Constructor
@@ -24,26 +24,17 @@ public class LookUpTable {
     }
     
     //Look up our data in our LookUpTable
-    public String lookUp(String terminal, String nonTerminal){
+    public String lookUp(String nonTerminal, String terminal){
         int count_terminal, count_nonTerminal;
         
         //get the index for our given terminal and nonTerminal
-        for(count_terminal = 0; count_terminal < this.terminals.length && terminal != this.terminals[count_terminal]; count_terminal++);
-        for(count_nonTerminal = 0; count_nonTerminal < this.nonTerminals.length && nonTerminal != this.nonTerminals[count_nonTerminal]; count_nonTerminal++);
+        for(count_terminal = 0; count_terminal < this.terminals.length && !terminal.equals(this.terminals[count_terminal]); count_terminal++);
+        for(count_nonTerminal = 0; count_nonTerminal < this.nonTerminals.length && !nonTerminal.equals(this.nonTerminals[count_nonTerminal]); count_nonTerminal++);
         
-        return table[count_nonTerminal][count_terminal];
-    }
-    
-    //Display our LookUpTable
-    private void displayLookUpTable(){
-        System.out.println("____________________________");
-        for(int a = 0; a < this.nonTerminals.length; a++){
-            for(int b = 0; b < this.terminals.length; b++){
-                System.out.print(" "+table[a][b]);
-            }
-            System.out.println();
-        }
-        System.out.println("____________________________");
+        if(count_terminal == this.terminals.length || count_nonTerminal == this.nonTerminals.length)
+            return "2D Array out of bounds";
+        else
+            return table[count_nonTerminal][count_terminal];
     }
     
     //Initialize our column header
@@ -59,28 +50,37 @@ public class LookUpTable {
     
     //Initialize our row header
     private void initializeNonTerminals(){
-        nonTerminals = new String[]{"<PROGRAM>", "<MAIN>", "<FUNCTION LIST>",
-                                    "<FUNCTION>", "<PARAMETER LIST>", 
-                                    "<PARAMETER OPTION>", "<PARAMETER>", 
-                                    "<DATATYPE>", "<STATEMENT LIST>", 
-                                    "<DECLARATION LIST>", "<DECLARATION>",
-                                    "<STATEMENT>", "<OTHER STATEMENT>", 
-                                    "<ITERATION STATEMENT>", "<CONDITIONAL LIST>",
-                                    "<CONDITIONAL OPTION>", "<CONDITION>", 
-                                    "<VALUE>", "<BOOLEAN>", "<RELATIONAL OPERATOR>", 
-                                    "<LOGICAL OPERATOR>", "<ASSIGNMENT STATEMENT>",
-                                    "<ASSIGNMENT VALUE>", "<ARITHMETIC CHOICE>", 
-                                    "<VARNUM>", "<ARITHMETIC OPEARTOR>", 
-                                    "<IF ELSE STATEMENT>", "<ELSE PART>", 
-                                    "<FUNCTION CALL>", "<CALL PARAM LIST>", 
-                                    "<CALL PARAM OPTION>", "<INPUT>", "<OUTPUT>"};
+        nonTerminals = new String[]{"PROGRAM", "MAIN", "FUNCTION_LIST",
+                                    "FUNCTION", "PARAMETER_LIST", 
+                                    "PARAMETER_OPTION", "PARAMETER", 
+                                    "DATATYPE", "STATEMENT_LIST", 
+                                    
+                                    "DECLARATION_LIST", "DECLARATION",
+                                    "STATEMENT", "OTHER_STATEMENT", 
+                                    "ITERATION_STATEMENT", "CONDITIONAL_LIST",
+                                    
+                                    
+                                    "CONDITIONAL_OPTION", "CONDITION", 
+                                    
+                                    
+                                    "VALUE", "BOOLEAN", "RELATIONAL_OPERATOR", 
+                                    
+                                    "LOGICAL_OPERATOR", "ASSIGNMENT_STATEMENT",
+                                    
+                                    
+                                    "ASSIGNMENT_VALUE", "ARITHMETIC_CHOICE", 
+                                    "VARNUM", "ARITHMETIC_OPEARTOR", 
+                                    
+                                    "IF_ELSE_STATEMENT", "ELSE_PART", 
+                                    "FUNCTION_CALL", "CALL_PARAM_LIST", 
+                                    "CALL_PARAM_OPTION", "INPUT", "OUTPUT"};
     }
     
     //Populate data for our LookUpTable
     private void populateLookUpTable(){
         table = new String[][]{
-                        //<PROGRAM>
-                        {null, null, null, "<MAIN>", "<FUNCTION LIST><MAIN>", 
+                        //PROGRAM
+                        {null, null, null, " MAIN ", " FUNCTION_LIST  MAIN ", 
                          null, null, null, null, null, 
                          null, null, null, null, null,
                          null, null, null, null, null, 
@@ -90,7 +90,7 @@ public class LookUpTable {
                          null, null, null, null},
                         
                         //MAIN
-                        {null, null, null, "#main(){<STATEMENT LIST>}", null,
+                        {null, null, null, "#main(){ STATEMENT_LIST }", null,
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
@@ -99,8 +99,8 @@ public class LookUpTable {
                          null, null, null, null, null,
                          null, null, null, null},
                         
-                        //FUNCTION LIST
-                        {null, null, null, null, "<FUNCTION><FUNCTION LIST>",
+                        //FUNCTION_LIST
+                        {null, null, null, null, " FUNCTION  FUNCTION_LIST ",
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
@@ -110,7 +110,7 @@ public class LookUpTable {
                          null, null, null, null},
                         
                         //FUNCTION
-                        {null, null, null, null, "#func id(<PARAMETER LIST>){<STATEMENT LIST>}",
+                        {null, null, null, null, "#func id( PARAMETER_LIST ){ STATEMENT_LIST }",
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
@@ -119,30 +119,30 @@ public class LookUpTable {
                          null, null, null, null, null,
                          null, null, null, null},
                         
-                        //PARAMETER LIST
+                        //PARAMETER_LIST
                         {null, null, null, null, null,
-                         null, null, null, null, "<PARAMETER><PARAMETER OPTION>", 
-                         "<PARAMETER><PARAMETER OPTION>", "<PARAMETER><PARAMETER OPTION>", null, null, null, 
+                         null, null, null, null, " PARAMETER  PARAMETER_OPTION ", 
+                         " PARAMETER  PARAMETER_OPTION ", " PARAMETER  PARAMETER_OPTION ", null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, "epsilon", null, null, 
                          null, null, null, null, null,
                          null, null, null, null},
                         
-                        //PARAMETER OPTION
+                        //PARAMETER_OPTION
                         {null, null, null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, "epsilon", null, null, 
-                         null, ",<PARAMETER><PARAMETER OPTION>", null, null, null,
+                         null, ", PARAMETER  PARAMETER_OPTION ", null, null, null,
                          null, null, null, null},
                         
                         //PARAMETER
                         {null, null, null, null, null,
-                         null, null, null, null, "<DATATYPE> id", 
-                         "<DATATYPE> id", "<DATATYPE> id", null, null, null, 
+                         null, null, null, null, " DATATYPE id", 
+                         " DATATYPE id", " DATATYPE id", null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
@@ -159,20 +159,20 @@ public class LookUpTable {
                          null, null, null, null, null, 
                          null, null, null, null},
                         
-                        //STATEMENT LIST
-                        {"<STATEMENT>", null, null, null, null,
-                         "<STATEMENT>", null, null, "<STATEMENT>", "<DECLARATION LIST><STATEMENT>", 
-                         "<DECLARATION LIST><STATEMENT>", "<DECLARATION LIST><STATEMENT>", null, null, null, 
+                        //STATEMENT_LIST
+                        {" STATEMENT ", null, null, null, null,
+                         " STATEMENT ", null, null, " STATEMENT ", " DECLARATION_LIST  STATEMENT ", 
+                         " DECLARATION_LIST  STATEMENT ", " DECLARATION_LIST  STATEMENT ", null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, "epsilon", 
-                         null, null, null, "<STATEMENT>", "<STATEMENT>", 
-                         "<STATEMENT>", "<STATEMENT>", null, null},
+                         null, null, null, " STATEMENT ", " STATEMENT ", 
+                         " STATEMENT ", " STATEMENT ", null, null},
                         
-                        //DECLARATION LIST
+                        //DECLARATION_LIST
                         {null, null, null, null, null,
-                         null, null, null, null, "<DECLARATION><DECLARATION LIST>", 
-                         "<DECLARATION><DECLARATION LIST>", "<DECLARATION><DECLARATION LIST>", null, null, null, 
+                         null, null, null, null, " DECLARATION  DECLARATION_LIST ", 
+                         " DECLARATION  DECLARATION_LIST ", " DECLARATION  DECLARATION_LIST ", null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null,
@@ -181,8 +181,8 @@ public class LookUpTable {
                         
                         //DECLARATION
                         {null, null, null, null, null,
-                         null, null, null, null, "<DATATYPE> id;", 
-                         "<DATATYPE> id;", "<DATATYPE> id;", null, null, null, 
+                         null, null, null, null, " DATATYPE id;", 
+                         " DATATYPE id;", " DATATYPE id;", null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
@@ -190,28 +190,28 @@ public class LookUpTable {
                          null, null, null, null},
                         
                         //STATEMENT
-                        {"<OTHER STATEMENT><STATEMENT>", null, null, null, null,
-                         "<OTHER STATEMENT><STATEMENT>", null, null, "<OTHER STATEMENT><STATEMENT>", null, 
+                        {" OTHER_STATEMENT  STATEMENT ", null, null, null, null,
+                         " OTHER_STATEMENT  STATEMENT ", null, null, " OTHER_STATEMENT  STATEMENT ", null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, "epsilon", 
-                         null, null, null, "<OTHER STATEMENT><STATEMENT>", "<OTHER STATEMENT><STATEMENT>", 
-                         "<OTHER STATEMENT><STATEMENT>", "<OTHER STATEMENT><STATEMENT>", null, null},
+                         null, null, null, " OTHER_STATEMENT  STATEMENT ", " OTHER_STATEMENT  STATEMENT ", 
+                         " OTHER_STATEMENT  STATEMENT ", " OTHER_STATEMENT  STATEMENT ", null, null},
                         
-                        //OTHER STATEMENT
-                        {"<ASSIGNMENT STATEMENT>|<FUNCTION CALL>", null, null, null, null,
-                         "<IF ELSE STATEMENT>", null, null, "<ITERATION STATEMENT>", null, 
+                        //OTHER_STATEMENT
+                        {" ASSIGNMENT_STATEMENT | FUNCTION_CALL ", null, null, null, null,
+                         " IF_ELSE_STATEMENT ", null, null, " ITERATION_STATEMENT ", null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
-                         null, null, null, "<INPUT>", "<INPUT>", 
-                         "<INPUT>", "<OUTPUT>", null, null},
+                         null, null, null, " INPUT ", " INPUT ", 
+                         " INPUT ", " OUTPUT ", null, null},
                         
-                        //ITERATION STATEMENT
+                        //ITERATION_STATEMENT
                         {null, null, null, null, null,
-                         null, null, null, "while(<CONDITION LIST>)<STATEMENT>end", null, 
+                         null, null, null, "while( CONDITIONAL_LIST ) STATEMENT end", null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
@@ -219,35 +219,35 @@ public class LookUpTable {
                          null, null, null, null, null,
                          null, null, null, null},
                         
-                        //CONDITIONAL LIST
-                        {"<CONDITION><CONDITIONAL OPTION>", null, null, null, null,
+                        //CONDITIONAL_LIST
+                        {" CONDITION  CONDITIONAL_OPTION ", null, null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
-                         null, null, "<CONDITION><CONDITIONAL OPTION>", "<CONDITION><CONDITIONAL OPTION>"},
+                         null, null, " CONDITION  CONDITIONAL_OPTION ", " CONDITION  CONDITIONAL_OPTION "},
                         
-                        //CONDITIONAL OPTION
+                        //CONDITIONAL_OPTION
                         {null, null, null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
-                         null, null, null, "<LOGICAL OPERATOR><CONDITION><CONDITIONAL OPTION>", "<LOGICAL OPERATOR><CONDITION><CONDITIONAL OPTION>", 
+                         null, null, null, " LOGICAL_OPERATOR  CONDITION  CONDITIONAL_OPTION ", " LOGICAL_OPERATOR  CONDITION  CONDITIONAL_OPTION ", 
                          null, null, "epsilon", null, null, 
                          null, null, null, null, null, 
                          null, null, null, null},
                         
                         //CONDITION
-                        {"id<RELATIONAL OPERATOR><VALUE>", null, null, null, null,
+                        {"id RELATIONAL_OPERATOR  VALUE ", null, null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null, 
-                         null, null, "<BOOLEAN>", "<BOOLEAN>"},
+                         null, null, " BOOLEAN ", " BOOLEAN "},
                         
                         //VALUE
                         {"id", "int", null, null, null,
@@ -269,7 +269,7 @@ public class LookUpTable {
                          null, null, null, null, null, 
                          null, null, "true", "false"},
                         
-                        //RELATIONAL OPERATOR
+                        //RELATIONAL_OPERATOR
                         {null, null, null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null, 
@@ -279,7 +279,7 @@ public class LookUpTable {
                          null, null, null, null, null, 
                          null, null, null, null},
                         
-                        //LOGICAL OPERATOR
+                        //LOGICAL_OPERATOR
                         {null, null, null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null, 
@@ -289,8 +289,8 @@ public class LookUpTable {
                          null, null, null, null, null, 
                          null, null, null, null},
                         
-                        //ASSIGNMENT STATEMENT
-                        {"id=<ASSIGNMENT VALUE>;", null, null, null, null,
+                        //ASSIGNMENT_STATEMENT
+                        {"id= ASSIGNMENT_VALUE ;", null, null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
@@ -299,8 +299,8 @@ public class LookUpTable {
                          null, null, null, null, null, 
                          null, null, null, null},
                         
-                        //ASSIGNMENT VALUE
-                        {"<VALUE>|<VARNUM><ARITHMETIC CHOICE>", "<VALUE>|<VARNUM><ARITHMETIC CHOICE>", null, null, null,
+                        //ASSIGNMENT_VALUE
+                        {" VALUE | VARNUM  ARITHMETIC_CHOICE ", " VALUE | VARNUM  ARITHMETIC_CHOICE ", null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null, 
                          null, null, null, null, null, 
@@ -309,11 +309,11 @@ public class LookUpTable {
                          null, null, "VALUE", null, null, 
                          null, null, null, null},
                         
-                        //ARITHMETIC CHOICE
+                        //ARITHMETIC_CHOICE
                         {null, null, null, null, null,
                          null, null, null, null, null, 
-                         null, null, "<ARITHMETIC OPERATOR><VARNUM><ARITHMETIC CHOICE>", "<ARITHMETIC OPERATOR><VARNUM><ARITHMETIC CHOICE>", "<ARITHMETIC OPERATOR><VARNUM><ARITHMETIC CHOICE>", 
-                         "<ARITHMETIC OPERATOR><VARNUM><ARITHMETIC CHOICE>", "<ARITHMETIC OPERATOR><VARNUM><ARITHMETIC CHOICE>", null, null, null, 
+                         null, null, " ARITHMETIC_OPERATOR  VARNUM  ARITHMETIC_CHOICE ", " ARITHMETIC_OPERATOR  VARNUM  ARITHMETIC_CHOICE ", " ARITHMETIC_OPERATOR  VARNUM  ARITHMETIC_CHOICE ", 
+                         " ARITHMETIC OPERATOR  VARNUM  ARITHMETIC_CHOICE ", " ARITHMETIC_OPERATOR  VARNUM  ARITHMETIC_CHOICE ", null, null, null, 
                          null, null, null, null, null,
                          null, null, null, null, null, 
                          "epsilon", null, null, null, null, 
@@ -339,9 +339,9 @@ public class LookUpTable {
                          null, null, null, null, null,
                          null, null, null, null},
                         
-                        //IF ELSE STATEMENT
+                        //IF_ELSE_STATEMENT
                         {null, null, null, null, null,
-                         "if(<CONDITION LIST>)<STATEMENT><ELSE PART>end", null, null, null, null, 
+                         "if( CONDITIONAL_LIST ) STATEMENT  ELSE_PART end", null, null, null, null, 
                          null, null, null, null, null,
                          null, null, null, null, null,
                          null, null, null, null, null,
@@ -349,9 +349,9 @@ public class LookUpTable {
                          null, null, null, null, null,
                          null, null, null, null},
                         
-                        //ELSE PART
+                        //ELSE_PART
                         {null, null, null, null, null,
-                         null, "else<STATEMENT>", "epsilon", null, null, 
+                         null, "else STATEMENT ", "epsilon", null, null, 
                          null, null, null, null, null,
                          null, null, null, null, null,
                          null, null, null, null, null,
@@ -359,8 +359,8 @@ public class LookUpTable {
                          null, null, null, null, null,
                          null, null, null, null},
                         
-                        //FUNCTION CALL
-                        {"id(<CALL PARAM LIST>);", null, null, null, null,
+                        //FUNCTION_CALL
+                        {"id( CALL_PARAM_LIST );", null, null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null,
                          null, null, null, null, null,
@@ -369,24 +369,24 @@ public class LookUpTable {
                          null, null, null, null, null,
                          null, null, null, null},
                         
-                        //CALL PARAM LIST
-                        {"<VALUE><CALL PARAM OPTION>", "<VALUE><CALL PARAM OPTION>", null, null, null,
+                        //CALL_PARAM_LIST
+                        {" VALUE  CALL_PARAM_OPTION ", " VALUE  CALL_PARAM_OPTION ", null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null,
                          null, null, null, null, null,
                          null, null, null, null, null,
                          null, null, "epsilon", null, null, 
-                         null, null, "<VALUE><CALL PARAM OPTION>", null, null,
+                         null, null, " VALUE  CALL_PARAM_OPTION ", null, null,
                          null, null, null, null},
                         
-                        //CALL PARAM OPTION
+                        //CALL_PARAM_OPTION
                         {null, null, null, null, null,
                          null, null, null, null, null, 
                          null, null, null, null, null,
                          null, null, null, null, null,
                          null, null, null, null, null,
                          null, null, "epsilon", null, null, 
-                         null, ",<VALUE><CALL PARAM OPTION>", null, null, null,
+                         null, ", VALUE  CALL_PARAM_OPTION ", null, null, null,
                          null, null, null, null},
                         
                         //INPUT
@@ -409,5 +409,17 @@ public class LookUpTable {
                          null, null, null, null, null,
                          null, "#puts(id);", null, null},
                     };
+    }
+    
+    //Display our LookUpTable
+    private void displayLookUpTable(){
+        System.out.println("____________________________");
+        for(int a = 0; a < this.nonTerminals.length; a++){
+            for(int b = 0; b < this.terminals.length; b++){
+                System.out.print(" "+table[a][b]);
+            }
+            System.out.println();
+        }
+        System.out.println("____________________________");
     }
 }
