@@ -51,15 +51,13 @@ public class LexicalAnalyzer {
                 }                
             }
         }   
-        this.displayLexemes();
+        //this.displayLexemes();
     }
     
     public Boolean checkDoubleDelim(String curDelim){
         Boolean check = false;
         String lastDelim = lexemes.get(lexemes.size()-1);
         if(curDelim.equals("=") && (lastDelim.equals("=") || lastDelim.equals("!") ||lastDelim.equals("<") ||lastDelim.equals(">") )){
-            check = true;
-        }else if((curDelim.equals("+") || curDelim.equals("-")) && curDelim.equals(lastDelim)){
             check = true;
         }
         return check;

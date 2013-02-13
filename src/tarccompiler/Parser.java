@@ -8,9 +8,7 @@ import datamodels.Token;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
-import java.util.StringTokenizer;
 import storage.LookUpTable;
-import storage.SymbolTable;
 /**
  *
  * @author charles_yu102
@@ -20,113 +18,105 @@ public class Parser {
     // Attributes
     private Stack<Token> tokens;
     private Stack<String> productions;
-    private SymbolTable symbolTable;
     private LookUpTable lookUpTable;
+    private Boolean errorDetected = false;
+    //private String errorMessage;
     
     // Constructor
-    public Parser(ArrayList<Token> tokens, SymbolTable table){
+    public Parser(ArrayList<Token> t){
         this.tokens = new Stack<Token>();
         this.productions = new Stack<String>();
-        
-        this.tokens.addAll(tokens);
+        this.tokens.addAll(t);
         Collections.reverse(this.tokens); //reverse the order for our stack
-        this.symbolTable = table;
         this.lookUpTable = new LookUpTable();
         this.productions.push("PROGRAM");
-        this.methodLLParser();
     }
     
     //<editor-fold defaultstate="collapsed" desc="Debugging Methods">
-    public void displayTokens(){
-        System.out.println("Tokens received");
-        for(int i=0; i < tokens.size(); i++){
-            System.out.println("Token: "+tokens.get(i).getToken()+" TokenInfo: "+tokens.get(i).getTokenInfo());
-        }
-    }
-    
-    public void displaySymTable(){
-        System.out.println("Symbol Table:");
-        for(int i=0; i < symbolTable.table.size(); i++){
-            System.out.println("Token: "+symbolTable.table.get(i).token+" Value: "+symbolTable.table.get(i).tokenValue+" DType: "+symbolTable.table.get(i).datatype);
+    public void displayTokenStack(){
+        System.out.println("Input Stack: ");
+        for(int i=tokens.size()-1; i >= 0; i--){
+            System.out.println("Token: "+tokens.get(i).getToken()+"\t TokenInfo: "+tokens.get(i).getTokenInfo());
         }
     }
     //</editor-fold>
     
-    private void methodLLParser(){
-        do
-        {
-            divide();
-            System.out.println("productions: "+productions);
-            System.out.println("productions_peek: "+productions.peek());
-            //If peekedData is a terminal / epsilon, proceed to loop
-            try
-            {
-                while(isTerminal(productions.peek()) || productions.peek().equals("epsilon")){
-                    // Keep on popping production stack and token stack if both of them have the same top data
-                    while(tokens.peek().getToken().equals(productions.peek())){
-                        tokens.pop();
-                        productions.pop();
+    public boolean methodLLParser(){
+        this.displayTokenStack();
+        do{
+            System.out.println("input stack top: "+tokens.peek().getToken());
+            System.out.println("productions: "+productions+"\n\n");
+            if(!tokens.peek().getToken().equals(productions.peek())){
+                if(productions.peek().equals("epsilon")){           // Peek of production stack is epsilon
+                    productions.pop();
+                } else{                                             // Peek of both stacks dont match
+                    if(lookUpTable.isTerminal(productions.peek())){
+                        errorDetected = true;
+                    } else{
+                        errorDetected = splitProductionTop();
                     }
-
-                    if(productions.peek().equals("epsilon"))
-                        productions.pop();  // Avoid redundancy due to peekedData with an epsilon production
                 }
-            }catch(Exception ex){ /*Peeking while stack is empty*/ }
-        }while(!tokens.empty() && !productions.empty());
+            } else {                                                // Peek of input stack is terminal and matches production stack
+                tokens.pop();
+                productions.pop();
+            }
+        }while(errorDetected == false && !tokens.empty());
+        return errorDetected;
     }
     
-    private void divide(){
-        ArrayList<String> temp = new ArrayList<String>();
-        String delims = "[(),;+-*/%&|!=]+{}";
-        String data = lookUpTable.lookUp(productions.peek(), tokens.peek().getToken());
-        productions.pop();
-        // Parse tokens
-        StringTokenizer st1 = new StringTokenizer(data, " ", false);
-        while(st1.hasMoreTokens()){
-            StringTokenizer st2 = new StringTokenizer(st1.nextToken(), delims, true);
-            
-            while(st2.hasMoreTokens())
-                temp.add(st2.nextToken());
-        }
-        
-        mergeDoubleDelim(temp);
-        Collections.reverse(temp);
-        productions.addAll(temp);
-    }
-    
-    //Check if string is a terminal
-    private Boolean isTerminal(String peekedData){
-        Boolean isTerminal = false;
-        
-        for(String terminal : lookUpTable.terminals){
-            if(peekedData.equals(terminal)){
-                isTerminal = true;
-                break;
+    private boolean splitProductionTop(){
+        boolean errorFound = false;
+        String prod = lookUpTable.lookUp(productions.peek(), tokens.peek().getToken());
+        if(prod.equals("null")){
+            errorFound = true;
+            System.out.println("Error found while parsing "+tokens.peek().getToken());
+        } else{
+            productions.pop();
+            // Check for exceptions
+            prod = fixExceptions(prod);
+            // Parse production
+            String[] tNt = prod.split(" ");
+            for(int i=tNt.length-1; i>=0 ; i--){
+                productions.push(tNt[i]);
             }
         }
-        return isTerminal;
+        return errorFound;
     }
     
-    // Merge 2 delimiters
-    private void mergeDoubleDelim(ArrayList<String> temp){
-        for(int counter = 0; counter < temp.size() - 1; counter++){
-            String curDelim = temp.get(counter + 1);
-            String lastDelim = temp.get(counter);
-            
-            if(curDelim.equals("=") && (lastDelim.equals("=") || lastDelim.equals("!") ||lastDelim.equals("<") ||lastDelim.equals(">") )){
-                temp.set(counter, lastDelim + curDelim);
-                temp.remove((int)counter + 1);
-            }else if((curDelim.equals("+") || curDelim.equals("-")) && curDelim.equals(lastDelim)){
-                temp.set(counter, lastDelim + curDelim);
-                temp.remove((int)counter + 1);
+    private String fixExceptions(String prod){
+        String correctProd = "";
+        // Try to split production
+        String[] prods = prod.split("8");
+        // Return based on exception
+        if(prods.length == 1){
+            correctProd = prods[0];
+        } else{
+            if(prods[0].equals("ASSIGNMENT_STATEMENT")){ // For OTHER_STATEMENT Exception
+                if(tokens.get(tokens.size()-2).getToken().equals("=")){
+                    correctProd = prods[0];
+                } else{
+                    correctProd = prods[1];
+                }
+            } else if(prods[0].equals("VALUE")){              // For ASSIGNMENT_VALUE Exception
+                if(tokens.get(tokens.size()-2).getToken().equals(";")){
+                    correctProd = prods[0];
+                } else{
+                    correctProd = prods[1];
+                }
             }
         }
+        return correctProd;
     }
     
     //<editor-fold defaultstate="collapsed" desc="Naming Conventions">
     //Check if string does not contain any alphabets
     private Boolean isNumeric(String numeric){
-        try{ Integer.parseInt(numeric); return true; }catch(Exception ex){ return false; }
+        try{ 
+            Integer.parseInt(numeric); 
+            return true; 
+        }catch(Exception ex){ 
+            return false; 
+        }
     }
     
     //Check if string does not contain any numbers

@@ -88,7 +88,6 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("TARC Compiler");
-        setLocation(new java.awt.Point(200, 0));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -147,6 +146,7 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         labelStatus.setText("Status");
 
+        taOutput.setEditable(false);
         taOutput.setColumns(20);
         taOutput.setForeground(new java.awt.Color(255, 0, 0));
         taOutput.setRows(5);
@@ -287,17 +287,24 @@ public class CompilerGUI extends javax.swing.JFrame {
 
     private void btnCompileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompileActionPerformed
         // TODO add your handling code here:
-        
-        // Instantiate classes for source code compilation here
-        int position = tpCode.getSelectedIndex();
-        LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).getCode().getText(), this.symbolTable);
-        lexicalAnalyzer.getLexemes();
-        ArrayList<Token> tokensForParser = lexicalAnalyzer.getTokensFormSymbolTable();
-        Parser parser = new Parser(tokensForParser, symbolTable);
-        parser.displayTokens();
-        parser.displaySymTable();
-        parser.functionList();
-        
+        if(tarcFiles.get(tpCode.getSelectedIndex()).getCode().getText().isEmpty()){
+            JOptionPane.showMessageDialog(this, "Please type something. TARC won't bite.");
+        } else{
+            // Instantiate classes for source code compilation here
+            int position = tpCode.getSelectedIndex();
+            LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).getCode().getText(), this.symbolTable);
+            lexicalAnalyzer.getLexemes();
+            ArrayList<Token> tokensForParser = lexicalAnalyzer.getTokensFormSymbolTable();
+            Parser parser = new Parser(tokensForParser);
+            boolean errorDetected = parser.methodLLParser();
+            String msg = "";
+            if(errorDetected){
+                msg = "There is an error in your code.";
+            } else{
+                msg = "Syntax check - Success!";
+            }
+            taOutput.setText(msg);
+        }
     }//GEN-LAST:event_btnCompileActionPerformed
 
     private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed
