@@ -129,6 +129,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         taCode.setRows(5);
         taCode.setTabSize(2);
         taCode.setCaretColor(new java.awt.Color(255, 255, 0));
+        taCode.setSelectionColor(new java.awt.Color(204, 204, 204));
         jScrollPane2.setViewportView(taCode);
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
@@ -296,14 +297,8 @@ public class CompilerGUI extends javax.swing.JFrame {
             lexicalAnalyzer.getLexemes();
             ArrayList<Token> tokensForParser = lexicalAnalyzer.getTokensFormSymbolTable();
             Parser parser = new Parser(tokensForParser);
-            boolean errorDetected = parser.methodLLParser();
-            String msg = "";
-            if(errorDetected){
-                msg = "There is an error in your code.";
-            } else{
-                msg = "Syntax check - Success!";
-            }
-            taOutput.setText(msg);
+            String message = parser.methodLLParser();
+            taOutput.setText(message);
         }
     }//GEN-LAST:event_btnCompileActionPerformed
 

@@ -19,18 +19,15 @@ public class TokenValuePairs {
         
             terms = new HashMap<String,String>();
             terms.put("#main", "keyword");
-            terms.put("#void", "keyword");
             terms.put("#func", "keyword");
             terms.put("if", "keyword");
             terms.put("else", "keyword");
             terms.put("end", "keyword");
             terms.put("while", "keyword");
-            terms.put("null", "keyword");
             
             terms.put("#int", "datatypes");
             terms.put("#char", "datatypes");
             terms.put("#boolean", "datatypes");
-            terms.put("#arr", "datatypes");
             
             terms.put("+", "arth_op");
             terms.put("-", "arth_op");
@@ -47,11 +44,7 @@ public class TokenValuePairs {
             
             terms.put("&", "log_op");
             terms.put("|", "log_op");
-            terms.put("!", "log_op");
-            
             terms.put("=", "assign");
-            terms.put("++", "un_op");
-            terms.put("--", "un_op");
                      
             terms.put("(", "open_par");
             terms.put(")", "close_par");
@@ -66,7 +59,9 @@ public class TokenValuePairs {
             terms.put("#getBool", "input");
             terms.put("#puts", "output");
             
-            terms.put("//", "comment");
+            terms.put("true", "boolean");
+            terms.put("false", "boolean");
+            terms.put("\"", "doub_q");
     }
     
     public String getType(String value){

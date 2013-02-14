@@ -39,7 +39,7 @@ public class LexicalAnalyzer {
         String[] codes = this.sourceCode.split(spaceDelims);
         
         // Parse source code
-        String delims = "[(),;+-*/%&|!<>=]+";
+        String delims = "[(),;+-*/%&|!<>=;'\"]+";
         for(int i=0; i<codes.length; i++){
             StringTokenizer st = new StringTokenizer(codes[i], delims, true);
             while(st.hasMoreTokens()){
@@ -69,15 +69,23 @@ public class LexicalAnalyzer {
             String curLexeme = lexemes.get(i);
             Token container = new Token();
             String type = tvp.getType(curLexeme);
-            if(type != null) {                           // Keyword
+            if(type != null) {                                                // Keyword
                 container.setToken(curLexeme);      
-            } else if(isNumeric(curLexeme)){             // Number
+            } else if(isNumeric(curLexeme)){                                  // Number
                 container.setToken("int");
                 container.setTokenInfo(curLexeme);
-            } else if(curLexeme.length() == 1){          // Character
+            } else if(curLexeme.length() == 1 && tokens.get(tokens.size()-1).getToken().equals("'")){    // Character
                 container.setToken("char");
                 container.setTokenInfo(curLexeme);
-            }else {                                      // String
+            } else if(tokens.get(tokens.size()-1).getToken().equals("\"")){   // String
+                String string = "";
+                for(; !lexemes.get(i).equals("\"") ;i++){
+                    string += " "+lexemes.get(i);
+                }
+                i--;
+                container.setToken("string");
+                container.setTokenInfo(string);
+            } else{                                                           // Identifier
                 symbolTable.insert("id", curLexeme);
                 container.setToken("id");
                 container.setTokenInfo(String.valueOf(symbolTable.getLast()));

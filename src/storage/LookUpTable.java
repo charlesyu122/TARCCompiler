@@ -411,7 +411,7 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "\"string\""},
+                         "null", "null", "null", "null", "\" string \""},
                     };
     }
     

@@ -20,7 +20,7 @@ public class Parser {
     private Stack<String> productions;
     private LookUpTable lookUpTable;
     private Boolean errorDetected = false;
-    //private String errorMessage;
+    private String errorMessage;
     
     // Constructor
     public Parser(ArrayList<Token> t){
@@ -41,7 +41,7 @@ public class Parser {
     }
     //</editor-fold>
     
-    public boolean methodLLParser(){
+    public String methodLLParser(){
         this.displayTokenStack();
         do{
             System.out.println("input stack top: "+tokens.peek().getToken());
@@ -52,6 +52,7 @@ public class Parser {
                 } else{                                             // Peek of both stacks dont match
                     if(lookUpTable.isTerminal(productions.peek())){
                         errorDetected = true;
+                        errorMessage = "Error found while parsing "+tokens.peek().getToken();
                     } else{
                         errorDetected = splitProductionTop();
                     }
@@ -61,7 +62,10 @@ public class Parser {
                 productions.pop();
             }
         }while(errorDetected == false && !tokens.empty());
-        return errorDetected;
+        if(errorDetected == false){
+            errorMessage = "Syntax check - Success!";
+        }
+        return errorMessage;
     }
     
     private boolean splitProductionTop(){
@@ -69,7 +73,7 @@ public class Parser {
         String prod = lookUpTable.lookUp(productions.peek(), tokens.peek().getToken());
         if(prod.equals("null")){
             errorFound = true;
-            System.out.println("Error found while parsing "+tokens.peek().getToken());
+            errorMessage = "Error found while parsing "+tokens.peek().getToken();
         } else{
             productions.pop();
             // Check for exceptions
