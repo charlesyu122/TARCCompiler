@@ -4,7 +4,9 @@
  */
 package tarccompiler;
 
+import datamodels.Node;
 import datamodels.Token;
+import datamodels.Tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
@@ -21,15 +23,19 @@ public class Parser {
     private LookUpTable lookUpTable;
     private Boolean errorDetected = false;
     private String errorMessage;
+    private Tree parserTree;
+    private Node treePtr;
     
     // Constructor
     public Parser(ArrayList<Token> t){
+        // Initialize data structures
         this.tokens = new Stack<Token>();
         this.productions = new Stack<String>();
         this.tokens.addAll(t);
         Collections.reverse(this.tokens); //reverse the order for our stack
         this.lookUpTable = new LookUpTable();
         this.productions.push("PROGRAM");
+        this.initTree();
     }
     
     //<editor-fold defaultstate="collapsed" desc="Debugging Methods">
@@ -39,6 +45,76 @@ public class Parser {
             System.out.println("Token: "+tokens.get(i).getToken()+"\t TokenInfo: "+tokens.get(i).getTokenInfo());
         }
     }
+    public void displayTree(){
+        /*
+        System.out.println("PARSER Tree:");
+        Node ptr = parserTree.getRoot();
+        ArrayList<Node> temp = ptr.getNodeChildren();
+        System.out.println(parserTree.getRoot().getNodeData());
+        // 1st level
+        System.out.print("1st:\t");
+        for(int i=0; i<temp.size(); i++){
+            System.out.print(temp.get(i).getNodeData() +" ");
+        }
+        System.out.println("");
+        // 2nd level
+        System.out.print("2nd:\t");
+        ptr = temp.get(0);
+        temp = ptr.getNodeChildren();
+        for(int i=0; i<temp.size(); i++){
+            System.out.print(temp.get(i).getNodeData() +" ");
+        }
+        System.out.println("");
+        // 3rd level
+        System.out.print("3rd:\t");
+        ptr = temp.get(4);
+        temp = ptr.getNodeChildren();
+        for(int i=0; i<temp.size(); i++){
+            System.out.print(temp.get(i).getNodeData() +" ");
+        }
+        System.out.println("");
+        //4th level
+        System.out.print("4th:\t");
+        ptr = temp.get(1);
+        temp = ptr.getNodeChildren();
+        for(int i=0; i<temp.size(); i++){
+            System.out.print(temp.get(i).getNodeData() +" ");
+        }
+
+        System.out.println("");
+        //5th level
+        System.out.print("5th:\t");
+        ptr = temp.get(0);
+        temp = ptr.getNodeChildren();
+        for(int i=0; i<temp.size(); i++){
+            System.out.print(temp.get(i).getNodeData() +" ");
+        }
+        System.out.println("");
+        //6th level
+        System.out.print("6th:\t");
+        ptr = temp.get(0);
+        temp = ptr.getNodeChildren();
+        for(int i=0; i<temp.size(); i++){
+            System.out.print(temp.get(i).getNodeData() +" ");
+        }
+        System.out.println("");
+        //7th level
+        System.out.print("7th:\t");
+        ptr = temp.get(2);
+        temp = ptr.getNodeChildren();
+        for(int i=0; i<temp.size(); i++){
+            System.out.print(temp.get(i).getNodeData() +" ");
+        }
+        System.out.println("");
+        //8th level
+        System.out.print("8th:\t");
+        ptr = temp.get(0);
+        temp = ptr.getNodeChildren();
+        for(int i=0; i<temp.size(); i++){
+            System.out.print(temp.get(i).getNodeData() +" ");
+        }
+        */
+    }
     //</editor-fold>
     
     public String methodLLParser(){
@@ -47,17 +123,19 @@ public class Parser {
             System.out.println("input stack top: "+tokens.peek().getToken());
             System.out.println("productions: "+productions+"\n\n");
             if(!tokens.peek().getToken().equals(productions.peek())){
-                if(productions.peek().equals("epsilon")){           // Peek of production stack is epsilon
+                if(productions.peek().equals("epsilon")){            // Peek of production stack is epsilon
+                    adjustTreePtr();
                     productions.pop();
-                } else{                                             // Peek of both stacks dont match
-                    if(lookUpTable.isTerminal(productions.peek())){
+                } else{                                              
+                    if(lookUpTable.isTerminal(productions.peek())){  // Peek of both stacks are terminals and dont match
                         errorDetected = true;
                         errorMessage = "Error found while parsing "+tokens.peek().getToken();
-                    } else{
+                    } else{                                          // Peek of both stacks dont match and there is a production
                         errorDetected = splitProductionTop();
                     }
                 }
             } else {                                                // Peek of input stack is terminal and matches production stack
+                adjustTreePtr();
                 tokens.pop();
                 productions.pop();
             }
@@ -65,6 +143,7 @@ public class Parser {
         if(errorDetected == false){
             errorMessage = "Syntax check - Success!";
         }
+        //displayTree();
         return errorMessage;
     }
     
@@ -80,6 +159,10 @@ public class Parser {
             prod = fixExceptions(prod);
             // Parse production
             String[] tNt = prod.split(" ");
+            // Add productions to tree and move to leftmost
+            treePtr.setNodeChildren(this.formChildren(treePtr, tNt));
+            treePtr = treePtr.getNodeChildren().get(0);
+            // Push to production stack
             for(int i=tNt.length-1; i>=0 ; i--){
                 productions.push(tNt[i]);
             }
@@ -111,6 +194,43 @@ public class Parser {
         }
         return correctProd;
     }
+    
+    //<editor-fold defaultstate="collapsed" desc="Tree Manipulation Methods">
+    private void initTree(){
+        this.parserTree = new Tree();
+        this.treePtr= parserTree.getRoot();
+    }
+    
+    private ArrayList<Node> formChildren(Node parent, String[] prods){
+        ArrayList children = new ArrayList<Node>();
+        for(int i=0; i<prods.length; i++){
+            children.add(new Node(prods[i], parent));
+        }
+        return children;
+    }
+    private void adjustTreePtr(){
+        boolean validPosition = false;
+        while( validPosition == false && !treePtr.getNodeData().equals("PROGRAM")){
+            String curProd = treePtr.getNodeData();
+            // Check for int or char exception
+            if(curProd.equals("int") || curProd.equals("char") || curProd.equals("string")){
+                treePtr.setNodeData(tokens.peek().getTokenInfo());
+            }
+            // Go up to parent
+            treePtr = treePtr.getNodeParent();
+            // Get current index
+            int curNdx = treePtr.getIndexOfChild(curProd);
+            // Find next position
+            if(curNdx+1 < treePtr.getNumOfChildren()){
+                treePtr = treePtr.getNodeChildren().get(curNdx+1);
+                validPosition = true;
+            } 
+        }
+    }
+    public Tree getParserTree(){
+        return this.parserTree;
+    }
+    //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Naming Conventions">
     //Check if string does not contain any alphabets

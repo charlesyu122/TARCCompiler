@@ -6,6 +6,7 @@ package tarccompiler;
 
 import datamodels.TARCFile;
 import datamodels.Token;
+import datamodels.Tree;
 import files.FileNode;
 import files.FileSelectorModel;
 import files.ReadFile;
@@ -235,29 +236,27 @@ public class CompilerGUI extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(btnNewFile)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(btnOpenFile)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(btnSave)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(btnCompile)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(btnCloseFile)
-                .add(0, 0, Short.MAX_VALUE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(tpOutput)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, tpCode))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 139, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
             .add(layout.createSequentialGroup()
+                .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(tpOutput)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, tpCode))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 139, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(labelStatus)))
-                .addContainerGap())
+                        .add(btnNewFile)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(btnOpenFile)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(btnSave)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(btnCompile)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(btnCloseFile))
+                    .add(labelStatus))
+                .add(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -298,7 +297,14 @@ public class CompilerGUI extends javax.swing.JFrame {
             ArrayList<Token> tokensForParser = lexicalAnalyzer.getTokensFormSymbolTable();
             Parser parser = new Parser(tokensForParser);
             String message = parser.methodLLParser();
-            taOutput.setText(message);
+            if(message.equals("Syntax check - Success!")){
+                labelStatus.setForeground(Color.BLUE);
+            } else{
+                labelStatus.setForeground(Color.RED);
+            }
+            labelStatus.setText(message);
+            Tree parserTree = parser.getParserTree();
+            ASTConstruction astC = new ASTConstruction(parserTree);
         }
     }//GEN-LAST:event_btnCompileActionPerformed
 
