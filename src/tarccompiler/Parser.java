@@ -19,7 +19,7 @@ public class Parser {
     
     // Attributes
     private Stack<Token> tokens;
-    private Stack<String> productions;
+    public Stack<String> productions;
     private LookUpTable lookUpTable;
     private Boolean errorDetected = false;
     private String errorMessage;
@@ -40,13 +40,21 @@ public class Parser {
     
     //<editor-fold defaultstate="collapsed" desc="Debugging Methods">
     public void displayTokenStack(){
-        System.out.println("Input Stack: ");
+       /* System.out.println("Input Stack: ");
         for(int i=tokens.size()-1; i >= 0; i--){
             System.out.println("Token: "+tokens.get(i).getToken()+"\t TokenInfo: "+tokens.get(i).getTokenInfo());
-        }
+        }*/
     }
-    public void displayTree(){
-        /*
+    public void displayTree(Node n){
+       
+//        System.out.print(" " + n.getNodeData());
+//        ArrayList<Node> temp = n.getNodeChildren();
+//        for(Node new_n : temp){
+//            
+//            displayTree(new_n);
+//            System.out.println("");
+//        }
+        
         System.out.println("PARSER Tree:");
         Node ptr = parserTree.getRoot();
         ArrayList<Node> temp = ptr.getNodeChildren();
@@ -113,15 +121,14 @@ public class Parser {
         for(int i=0; i<temp.size(); i++){
             System.out.print(temp.get(i).getNodeData() +" ");
         }
-        */
     }
     //</editor-fold>
     
     public String methodLLParser(){
         this.displayTokenStack();
         do{
-            System.out.println("input stack top: "+tokens.peek().getToken());
-            System.out.println("productions: "+productions+"\n\n");
+            //System.out.println("input stack top: "+tokens.peek().getToken());
+            //System.out.println("productions: "+productions+"\n\n");
             if(!tokens.peek().getToken().equals(productions.peek())){
                 if(productions.peek().equals("epsilon")){            // Peek of production stack is epsilon
                     adjustTreePtr();
@@ -143,7 +150,7 @@ public class Parser {
         if(errorDetected == false){
             errorMessage = "Syntax check - Success!";
         }
-        //displayTree();
+        displayTree(parserTree.getRoot());
         return errorMessage;
     }
     
