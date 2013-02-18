@@ -5,9 +5,8 @@
 package tarccompiler;
 
 import datamodels.Node;
-import datamodels.Tree;
-import storage.LookUpTable;
 import java.util.ArrayList;
+import storage.LookUpTable;
 
 /**
  *
@@ -16,48 +15,43 @@ import java.util.ArrayList;
 public class ASTConstruction {
     
     // Attributes
-    Tree parserTree;
     LookUpTable table;
+    
     // Constructor
-    public ASTConstruction(Tree parserT){
-        this.parserTree = parserT;
+    public ASTConstruction(){
         this.table = new LookUpTable();
     }
      
-    //methods
+    // Methods
     
-    public Tree minimizeTree(Node n){
-        Tree minTree = this.parserTree;
-        
-        //epsiolon is an exception because it is not a nonterminal
+    public void minimizeTree(Node n){ 
+        // epsilon is an exception because it is not a nonterminal
         ArrayList<Node> temp = n.getNodeChildren();
         if(n.getNodeData().equals("epsilon")){
             n.setNodeData("~");
         }
         
-        //if the data of the node is a nonterminal change to ~
-        for(int i = 0; i < table.nonTerminals.length -1; i++){
+        // if the data of the node is a nonterminal change to ~
+        boolean check = false;
+        for(int i = 0; check == false && i < table.nonTerminals.length; i++){
             if(n.getNodeData().equals(table.nonTerminals[i])){
                 n.setNodeData("~");
+                check = true;
             }             
         }
         
-        //tree traversal prefix notation
+        // tree traversal prefix notation
         for(Node new_n : temp){
             minimizeTree(new_n);          
         }
-       
-        return minTree;
     }
     
-    //display the tree
-    public void showTree(Node n){
-        Tree minTree = this.parserTree;
-        
+    // Display the tree
+    public void showTree(Node n){    
         System.out.print("\nParent: " + n.getNodeData());
         ArrayList<Node> temp = n.getNodeChildren();
         
-        //tree traversal prefix notation
+        // tree traversal prefix notation
         for(Node new_n : temp){
             showTree(new_n);
         }

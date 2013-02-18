@@ -64,9 +64,17 @@ public class LexicalAnalyzer {
     }
     
     public ArrayList<Token> getTokensFormSymbolTable(){
+        String curScope = "";
+        
         // Check every lexeme type
         for(int i=0; i<this.lexemes.size(); i++){
             String curLexeme = lexemes.get(i);
+            // Update current scope
+            if(curLexeme.equals("#main")){
+                curScope = "#main";
+            } else if(i!=lexemes.size()-1 && curLexeme.equals("#func")){
+                curScope = lexemes.get(i+1);
+            }
             Token container = new Token();
             String type = tvp.getType(curLexeme);
             if(type != null) {                                                // Keyword
@@ -86,7 +94,12 @@ public class LexicalAnalyzer {
                 container.setToken("string");
                 container.setTokenInfo(string);
             } else{                                                           // Identifier
-                symbolTable.insert("id", curLexeme);
+                // Get datatype if declaration or function
+                if(i!=0 && lexemes.get(i-1).contains("#")){
+                    String datatype = lexemes.get(i-1);
+                    String scope = (datatype.equals("#func"))?"null":curScope;
+                    symbolTable.insert("id", curLexeme, datatype,scope);
+                }
                 container.setToken("id");
                 container.setTokenInfo(String.valueOf(symbolTable.getLast()));
             }

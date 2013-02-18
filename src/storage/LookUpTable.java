@@ -321,7 +321,7 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null"},
                         
                         //ARITHMETIC OPERATOR
                         {"null", "null", "null", "null", "null",

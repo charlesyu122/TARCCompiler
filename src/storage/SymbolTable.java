@@ -35,8 +35,8 @@ public class SymbolTable {
         return index;
     }
     
-    public void insert(String token, String tokenVal){
-        SymbolTableModel row = new SymbolTableModel(token, tokenVal, "");
+    public void insert(String token, String tokenVal, String datatype, String scope){
+        SymbolTableModel row = new SymbolTableModel(token, tokenVal, datatype, scope);
         this.table.add(row);
         this.last++;
     }

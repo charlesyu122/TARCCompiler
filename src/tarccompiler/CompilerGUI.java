@@ -44,9 +44,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         tarcFiles = new ArrayList<TARCFile>();
         tarcFiles.add(new TARCFile(taCode));
         // Initialize file tree
-        initFileTree();
-        // Initialize attributes for compilation
-        this.symbolTable = new SymbolTable();
+        initFileTree();        
     }
 
     /**
@@ -292,9 +290,13 @@ public class CompilerGUI extends javax.swing.JFrame {
         } else{
             // Instantiate classes for source code compilation here
             int position = tpCode.getSelectedIndex();
+            // Refresh Symbol Table
+            this.symbolTable = new SymbolTable();
+            // Lexical Analyzer
             LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).getCode().getText(), this.symbolTable);
             lexicalAnalyzer.getLexemes();
             ArrayList<Token> tokensForParser = lexicalAnalyzer.getTokensFormSymbolTable();
+            // Syntax Analyzer/Parser
             Parser parser = new Parser(tokensForParser);
             String message = parser.methodLLParser();
             if(message.equals("Syntax check - Success!")){
@@ -304,9 +306,12 @@ public class CompilerGUI extends javax.swing.JFrame {
             }
             labelStatus.setText(message);
             Tree parserTree = parser.getParserTree();
-            ASTConstruction astC = new ASTConstruction(parserTree);
-            astC.minimizeTree(astC.parserTree.getRoot());
-            astC.showTree(astC.parserTree.getRoot());   //display the content of the tree after the AST construction
+            // AST Construction
+            ASTConstruction astTree = new ASTConstruction();
+            astTree.minimizeTree(parserTree.getRoot());
+            astTree.showTree(parserTree.getRoot());   //display the content of the tree after the AST construction
+            // Semantic Analyzer
+            SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable);
         }
     }//GEN-LAST:event_btnCompileActionPerformed
 

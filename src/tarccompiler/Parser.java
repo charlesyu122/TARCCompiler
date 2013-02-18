@@ -150,7 +150,7 @@ public class Parser {
         if(errorDetected == false){
             errorMessage = "Syntax check - Success!";
         }
-        displayTree(parserTree.getRoot());
+        //displayTree(parserTree.getRoot());
         return errorMessage;
     }
     
@@ -274,8 +274,9 @@ public class Parser {
                     isCorrect = false;
                     break;
                 }
-                else
+                else{
                     isCorrect = true;
+                }
             }
         }
         
