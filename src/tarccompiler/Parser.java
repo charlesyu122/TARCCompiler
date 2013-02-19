@@ -161,6 +161,10 @@ public class Parser {
             errorFound = true;
             errorMessage = "Error found while parsing "+tokens.peek().getToken();
         } else{
+            // Check if production top matches tree ptr node
+            if(!productions.peek().equals(treePtr.getNodeData())){
+                adjustTreePtr();
+            }
             productions.pop();
             // Check for exceptions
             prod = fixExceptions(prod);
@@ -210,11 +214,14 @@ public class Parser {
     
     private ArrayList<Node> formChildren(Node parent, String[] prods){
         ArrayList children = new ArrayList<Node>();
+        System.out.println("\nParent "+ parent.getNodeData());
         for(int i=0; i<prods.length; i++){
+            System.out.println("Child "+prods[i]);
             children.add(new Node(prods[i], parent));
         }
         return children;
     }
+    
     private void adjustTreePtr(){
         boolean validPosition = false;
         while( validPosition == false && !treePtr.getNodeData().equals("PROGRAM")){
@@ -229,8 +236,18 @@ public class Parser {
             int curNdx = treePtr.getIndexOfChild(curProd);
             // Find next position
             if(curNdx+1 < treePtr.getNumOfChildren()){
-                treePtr = treePtr.getNodeChildren().get(curNdx+1);
-                validPosition = true;
+                // Check for "string" exception
+                if(curProd.equals("\"") && productions.size()>1 && !productions.get(productions.size()-2).equals("string")){
+                    treePtr = treePtr.getNodeChildren().get(curNdx+2);
+                    validPosition = true;
+                    if(!productions.get(productions.size()-2).equals("\"")){
+                        validPosition = false;
+                        treePtr = treePtr.getNodeParent();
+                    }
+                } else{ // Normal next child
+                    treePtr = treePtr.getNodeChildren().get(curNdx+1);
+                    validPosition = true;
+                }  
             } 
         }
     }
