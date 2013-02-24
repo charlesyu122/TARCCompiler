@@ -39,7 +39,7 @@ public class LexicalAnalyzer {
         String[] codes = this.sourceCode.split(spaceDelims);
         
         // Parse source code
-        String delims = "[(),;+-*/%&|!<>=;'\"]+";
+        String delims = "[(),;+-*/%&|!<>=;'\"]+{}";
         for(int i=0; i<codes.length; i++){
             StringTokenizer st = new StringTokenizer(codes[i], delims, true);
             while(st.hasMoreTokens()){
