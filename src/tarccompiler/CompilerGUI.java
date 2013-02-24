@@ -306,15 +306,14 @@ public class CompilerGUI extends javax.swing.JFrame {
             }
             labelStatus.setText(message);
             Tree parserTree = parser.getParserTree();
-             System.err.println("SHOW TREE : PARSER TREE");
-           parser.displayTree(parserTree.getRoot());
+            parser.displayTree(parserTree.getRoot());
             // AST Construction
             ASTConstruction astTree = new ASTConstruction();
             astTree.minimizeTree(parserTree.getRoot());
             astTree.showTree(parserTree.getRoot());   //display the content of the tree after the AST construction
             // Semantic Analyzer
-            ArrayList<String> s = new ArrayList<String>();
-            SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable, s);
+            //ArrayList<String> s = new ArrayList<String>();
+            //SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable, s);
             //System.out.println("THIS IS PARSE TREE!!!!!!!!" + parserTree.getRoot().getNodeData());
 		 
             //Boolean verify = semAnalyze.checkMain(parserTree.getRoot());

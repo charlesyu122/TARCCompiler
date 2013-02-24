@@ -44,4 +44,8 @@ public class SymbolTable {
     public int getLast(){
         return this.last;
     }
+    
+    public String getTokenValue(int index){
+        return this.table.get(index).getTokenValue();
+    }
 }

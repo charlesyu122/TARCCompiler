@@ -101,7 +101,7 @@ public class LexicalAnalyzer {
                     symbolTable.insert("id", curLexeme, datatype,scope);
                 }
                 container.setToken("id");
-                container.setTokenInfo(String.valueOf(symbolTable.getLast()));
+                container.setTokenInfo(curLexeme);
             }
             this.tokens.add(container);
         }

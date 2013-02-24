@@ -8,8 +8,6 @@ import datamodels.Node;
 import datamodels.SymbolTableModel;
 import datamodels.Tree;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import storage.SymbolTable;
 
 
@@ -27,7 +25,7 @@ public class SemanticAnalyzer {
         this.list = list;
         displaySymbolTable();
         storeToken(astTree.getRoot(), list);
-        System.err.println(list);
+        //System.err.println(list);
         checkDataType();
         //System.err.println(Collections.frequency(list, "id"));
         //System.err.println(symbolTable.table.get(0).tokenValue);
