@@ -312,10 +312,9 @@ public class CompilerGUI extends javax.swing.JFrame {
             astTree.minimizeTree(parserTree.getRoot());
             astTree.showTree(parserTree.getRoot());   //display the content of the tree after the AST construction
             // Semantic Analyzer
-            //ArrayList<String> s = new ArrayList<String>();
-            //SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable, s);
-            //System.out.println("THIS IS PARSE TREE!!!!!!!!" + parserTree.getRoot().getNodeData());
-		 
+            ArrayList<String> s = new ArrayList<String>();
+            SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable, s);
+            	 
             //Boolean verify = semAnalyze.checkMain(parserTree.getRoot());
             
             //System.out.println("VERIFY: "+verify);

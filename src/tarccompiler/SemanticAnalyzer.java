@@ -8,6 +8,7 @@ import datamodels.Node;
 import datamodels.SymbolTableModel;
 import datamodels.Tree;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 import storage.SymbolTable;
 
 
@@ -20,13 +21,15 @@ public class SemanticAnalyzer {
     
     // Constructor
     public SemanticAnalyzer(Tree tree, SymbolTable symTbl, ArrayList<String> list){
+        
         this.astTree = tree;
         this.symbolTable = symTbl;
         this.list = list;
         displaySymbolTable();
         storeToken(astTree.getRoot(), list);
-        //System.err.println(list);
+        System.err.println(list);
         checkDataType();
+        
         //System.err.println(Collections.frequency(list, "id"));
         //System.err.println(symbolTable.table.get(0).tokenValue);
         }
@@ -47,8 +50,8 @@ public class SemanticAnalyzer {
 void storeToken(Node n, ArrayList<String> s){
 		 //System.out.println("THIS IS NODE N!!!!!!!!" + n.getNodeData());
 		 ArrayList<Node> temp = n.getNodeChildren();
-		 for(Node new_n : temp){
-						
+		 
+                 for(Node new_n : temp){
 			if(!new_n.getNodeData().equals("~"))
 				s.add(new_n.getNodeData());
 			
@@ -90,68 +93,88 @@ return verifyFunc;
 
 void checkDataType(){
     
-    int i, j;
-    ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
-    ArrayList<Integer> storeFuncInST = new ArrayList<Integer>();
-   // int funcCounter = Collections.frequency(list, "#func");
+                int i, j;
+                ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
+                ArrayList<Integer> storeFuncInST = new ArrayList<Integer>();
+               // int funcCounter = Collections.frequency(list, "#func");
+
+                //store all indeces of function types found in the arraylist of tokens
+                for(i = 0;i<list.size();i++){
+                    if(list.get(i).equals("#func") || list.get(i).equals("#main"))
+                        storeFuncInList.add(i);
+                }
+                //store all indeces of function types found in symboltable
+                for(j = 0; j<symbolTable.getLast(); j++){
+                    if( "#func".equals(symbolTable.table.get(j).datatype))
+                        storeFuncInST.add(j);
+                }
     
-    //store all indeces of function types found in the arraylist of tokens
-    for(i = 0;i<list.size();i++){
-        if(list.get(i).equals("#func") || list.get(i).equals("#main"))
-            storeFuncInList.add(i);
-    }
-    //store all indeces of function types found in symboltable
-    for(j = 0; j<symbolTable.getLast(); j++){
-        if( "#func".equals(symbolTable.table.get(j).datatype))
-            storeFuncInST.add(j);
-    }
-    
-    Boolean stopper_fail = false;
-    for(i = 0, j = storeFuncInList.get(i); i<(storeFuncInList.size())-1 
-            && j<storeFuncInList.get(i+1) && stopper_fail==false; j++){
-        //comes in assignment checking only such as: x = 5; 
-        //if true, it is a plain assignment statement with no operations involved
-        if(list.get(j).equals("=") && list.get(j+2).equals(";"))
-        {
-            //checking of datatype comes in. In function checkType, 
-            //the value to be assigned, and datatype of the variable from symboltable 
-            // to understand more: see this: 
-                //stopper_fail = checkType(list.get(j+1), symbolTable.table.get(i).dataType);
-          // LRCheck() pass nameofVal LRCheck(list.get(j-1), and datatype and scope
-        }
-        if(j+1==(storeFuncInList.get(i+1))-1)
-            i++;
-    }
-    System.err.println("\n"+storeFuncInList);
-    System.err.println("\n"+storeFuncInST);
+                Boolean stopperFailType = true;
+                Boolean stopperFailLR = true;
+                for(i = 0, j = storeFuncInList.get(i); i<(storeFuncInList.size())-1 
+                        && j<storeFuncInList.get(i+1) && stopperFailType==true && stopperFailLR==true; j++){
+                    //comes in assignment checking only such as: x = 5; 
+                    //if true, it is a plain assignment statement with no operations involved
+                    if(list.get(j).equals("=") && list.get(j+2).equals(";"))
+                    {
+                        //checking of datatype comes in. In function checkType, 
+                        //the value to be assigned, and datatype of the variable from symboltable 
+                        // to understand more: see this: 
+                        //stopper_fail = checkType(list.get(j+1), symbolTable.table.get(i).dataType);
+                      // LRCheck() pass nameofVal LRCheck(list.get(j-1), and datatype and scope
+                        String scopeOfVar = symbolTable.table.get(i).tokenValue;
+                        int k;
+                        for(k = 0; symbolTable.table.get(k).scope!=scopeOfVar
+                                && symbolTable.table.get(k).tokenValue!=list.get(j-1); k++);
+                    stopperFailType = (checkType(list.get(j+1), symbolTable.table.get(k).datatype))?true:false;
+                    System.err.println("\n" + list.get(j+1)+symbolTable.table.get(k).datatype+stopperFailType);
+                    
+                    if(stopperFailType==true)
+                        symbolTable.table.get(k).setActualValue(list.get(j+1)); 
+                    //if checkType is false, for loop will terminate=
+                    
+                    }
+                    if(j+1==(storeFuncInList.get(i+1))-1)
+                        i++;
+                 }
+                    System.err.println("\n"+storeFuncInList);
+                    System.err.println("\n"+storeFuncInST);
 }
 
 Boolean checkType(String value, String dataType){
-    //sample: x, add, #int
-    Boolean ret = false;
-    
-    if( "#int".equals(dataType))
-        ret = (!value.matches("[+-]?\\d*(\\.\\d+)?"))? false: true;
-    else if("#char".equals(dataType))
-        ret = value.length()>1? false: true;
-    else if("#bool".equals(dataType))
-        ret = ("false".equals(value)|| "true".equals(value))? true: false;
-    
-    return ret;
+                //sample: x, add, #int
+                Boolean ret = false;
+
+                if( "#int".equals(dataType)){
+                   try{ 
+                    Integer.parseInt(value);
+                    return true;
+                    }catch(NumberFormatException e) { 
+                        return false; 
+                    }
+                
+                }
+                else if("#char".equals(dataType)){
+                    ret = (value.length()>1)? false: true;
+                }
+                else if("#boolean".equals(dataType))
+                    ret = ("false".equals(value)|| "true".equals(value))? true: false;
+
+                return ret;
 }
 
 Boolean LRcheck(String leftVal, String dataType){
-    Boolean ret = false;
-    int i;
-    //first: traverse symbolTable, and look for the tokenValue that matches leftVal
-    for(i = 0; i<symbolTable.getLast() && (symbolTable.table.get(i).tokenValue==leftVal &&symbolTable.table.get(i).datatype==dataType); i++);
-    
-    //if loop ended and i is still less than the last index of symbolTable, it means there was a match
-    //leftVal is a variable
-    if(i<symbolTable.getLast())
-        ret = true;
-        
-    return ret;
+                Boolean ret = false;
+                int i;
+                //first: traverse symbolTable, and look for the tokenValue that matches leftVal
+                for(i = 0; i<symbolTable.getLast() && (symbolTable.table.get(i).tokenValue==leftVal &&symbolTable.table.get(i).datatype==dataType); i++);
+
+                //if loop ended and i is still less than the last index of symbolTable, it means there was a match
+                //leftVal is a variable
+                if(i<symbolTable.getLast())
+                    ret = true;
+
+                return ret;
 }
 //<editor-fold defaultstate="collapsed" desc="Checking-Old">
 //protected Node checkMain(){
