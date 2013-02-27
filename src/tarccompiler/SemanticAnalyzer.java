@@ -108,7 +108,8 @@ void checkDataType(){
                     if( "#func".equals(symbolTable.table.get(j).datatype))
                         storeFuncInST.add(j);
                 }
-    
+                
+                
                 Boolean stopperFailType = true;
                 Boolean stopperFailLR = true;
                 for(i = 0, j = storeFuncInList.get(i); i<(storeFuncInList.size())-1 
@@ -123,10 +124,16 @@ void checkDataType(){
                         //stopper_fail = checkType(list.get(j+1), symbolTable.table.get(i).dataType);
                       // LRCheck() pass nameofVal LRCheck(list.get(j-1), and datatype and scope
                         String scopeOfVar = symbolTable.table.get(i).tokenValue;
+                        System.err.println("kani ang val"+scopeOfVar);
                         int k;
                         for(k = 0; symbolTable.table.get(k).scope!=scopeOfVar
-                                && symbolTable.table.get(k).tokenValue!=list.get(j-1); k++);
-                    stopperFailType = (checkType(list.get(j+1), symbolTable.table.get(k).datatype))?true:false;
+                                && symbolTable.table.get(k).tokenValue!=list.get(j-1);
+                                System.err.println("hi"+symbolTable.table.get(k).scope), System.err.print(symbolTable.table.get(k).tokenValue), k++);
+                    
+                     System.err.println("ni stop siya here"+symbolTable.table.get(k).scope);
+                     System.err.print(symbolTable.table.get(k+1).datatype+list.get(j-1));    
+                    
+                    stopperFailType = (checkType(list.get(j+1), symbolTable.table.get(k+1).datatype))?true:false;
                     System.err.println("\n" + list.get(j+1)+symbolTable.table.get(k).datatype+stopperFailType);
                     
                     if(stopperFailType==true)
@@ -147,15 +154,27 @@ Boolean checkType(String value, String dataType){
 
                 if( "#int".equals(dataType)){
                    try{ 
-                    Integer.parseInt(value);
-                    return true;
+                        Integer.parseInt(value);
+                        return true;
                     }catch(NumberFormatException e) { 
                         return false; 
                     }
                 
                 }
                 else if("#char".equals(dataType)){
-                    ret = (value.length()>1)? false: true;
+                    
+                    int charVerifier = 0;
+                    //ret = (value.length()>1)? false: true;
+                    try{ 
+                        Integer.parseInt(value);
+                        charVerifier = 1;
+                        System.err.print("hoy nisud" + charVerifier);
+                    }catch(NumberFormatException e) { 
+                        charVerifier = 0;
+                    }
+                    
+                        System.err.print("hoy nisud" + charVerifier);
+                    ret = (value.length()>1 || charVerifier==1)? false: true;
                 }
                 else if("#boolean".equals(dataType))
                     ret = ("false".equals(value)|| "true".equals(value))? true: false;
