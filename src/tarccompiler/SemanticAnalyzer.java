@@ -27,11 +27,8 @@ public class SemanticAnalyzer {
         this.list = list;
         displaySymbolTable();
         storeToken(astTree.getRoot(), list);
-        System.err.println("LIST: "+ list);
         checkDataType();
         
-        //System.err.println(Collections.frequency(list, "id"));
-        //System.err.println(symbolTable.table.get(0).tokenValue);
         }
     
     // Methods
@@ -115,6 +112,7 @@ void checkDataType(){
                     if(list.get(j).equals("=") && list.get(j+2).equals(";")){
                         String scopeOfVar;
                         String dt = null;
+                        storeAllDecVar.add(list.get(j-1)); //varName
                         storeAllDecVar.add(list.get(j+1)); //actualValue
                         scopeOfVar = ("#func".equals(list.get(storeFuncInList.get(i))))? (list.get(storeFuncInList.get(i)+1)):"main";
                         
@@ -146,10 +144,20 @@ void checkDataType(){
                 System.err.println("\nDEC STATEMENTS: "+storeAllDecVar);
                 
                 //Type Checking comes in
-                Boolean verify = true;
-                for(i=0; i<storeAllDecVar.size(); i=i+3){
-                    verify = checkType(storeAllDecVar.get(i), storeAllDecVar.get(i+1));
-                    System.err.println(storeAllDecVar.get(i) +" is "+ storeAllDecVar.get(i+1)+ " STATUS: "+verify);
+                Boolean verifyDT = true;
+                Boolean verifyLR = true;
+                for(i=0; i<storeAllDecVar.size(); i=i+4){
+                    verifyDT = checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
+                    verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
+                    System.err.println(storeAllDecVar.get(i) +" is a "+ storeAllDecVar.get(i+2)+ 
+                            " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
+                    
+                    if(verifyDT.equals(true)){
+                       for(j = 0; j<symbolTable.getLast() && (!symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i))
+                                && !symbolTable.table.get(j).datatype.equals(storeAllDecVar.get(i+1))); j++);
+                        if(j<symbolTable.getLast())
+                            symbolTable.table.get(j).actualValue = storeAllDecVar.get(i+1);
+                    }
                 }
 }
 
@@ -184,7 +192,7 @@ Boolean checkType(String value, String dataType){
                 return ret;
 }
 
-Boolean LRcheck(String leftVal, String dataType){
+Boolean LRCheck(String leftVal, String dataType){
                 Boolean ret = false;
                 int i;
                 //first: traverse symbolTable, and look for the tokenValue that matches leftVal
