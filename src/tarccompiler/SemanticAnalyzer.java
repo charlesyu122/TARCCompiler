@@ -209,8 +209,10 @@ Boolean LRCheck(String leftVal, String dataType){
 void checkFuncCall(){
         
     //store Function Details in an Array List
-        int i;
+        int i, j;
         ArrayList<String> storeAllFuncs = new ArrayList<String>();
+        
+        ArrayList<String> storeFuncCalls = new ArrayList<String>();
         
         for(i = 0;i<list.size()-1 && !"#main".equals(list.get(i)); i++){
             if(list.get(i).equals("#func")){
@@ -219,7 +221,7 @@ void checkFuncCall(){
                 
                 //count no. of parameters
                 int numOfParam = 0;
-                for(int j = i; j<list.size() && !list.get(j).equals(")"); j++){
+                for(j = i; j<list.size() && !list.get(j).equals(")"); j++){
                     if(list.get(j)=="#int"||list.get(j)=="#char"||list.get(j)=="#boolean")
                         numOfParam++;
                 }
@@ -229,9 +231,40 @@ void checkFuncCall(){
         System.err.println("Function Information (by 3): "+storeAllFuncs);
    
     //scan list for function calls
-        for(i = 0;i<list.size()-1; i++){
+        for(i = 0;i<storeAllFuncs.size(); i=i+3){
+            
+            for(j = 0; j<list.size()-1; j++){
+                
+                if(list.get(j).equals("#"+storeAllFuncs.get(i+1))){
+                    System.err.println("Function call at: "+j+" = #"+storeAllFuncs.get(i+1));
+                    //storeFuncCalls.add(Integer.toString(j));
+                    performFunc(storeAllFuncs, j, storeAllFuncs.get(i+1));
+                }
+            }
+            
         }
+        //System.err.println("list of Function Calls: " + storeFuncCalls);
+        
+}
+
+void performFunc(ArrayList<String> allFuncs, int j, String funcRefer){
+    int i, countParam=0;
+    for(i=j+1; !")".equals(list.get(i+1)); i++){
+            countParam++;
+            
+    }
+    System.err.println(countParam);
     
+    for(i=0;i<allFuncs.size()-1; i=i+3);
+    
+    if(i<allFuncs.size()-1 && allFuncs.get(i+1).equals(funcRefer)){
+        if(countParam!=Integer.parseInt(allFuncs.get(i+2))){
+            System.err.println("Number of parameters in function call at line j does not match with function.");
+        
+    }
+    
+    
+    }
 }
 //<editor-fold defaultstate="collapsed" desc="Checking-Old">
 //protected Node checkMain(){
