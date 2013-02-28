@@ -28,6 +28,7 @@ public class SemanticAnalyzer {
         displaySymbolTable();
         storeToken(astTree.getRoot(), list);
         checkDataType();
+        checkFuncCall();
         
         }
     
@@ -45,15 +46,15 @@ public class SemanticAnalyzer {
     
  // method will return a list of strings containing all terminals: #main, #char, #bool, #func
 void storeToken(Node n, ArrayList<String> s){
-		 //System.out.println("THIS IS NODE N!!!!!!!!" + n.getNodeData());
-		 ArrayList<Node> temp = n.getNodeChildren();
-		 
-                 for(Node new_n : temp){
-			if(!new_n.getNodeData().equals("~"))
-				s.add(new_n.getNodeData());
-			
-            storeToken(new_n, s);
-         } 
+     //System.out.println("THIS IS NODE N!!!!!!!!" + n.getNodeData());
+     ArrayList<Node> temp = n.getNodeChildren();
+
+     for(Node new_n : temp){
+            if(!new_n.getNodeData().equals("~"))
+                    s.add(new_n.getNodeData());
+
+    storeToken(new_n, s);
+ } 
 }
     
 //checkMain will return the Node containing #main
@@ -89,121 +90,148 @@ return verifyFunc;
 }   
 
 void checkDataType(){
-    
-                int i, j;
-                ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
-                ArrayList<Integer> storeFuncInST = new ArrayList<Integer>();
-                ArrayList<String> storeAllDecVar = new ArrayList<String>();
-               // int funcCounter = Collections.frequency(list, "#func");
 
-                //store all indeces of function types found in the arraylist of tokens
-                for(i = 0;i<list.size();i++){
-                    if(list.get(i).equals("#func") || list.get(i).equals("#main"))
-                        storeFuncInList.add(i);
-                }
-                //store all indeces of function types found in symboltable
-                for(j = 0; j<symbolTable.getLast(); j++){
-                    if( "#func".equals(symbolTable.table.get(j).datatype))
-                        storeFuncInST.add(j);
-                }
-                 
-                for(i=0, j = storeFuncInList.get(i); i<storeFuncInList.size() && j<list.size()-1; j++){
-                    
-                    if(list.get(j).equals("=") && list.get(j+2).equals(";")){
-                        String scopeOfVar;
-                        String dt = null;
-                        storeAllDecVar.add(list.get(j-1)); //varName
-                        storeAllDecVar.add(list.get(j+1)); //actualValue
-                        scopeOfVar = ("#func".equals(list.get(storeFuncInList.get(i))))? (list.get(storeFuncInList.get(i)+1)):"main";
-                        
-                        //traverse in symbolTable to find out the datatype of the variable with declaration statement
-                        int k = 0;
-                        Boolean stopScan = false;
-                        for(; stopScan!=true && k<=symbolTable.getLast(); k++){
-                            String scopeWithHash = scopeOfVar;
-                            
-                            if("main".equals(scopeOfVar))
-                                scopeWithHash = "#main";
-                            
-                            if(symbolTable.table.get(k).scope.equals(scopeWithHash) && symbolTable.table.get(k).tokenValue.equals(list.get(j-1)))
-                            {   
-                                dt = symbolTable.table.get(k).datatype;
-                                stopScan = true; 
-                            }
-                        }
-                        
-                        storeAllDecVar.add(dt);
-                        storeAllDecVar.add("#"+scopeOfVar);
-                    }
-                    
-                    if("#main".equals(list.get(j+1)) || "#func".equals(list.get(j+1))){
-                        i++;
+        int i, j;
+        ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
+        ArrayList<Integer> storeFuncInST = new ArrayList<Integer>();
+        ArrayList<String> storeAllDecVar = new ArrayList<String>();
+       // int funcCounter = Collections.frequency(list, "#func");
+
+        //store all indeces of function types found in the arraylist of tokens
+        for(i = 0;i<list.size();i++){
+            if(list.get(i).equals("#func") || list.get(i).equals("#main"))
+                storeFuncInList.add(i);
+        }
+        //store all indeces of function types found in symboltable
+        for(j = 0; j<symbolTable.getLast(); j++){
+            if( "#func".equals(symbolTable.table.get(j).datatype))
+                storeFuncInST.add(j);
+        }
+
+        for(i=0, j = storeFuncInList.get(i); i<storeFuncInList.size() && j<list.size()-1; j++){
+
+            if(list.get(j).equals("=") && list.get(j+2).equals(";")){
+                String scopeOfVar;
+                String dt = null;
+                storeAllDecVar.add(list.get(j-1)); //varName
+                storeAllDecVar.add(list.get(j+1)); //actualValue
+                scopeOfVar = ("#func".equals(list.get(storeFuncInList.get(i))))? (list.get(storeFuncInList.get(i)+1)):"main";
+
+                //traverse in symbolTable to find out the datatype of the variable with declaration statement
+                int k = 0;
+                Boolean stopScan = false;
+                for(; stopScan!=true && k<=symbolTable.getLast(); k++){
+                    String scopeWithHash = scopeOfVar;
+
+                    if("main".equals(scopeOfVar))
+                        scopeWithHash = "#main";
+
+                    if(symbolTable.table.get(k).scope.equals(scopeWithHash) && symbolTable.table.get(k).tokenValue.equals(list.get(j-1)))
+                    {   
+                        dt = symbolTable.table.get(k).datatype;
+                        stopScan = true; 
                     }
                 }
-                
-                System.err.println("\nDEC STATEMENTS: "+storeAllDecVar);
-                
-                //Type Checking comes in
-                Boolean verifyDT = true;
-                Boolean verifyLR = true;
-                for(i=0; i<storeAllDecVar.size(); i=i+4){
-                    verifyDT = checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
-                    verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
-                    System.err.println(storeAllDecVar.get(i) +" is a "+ storeAllDecVar.get(i+2)+ 
-                            " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
-                    
-                    if(verifyDT.equals(true)){
-                       for(j = 0; j<symbolTable.getLast() && (!symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i))
-                                && !symbolTable.table.get(j).datatype.equals(storeAllDecVar.get(i+1))); j++);
-                        if(j<symbolTable.getLast())
-                            symbolTable.table.get(j).actualValue = storeAllDecVar.get(i+1);
-                    }
-                }
+
+                storeAllDecVar.add(dt);
+                storeAllDecVar.add("#"+scopeOfVar);
+            }
+
+            if("#main".equals(list.get(j+1)) || "#func".equals(list.get(j+1))){
+                i++;
+            }
+        }
+
+        System.err.println("\nDEC STATEMENTS: "+storeAllDecVar);
+
+        //Type Checking comes in
+        Boolean verifyDT = true;
+        Boolean verifyLR = true;
+        for(i=0; i<storeAllDecVar.size(); i=i+4){
+            verifyDT = checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
+            verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
+            System.err.println(storeAllDecVar.get(i) +" is a "+ storeAllDecVar.get(i+2)+ 
+                    " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
+
+            if(verifyDT.equals(true)){
+               for(j = 0; j<symbolTable.getLast() && (!symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i))
+                        && !symbolTable.table.get(j).datatype.equals(storeAllDecVar.get(i+1))); j++);
+                if(j<symbolTable.getLast())
+                    symbolTable.table.get(j).actualValue = storeAllDecVar.get(i+1);
+            }
+        }
 }
 
 Boolean checkType(String value, String dataType){
-                //sample: x, add, #int
-                Boolean ret = false;
+        //sample: x, add, #int
+        Boolean ret = false;
 
-                if( "#int".equals(dataType)){
-                   try{ 
-                        Integer.parseInt(value);
-                        return true;
-                    }catch(NumberFormatException e) { 
-                        return false; 
-                    }
-                
-                }
-                else if("#char".equals(dataType)){
-                    
-                    int charVerifier = 0;
-                    //ret = (value.length()>1)? false: true;
-                    try{ 
-                        Integer.parseInt(value);
-                        charVerifier = 1;
-                    }catch(NumberFormatException e) { 
-                        charVerifier = 0;
-                    }
-                    ret = (value.length()>1 || charVerifier==1)? false: true;
-                }
-                else if("#boolean".equals(dataType))
-                    ret = ("false".equals(value)|| "true".equals(value))? true: false;
+        if( "#int".equals(dataType)){
+           try{ 
+                Integer.parseInt(value);
+                return true;
+            }catch(NumberFormatException e) { 
+                return false; 
+            }
+        }
+        else if("#char".equals(dataType)){
 
-                return ret;
+            int charVerifier = 0;
+            //ret = (value.length()>1)? false: true;
+            try{ 
+                Integer.parseInt(value);
+                charVerifier = 1;
+            }catch(NumberFormatException e) { 
+                charVerifier = 0;
+            }
+            ret = (value.length()>1 || charVerifier==1)? false: true;
+        }
+        else if("#boolean".equals(dataType))
+            ret = ("false".equals(value)|| "true".equals(value))? true: false;
+
+        return ret;
 }
 
 Boolean LRCheck(String leftVal, String dataType){
-                Boolean ret = false;
-                int i;
-                //first: traverse symbolTable, and look for the tokenValue that matches leftVal
-                for(i = 0; i<symbolTable.getLast() && (symbolTable.table.get(i).tokenValue==leftVal &&symbolTable.table.get(i).datatype==dataType); i++);
+        Boolean ret = false;
+        int i;
+        //first: traverse symbolTable, and look for the tokenValue that matches leftVal
+        for(i = 0; i<symbolTable.getLast() && (symbolTable.table.get(i).tokenValue==leftVal &&symbolTable.table.get(i).datatype==dataType); i++);
 
-                //if loop ended and i is still less than the last index of symbolTable, it means there was a match
-                //leftVal is a variable
-                if(i<symbolTable.getLast())
-                    ret = true;
+        //if loop ended and i is still less than the last index of symbolTable, it means there was a match
+        //leftVal is a variable
+        if(i<symbolTable.getLast())
+            ret = true;
 
-                return ret;
+        return ret;
+}
+
+void checkFuncCall(){
+        
+    //store Function Details in an Array List
+        int i;
+        ArrayList<String> storeAllFuncs = new ArrayList<String>();
+        
+        for(i = 0;i<list.size()-1 && !"#main".equals(list.get(i)); i++){
+            if(list.get(i).equals("#func")){
+                storeAllFuncs.add(Integer.toString(i)); //1st: starting index of function in the list
+                storeAllFuncs.add(list.get(i+1)); //Name of Function
+                
+                //count no. of parameters
+                int numOfParam = 0;
+                for(int j = i; j<list.size() && !list.get(j).equals(")"); j++){
+                    if(list.get(j)=="#int"||list.get(j)=="#char"||list.get(j)=="#boolean")
+                        numOfParam++;
+                }
+                storeAllFuncs.add(Integer.toString(numOfParam)); // Number of Parameters
+            }
+        }
+        System.err.println("Function Information (by 3): "+storeAllFuncs);
+   
+    //scan list for function calls
+        for(i = 0;i<list.size()-1; i++){
+        }
+    
 }
 //<editor-fold defaultstate="collapsed" desc="Checking-Old">
 //protected Node checkMain(){
