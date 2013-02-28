@@ -158,9 +158,9 @@ public class Parser {
     
     private ArrayList<Node> formChildren(Node parent, String[] prods){
         ArrayList children = new ArrayList<Node>();
-        System.out.println("\nParent "+ parent.getNodeData());
+        //COMMENTED: System.out.println("\nParent "+ parent.getNodeData());
         for(int i=0; i<prods.length; i++){
-            System.out.println("Child "+prods[i]);
+            //COMMENTED: System.out.println("Child "+prods[i]);
             children.add(new Node(prods[i], parent));
         }
         return children;

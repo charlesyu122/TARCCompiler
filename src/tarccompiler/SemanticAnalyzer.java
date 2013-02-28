@@ -27,7 +27,7 @@ public class SemanticAnalyzer {
         this.list = list;
         displaySymbolTable();
         storeToken(astTree.getRoot(), list);
-        System.err.println(list);
+        System.err.println("LIST: "+ list);
         checkDataType();
         
         //System.err.println(Collections.frequency(list, "id"));
@@ -96,6 +96,7 @@ void checkDataType(){
                 int i, j;
                 ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
                 ArrayList<Integer> storeFuncInST = new ArrayList<Integer>();
+                ArrayList<String> storeAllDecVar = new ArrayList<String>();
                // int funcCounter = Collections.frequency(list, "#func");
 
                 //store all indeces of function types found in the arraylist of tokens
@@ -108,44 +109,48 @@ void checkDataType(){
                     if( "#func".equals(symbolTable.table.get(j).datatype))
                         storeFuncInST.add(j);
                 }
-                
-                
-                Boolean stopperFailType = true;
-                Boolean stopperFailLR = true;
-                for(i = 0, j = storeFuncInList.get(i); i<(storeFuncInList.size())-1 
-                        && j<storeFuncInList.get(i+1) && stopperFailType==true && stopperFailLR==true; j++){
-                    //comes in assignment checking only such as: x = 5; 
-                    //if true, it is a plain assignment statement with no operations involved
-                    if(list.get(j).equals("=") && list.get(j+2).equals(";"))
-                    {
-                        //checking of datatype comes in. In function checkType, 
-                        //the value to be assigned, and datatype of the variable from symboltable 
-                        // to understand more: see this: 
-                        //stopper_fail = checkType(list.get(j+1), symbolTable.table.get(i).dataType);
-                      // LRCheck() pass nameofVal LRCheck(list.get(j-1), and datatype and scope
-                        String scopeOfVar = symbolTable.table.get(i).tokenValue;
-                        System.err.println("kani ang val"+scopeOfVar);
-                        int k;
-                        for(k = 0; symbolTable.table.get(k).scope!=scopeOfVar
-                                && symbolTable.table.get(k).tokenValue!=list.get(j-1);
-                                System.err.println("hi"+symbolTable.table.get(k).scope), System.err.print(symbolTable.table.get(k).tokenValue), k++);
+                 
+                for(i=0, j = storeFuncInList.get(i); i<storeFuncInList.size() && j<list.size()-1; j++){
                     
-                     System.err.println("ni stop siya here"+symbolTable.table.get(k).scope);
-                     System.err.print(symbolTable.table.get(k+1).datatype+list.get(j-1));    
-                    
-                    stopperFailType = (checkType(list.get(j+1), symbolTable.table.get(k+1).datatype))?true:false;
-                    System.err.println("\n" + list.get(j+1)+symbolTable.table.get(k).datatype+stopperFailType);
-                    
-                    if(stopperFailType==true)
-                        symbolTable.table.get(k).setActualValue(list.get(j+1)); 
-                    //if checkType is false, for loop will terminate=
-                    
+                    if(list.get(j).equals("=") && list.get(j+2).equals(";")){
+                        String scopeOfVar;
+                        String dt = null;
+                        storeAllDecVar.add(list.get(j+1)); //actualValue
+                        scopeOfVar = ("#func".equals(list.get(storeFuncInList.get(i))))? (list.get(storeFuncInList.get(i)+1)):"main";
+                        
+                        //traverse in symbolTable to find out the datatype of the variable with declaration statement
+                        int k = 0;
+                        Boolean stopScan = false;
+                        for(; stopScan!=true && k<=symbolTable.getLast(); k++){
+                            String scopeWithHash = scopeOfVar;
+                            
+                            if("main".equals(scopeOfVar))
+                                scopeWithHash = "#main";
+                            
+                            if(symbolTable.table.get(k).scope.equals(scopeWithHash) && symbolTable.table.get(k).tokenValue.equals(list.get(j-1)))
+                            {   
+                                dt = symbolTable.table.get(k).datatype;
+                                stopScan = true; 
+                            }
+                        }
+                        
+                        storeAllDecVar.add(dt);
+                        storeAllDecVar.add("#"+scopeOfVar);
                     }
-                    if(j+1==(storeFuncInList.get(i+1))-1)
+                    
+                    if("#main".equals(list.get(j+1)) || "#func".equals(list.get(j+1))){
                         i++;
-                 }
-                    System.err.println("\n"+storeFuncInList);
-                    System.err.println("\n"+storeFuncInST);
+                    }
+                }
+                
+                System.err.println("\nDEC STATEMENTS: "+storeAllDecVar);
+                
+                //Type Checking comes in
+                Boolean verify = true;
+                for(i=0; i<storeAllDecVar.size(); i=i+3){
+                    verify = checkType(storeAllDecVar.get(i), storeAllDecVar.get(i+1));
+                    System.err.println(storeAllDecVar.get(i) +" is "+ storeAllDecVar.get(i+1)+ " STATUS: "+verify);
+                }
 }
 
 Boolean checkType(String value, String dataType){
@@ -168,12 +173,9 @@ Boolean checkType(String value, String dataType){
                     try{ 
                         Integer.parseInt(value);
                         charVerifier = 1;
-                        System.err.print("hoy nisud" + charVerifier);
                     }catch(NumberFormatException e) { 
                         charVerifier = 0;
                     }
-                    
-                        System.err.print("hoy nisud" + charVerifier);
                     ret = (value.length()>1 || charVerifier==1)? false: true;
                 }
                 else if("#boolean".equals(dataType))

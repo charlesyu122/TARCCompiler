@@ -310,7 +310,7 @@ public class CompilerGUI extends javax.swing.JFrame {
             // AST Construction
             ASTConstruction astTree = new ASTConstruction();
             astTree.minimizeTree(parserTree.getRoot());
-            astTree.showTree(parserTree.getRoot());   //display the content of the tree after the AST construction
+            //COMMENTED: astTree.showTree(parserTree.getRoot());   //display the content of the tree after the AST construction
             // Semantic Analyzer
             ArrayList<String> s = new ArrayList<String>();
             SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable, s);
