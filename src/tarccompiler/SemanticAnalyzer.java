@@ -25,10 +25,10 @@ public class SemanticAnalyzer {
         this.astTree = tree;
         this.symbolTable = symTbl;
         this.list = list;
-        displaySymbolTable();
         storeToken(astTree.getRoot(), list);
         checkDataType();
         checkFuncCall();
+        displaySymbolTable();
         
         }
     
@@ -36,10 +36,10 @@ public class SemanticAnalyzer {
     //<editor-fold defaultstate="collapsed" desc="Debugging Methods">
     private void displaySymbolTable(){
         System.out.println("\n\nSymbol Table:");
-        System.out.println("token \t\t tokenVal \t\t datatype \t\t scope");
+        System.out.println("token \t\t tokenVal \t\t datatype \t\t scope \t\t actual value");
         for(int i=0; i<symbolTable.table.size(); i++){
             SymbolTableModel temp = symbolTable.table.get(i);
-            System.out.println(temp.token+" \t\t "+temp.tokenValue+" \t\t "+temp.datatype+" \t\t "+temp.scope);
+            System.out.println(temp.token+" \t\t "+temp.tokenValue+" \t\t\t "+temp.datatype+" \t\t\t "+temp.scope+"\t\t\t"+temp.actualValue);
         }
     }
     //</editor-fold>
@@ -154,10 +154,12 @@ void checkDataType(){
                     " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
 
             if(verifyDT.equals(true)){
-               for(j = 0; j<symbolTable.getLast() && (!symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i))
-                        && !symbolTable.table.get(j).datatype.equals(storeAllDecVar.get(i+1))); j++);
-                if(j<symbolTable.getLast())
+               for(j = 0; j<=symbolTable.getLast(); j++){
+                  if(symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i)) && symbolTable.table.get(j).datatype.equals(storeAllDecVar.get(i+2))){
                     symbolTable.table.get(j).actualValue = storeAllDecVar.get(i+1);
+                  }
+               }
+                
             }
         }
 }
@@ -315,159 +317,8 @@ ArrayList<String> checkFuncDetails(ArrayList<String> allFuncs, int j){
 System.err.println("index in symboltable: "+ret);
     return ret;
 }
-//<editor-fold defaultstate="collapsed" desc="Checking-Old">
-//protected Node checkMain(){
-//        
-//       Node ptr, start;
-//       ptr = start = astTree.getRoot();
-//        ArrayList<Node> children;
-//       int i, j = 1;
-//       
-//      */ 
-//       /* for(int val=0;!start.getNodeData().contains("#main");val+=4){
-//       
-//           ArrayList<Node> children = start.getNodeChildren();
-//           for(i=0; i<children.size() && !children.get(i).getNodeData().contains("#main"); i++);
-//           
-//           if(children.get(i).getNodeData().contains("#main")){
-//               ptr = children.get(i);
-//           }
-//       }*/
-//       //as long as #main's not found, PROBLEM 1: NEED ANOTHER STOPPER in case of end of tree
-//       
-//       /* while(!ptr.getNodeData().contains("#main") && !ptr.getNodeData().contains("}")){
-//           
-//       	children = start.getNodeChildren();
-//        
-//        for(i=0, ptr = children.get(i) ; i<children.size() && !ptr.getNodeData().contains("#main"); i++, ptr = children.get(i));
-//        */
-//       /*  switch(j++){
-//            case 3: start = children.get(4); break;
-//            case 4: start = children.get(1); break;
-//            case 7: start = children.get(2); break;
-//            default: start = children.get(0);
-//        } */
-//        
-//        /* if(j==3)
-//            start = children.get(4);
-//        else if(j==4)
-//            start = children.get(1);
-//        else if(j==7)
-//            start = children.get(2);
-//        else start = children.get(0); 
-//        
-//        }
-//        
-//        
-//       
-//       return ptr;
-//    
-//    }*/
-//    
-//   /*  public class checkDeclarations{
-//        
-//     public ArrayList<String> declarationsInsideMain(){
-//         ArrayList<String> verify = null;
-//         Node ptr, mainNode;
-//         ptr = mainNode = checkMain();
-//         ArrayList<Node> children;
-//         int i, j, k=1;
-//         int counter = 1;
-//         
-//         while(counter!=0){
-//        
-//         for(i=0, children = mainNode.getNodeChildren(), ptr = children.get(i); i<children.size()
-//                 && counter!=0; i++, ptr = children.get(i)){
-//             
-//             
-//          switch(k++){
-//                    case 3: mainNode = children.get(4); break;
-//                    case 4: mainNode = children.get(1); break;
-//                    case 7: mainNode = children.get(2); break;
-//                    default: mainNode = children.get(0);
-//            }
-//          
-//             if(ptr.getNodeData().contains("{") || ptr.getNodeData().contains("}"))
-//                 counter = 0;
-//                     
-//             else{
-//                 for(j=0; j<symbolTable.getLast() && ((ptr.getNodeData() == null ? symbolTable.table.get(j).datatype != null : !ptr.getNodeData().equals(symbolTable.table.get(j).datatype))
-//                         && (children.get(i+1).getNodeData() == null ? symbolTable.table.get(j).tokenValue != null : !children.get(i+1).getNodeData().equals(symbolTable.table.get(j).tokenValue))); j++);
-//                // UNDER CONSTRUCTION
-//                /*  if(symbolTable.table.get(j).datatype=="#func")
-//                       counter = 0; */
-//             }
-//           }
-//         
-//         }
-//         return verify;
-//     }   
-//        
-//     public void declarationsInsideFunc(){
-//         
-//     }
-//     
-//     // check if the value of the variable is appropriate (according to its datatype)
-//     public Boolean checkType(Node X, Node Y){
-//         Boolean checker = true;
-//         int i;
-//         String expected = null;
-//         
-//         for(i=0; i<symbolTable.getLast() && X.getNodeData()!=symbolTable.table.get(i).tokenValue; i++);
-//         if(i<symbolTable.getLast())
-//                expected = symbolTable.table.get(i).datatype;
-//         
-//         if("#int".equals(expected)){
-//        // j = Integer.parseInt(Y.getNodeData());
-//         
-//             if(!Y.getNodeData().matches("[+-]?\\d*(\\.\\d+)?"))
-//                 checker = false;
-//         }
-//         
-//         else if("#char".equals(expected)){
-//                 if(X.getNodeData().length()>1)
-//                     checker = false;
-//         }
-//         
-//         if(!checker){
-//                 System.err.println("Type mismatch: assignment to " + X.getNodeData()+
-//              " should be " + expected + " expression");
-//         }
-//         
-//         return checker;
-//     }
-//    }
-//    
-//    /* public class checkDeclarations{
-//        
-//        protected ArrayList<Binding> declarations;
-//        int last;
-//        
-//        public checkDeclarations(){
-//            this.declarations = new ArrayList<Binding>();
-//            this.last = -1;
-//        }
-//        void checkMain(SemanticAnalyzer SA){
-//            for(i=mainStart, stop=0; i<SA.symbolTable.getLast(); i++){
-//               String val = SA.symbolTable.table.get(i).tokenValue;
-//                    if(val.equals("#int"))
-//                        insert("#int", SA.symbolTable.table.get(i+1).tokenValue, "-1");
-//            
-//                    else if(val.equals("#char"))
-//                        insert("#int", SA.symbolTable.table.get(i+1).tokenValue, "-1");
-//                    
-//                    else insert("#int", SA.symbolTable.table.get(i+1).tokenValue, "-1");
-//                    }
-//        
-//            }
-//        
-//        
-//        public void insert(String datatype, String name, String actualValue){
-//            Binding row = new Binding(datatype, name, actualValue);
-//            this.declarations.add(row);
-//            this.last++;
-//    }
-//    } */
-//</editor-fold>
 
+void performFunc(){
+    
+}
 }

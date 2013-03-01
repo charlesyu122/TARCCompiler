@@ -306,7 +306,7 @@ public class CompilerGUI extends javax.swing.JFrame {
             }
             labelStatus.setText(message);
             Tree parserTree = parser.getParserTree();
-            parser.displayTree(parserTree.getRoot());
+            //parser.displayTree(parserTree.getRoot());
             // AST Construction
             ASTConstruction astTree = new ASTConstruction();
             astTree.minimizeTree(parserTree.getRoot());
