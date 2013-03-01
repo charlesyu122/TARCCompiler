@@ -108,6 +108,8 @@ void checkDataType(){
                 storeFuncInST.add(j);
         }
 
+        if(!storeFuncInList.isEmpty()){
+            
         for(i=0, j = storeFuncInList.get(i); i<storeFuncInList.size() && j<list.size()-1; j++){
 
             if(list.get(j).equals("=") && list.get(j+2).equals(";")){
@@ -161,6 +163,7 @@ void checkDataType(){
                }
                 
             }
+        }
         }
 }
 
@@ -292,29 +295,15 @@ ArrayList<String> checkFuncDetails(ArrayList<String> allFuncs, int j){
 
      //perform function
     if(flagError!=1){
-        //traverse in symbolTable and look for matching calling function and tokenValue
-        for(i=0; i<symbolTable.getLast(); i++){
-           /* for(j=0; j<funcVerify.size();j++){
-                System.err.println("TEST THIS: "+symbolTable.table.get(i).tokenValue + " "+funcVerify.get(j) + symbolTable.table.get(i).scope+callingFunc);
-                if(symbolTable.table.get(i).tokenValue.equals(funcVerify.get(j)) && symbolTable.table.get(i).scope.equals(callingFunc)){
-                    ret.add(Integer.toString(i));//symbolTable index
-                    ret.add(symbolTable.table.get(i).tokenValue);
-                    ret.add(symbolTable.table.get(i).actualValue);
-                    System.err.println("NISULOD");
-                }
-            }*/
-            int flagCounter = 0;
-            for(j=0; j<funcVerify.size() && flagCounter==0;j++){
-                if(symbolTable.table.get(i).tokenValue.equals(funcVerify.get(j)) && symbolTable.table.get(i).scope.equals(callingFunc)){
-                    flagCounter = 1;
-                    j--;
-                }
-            }
-            if(j<funcVerify.size())
-                ret.add(Integer.toString(i));//symbolTable index
-        }
+        
+        for(i=0; i<funcVerify.size()-1; i++){
+            for(j=0; j<symbolTable.getLast() && !symbolTable.table.get(j).tokenValue.equals(funcVerify.get(i))&& !symbolTable.table.get(j).scope.equals(callingFunc); 
+                    j++);
+            
+                    ret.add(Integer.toString(j));
+                  }
     }
-System.err.println("index in symboltable: "+ret);
+System.err.println(funcVerify+ "index in symboltable: "+ret);
     return ret;
 }
 
