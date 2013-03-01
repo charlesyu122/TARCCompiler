@@ -76,6 +76,7 @@ public class CompilerGUI extends javax.swing.JFrame {
         taOutput = new javax.swing.JTextArea();
         btnCloseFile = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
+        pbProgress = new javax.swing.JProgressBar();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         itemNewFile = new javax.swing.JMenuItem();
@@ -180,6 +181,9 @@ public class CompilerGUI extends javax.swing.JFrame {
             }
         });
 
+        pbProgress.setBackground(new java.awt.Color(0, 153, 0));
+        pbProgress.setForeground(new java.awt.Color(0, 153, 0));
+
         menuFile.setText("File");
 
         itemNewFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
@@ -234,30 +238,36 @@ public class CompilerGUI extends javax.swing.JFrame {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(tpOutput)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, tpCode))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 139, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(btnNewFile)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnOpenFile)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnSave)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnCompile)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnCloseFile))
-                    .add(labelStatus))
-                .add(0, 0, Short.MAX_VALUE))
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(tpOutput)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, tpCode))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 139, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(layout.createSequentialGroup()
+                                .add(btnNewFile)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(btnOpenFile)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(btnSave)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(btnCompile)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(btnCloseFile))
+                            .add(layout.createSequentialGroup()
+                                .add(6, 6, 6)
+                                .add(labelStatus)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(pbProgress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 196, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(btnNewFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -275,8 +285,10 @@ public class CompilerGUI extends javax.swing.JFrame {
                         .add(15, 15, 15)
                         .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 564, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(labelStatus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(pbProgress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(labelStatus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(12, 12, 12))
         );
 
         pack();
@@ -284,6 +296,13 @@ public class CompilerGUI extends javax.swing.JFrame {
 
     private void btnCompileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompileActionPerformed
         // TODO add your handling code here:
+        // Reset components
+        taOutput.setText("");
+        labelStatus.setText("Status");
+        pbProgress.setValue(0);
+        pbProgress.setStringPainted(true);
+        pbProgress.setForeground(Color.GREEN);
+        //pbProgress.repaint(); //Refresh graphics
         if(tarcFiles.get(tpCode.getSelectedIndex()).getCode().getText().isEmpty()){
             JOptionPane.showMessageDialog(this, "Please type something. TARC won't bite.");
         } else{
@@ -295,6 +314,10 @@ public class CompilerGUI extends javax.swing.JFrame {
             LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).getCode().getText(), this.symbolTable);
             lexicalAnalyzer.getLexemes();
             ArrayList<Token> tokensForParser = lexicalAnalyzer.getTokensFormSymbolTable();
+            pbProgress.setValue(25); //Set value
+            pbProgress.setStringPainted(true);
+            pbProgress.setForeground(Color.GREEN);
+            //pbProgress.repaint(); //Refresh graphics
             // Syntax Analyzer/Parser
             Parser parser = new Parser(tokensForParser);
             String message = parser.methodLLParser();
@@ -303,6 +326,10 @@ public class CompilerGUI extends javax.swing.JFrame {
                 labelStatus.setForeground(Color.BLUE);
                 labelStatus.setText(message);
                 Tree parserTree = parser.getParserTree(); 
+                pbProgress.setValue(50); //Set value
+                pbProgress.setStringPainted(true);
+                pbProgress.setForeground(Color.GREEN);
+                //pbProgress.repaint(); //Refresh graphics
                 // AST Construction
                 ASTConstruction astTree = new ASTConstruction();
                 astTree.minimizeTree(parserTree.getRoot());
@@ -312,6 +339,10 @@ public class CompilerGUI extends javax.swing.JFrame {
                 semAnalyze.checkDataType();
                 semAnalyze.checkFuncCall();
                 message = semAnalyze.getMessage();
+                pbProgress.setValue(75); //Set value
+                pbProgress.setStringPainted(true);
+                pbProgress.setForeground(Color.GREEN);
+                //pbProgress.repaint(); //Refresh graphics
                 if(message.equals("Success")){
                     // Code Generator
                     CodeGenerator codeG = new CodeGenerator(tokensForParser, symbolTable);
@@ -321,6 +352,10 @@ public class CompilerGUI extends javax.swing.JFrame {
                     String output = codeG.getOutput();
                     // Display output
                     this.taOutput.setText(output);
+                    pbProgress.setValue(100); //Set value
+                    pbProgress.setStringPainted(true);
+                    pbProgress.setForeground(Color.GREEN);
+                    //pbProgress.repaint(); //Refresh graphics
                 } else{
                     // Error
                     labelStatus.setForeground(Color.RED);
@@ -607,6 +642,7 @@ public class CompilerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuFile;
     private javax.swing.JMenu menuHelp;
+    private javax.swing.JProgressBar pbProgress;
     private javax.swing.JTextArea taCode;
     private javax.swing.JTextArea taOutput;
     private javax.swing.JTabbedPane tpCode;
