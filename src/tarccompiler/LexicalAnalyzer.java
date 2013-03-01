@@ -87,7 +87,7 @@ public class LexicalAnalyzer {
                 container.setTokenInfo(curLexeme);
             } else if(tokens.size()>1 && tokens.get(tokens.size()-1).getToken().equals("\"")){   // String
                 String string = "";
-                for(; !lexemes.get(i).equals("\"") ;i++){
+                for(; i<lexemes.size() && !lexemes.get(i).equals("\"") ;i++){
                     string += " "+lexemes.get(i);
                 }
                 i--;
