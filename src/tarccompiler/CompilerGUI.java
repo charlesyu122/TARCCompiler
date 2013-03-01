@@ -300,24 +300,23 @@ public class CompilerGUI extends javax.swing.JFrame {
             Parser parser = new Parser(tokensForParser);
             String message = parser.methodLLParser();
             if(message.equals("Syntax check - Success!")){
+                // No syntax error
                 labelStatus.setForeground(Color.BLUE);
+                labelStatus.setText(message);
+                Tree parserTree = parser.getParserTree(); 
+                // AST Construction
+                ASTConstruction astTree = new ASTConstruction();
+                astTree.minimizeTree(parserTree.getRoot());
+                // Semantic Analyzer
+                ArrayList<String> s = new ArrayList<String>();
+                SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable, s);
+                // Code Generator
+                CodeGenerator codeG = new CodeGenerator(tokensForParser, symbolTable);
             } else{
+                // Error
                 labelStatus.setForeground(Color.RED);
-            }
-            labelStatus.setText(message);
-            Tree parserTree = parser.getParserTree();
-            //parser.displayTree(parserTree.getRoot());
-            // AST Construction
-            ASTConstruction astTree = new ASTConstruction();
-            astTree.minimizeTree(parserTree.getRoot());
-            //COMMENTED: astTree.showTree(parserTree.getRoot());   //display the content of the tree after the AST construction
-            // Semantic Analyzer
-            ArrayList<String> s = new ArrayList<String>();
-            SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable, s);
-            	 
-            //Boolean verify = semAnalyze.checkMain(parserTree.getRoot());
-            
-            //System.out.println("VERIFY: "+verify);
+                labelStatus.setText(message);
+            }            
         }
     }//GEN-LAST:event_btnCompileActionPerformed
 
