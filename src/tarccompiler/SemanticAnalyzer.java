@@ -92,6 +92,7 @@ return verifyFunc;
 void checkDataType(){
 
         int i, j;
+        Boolean charTypeChecker = true;
         ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
         ArrayList<Integer> storeFuncInST = new ArrayList<Integer>();
         ArrayList<String> storeAllDecVar = new ArrayList<String>();
@@ -107,16 +108,35 @@ void checkDataType(){
             if( "#func".equals(symbolTable.table.get(j).datatype))
                 storeFuncInST.add(j);
         }
-
-        if(!storeFuncInList.isEmpty()){
+        
+        if(storeFuncInList.isEmpty()!=true){
             
         for(i=0, j = storeFuncInList.get(i); i<storeFuncInList.size() && j<list.size()-1; j++){
-
-            if(list.get(j).equals("=") && list.get(j+2).equals(";")){
+            
+            //traverse in symbol table, check for char variables, verify if there's ''
+            //System.err.println(storeFuncInST.get(i));
+            
+            if(list.get(j).equals("=")){
+                //check first if variable is of type #char, type char have special case: the use of ''
+                //String charTypeCheck = list.get(j-1);
+                //String functionBelong = list.get(i+1);
+                int incrementer = 2;
+                int valIncrementer = 1;
+                
+                if(list.get(j+1).equals("'")){
+                    incrementer = 4;
+                    valIncrementer = 2;
+                }
+                //if( "(".equals(functionBelong))
+                //    functionBelong = "#main";
+                
+                //System.err.println(charTypeCheck + functionBelong);
+                
+                if(list.get(j+incrementer).equals(";")){
                 String scopeOfVar;
                 String dt = null;
                 storeAllDecVar.add(list.get(j-1)); //varName
-                storeAllDecVar.add(list.get(j+1)); //actualValue
+                storeAllDecVar.add(list.get(j+valIncrementer)); //actualValue
                 scopeOfVar = ("#func".equals(list.get(storeFuncInList.get(i))))? (list.get(storeFuncInList.get(i)+1)):"main";
 
                 //traverse in symbolTable to find out the datatype of the variable with declaration statement
@@ -137,6 +157,11 @@ void checkDataType(){
 
                 storeAllDecVar.add(dt);
                 storeAllDecVar.add("#"+scopeOfVar);
+                
+                if(dt.equals("#char"))
+                    charTypeChecker = (list.get(j+2).equals(";"))?false:true;
+                    
+                }
             }
 
             if("#main".equals(list.get(j+1)) || "#func".equals(list.get(j+1))){
@@ -150,7 +175,7 @@ void checkDataType(){
         Boolean verifyDT = true;
         Boolean verifyLR = true;
         for(i=0; i<storeAllDecVar.size(); i=i+4){
-            verifyDT = checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
+            verifyDT = (charTypeChecker==false)?false:checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
             verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
             System.err.println(storeAllDecVar.get(i) +" is a "+ storeAllDecVar.get(i+2)+ 
                     " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
@@ -161,7 +186,6 @@ void checkDataType(){
                     symbolTable.table.get(j).actualValue = storeAllDecVar.get(i+1);
                   }
                }
-                
             }
         }
         }
@@ -199,14 +223,17 @@ Boolean checkType(String value, String dataType){
 
 Boolean LRCheck(String leftVal, String dataType){
         Boolean ret = false;
+        System.err.println("LRCHECK!: " + leftVal + dataType);
         int i;
         //first: traverse symbolTable, and look for the tokenValue that matches leftVal
-        for(i = 0; i<symbolTable.getLast() && (symbolTable.table.get(i).tokenValue==leftVal &&symbolTable.table.get(i).datatype==dataType); i++);
+        for(i = 0; i<symbolTable.getLast()+1 && ret==false; i++){
+            if(symbolTable.table.get(i).tokenValue.equals(leftVal) &&symbolTable.table.get(i).datatype.equals(dataType)){
+                ret = true;
+            }
+        }
 
         //if loop ended and i is still less than the last index of symbolTable, it means there was a match
         //leftVal is a variable
-        if(i<symbolTable.getLast())
-            ret = true;
 
         return ret;
 }
@@ -296,14 +323,17 @@ ArrayList<String> checkFuncDetails(ArrayList<String> allFuncs, int j){
      //perform function
     if(flagError!=1){
         
-        for(i=0; i<funcVerify.size()-1; i++){
-            for(j=0; j<symbolTable.getLast() && !symbolTable.table.get(j).tokenValue.equals(funcVerify.get(i))&& !symbolTable.table.get(j).scope.equals(callingFunc); 
-                    j++);
-            
-                    ret.add(Integer.toString(j));
-                  }
+        for(i=0; i<funcVerify.size(); i++){
+            for(j=0; j<symbolTable.getLast()+1; j++){
+             
+                if(symbolTable.table.get(j).tokenValue.equals(funcVerify.get(i))
+                    && symbolTable.table.get(j).scope.equals(callingFunc))
+                ret.add(Integer.toString(j));
+            }
+                
+            }
     }
-System.err.println(funcVerify+ "index in symboltable: "+ret);
+System.err.println(funcVerify+ "index in symboltable: ");
     return ret;
 }
 
