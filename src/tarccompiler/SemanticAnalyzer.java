@@ -228,6 +228,7 @@ void checkFuncCall(){
         }
         System.err.println("Function Information (by 3): "+storeAllFuncs);
    
+        ArrayList<String> performFunc = new ArrayList<String>();
     //scan list for function calls
         for(i = 0;i<storeAllFuncs.size(); i=i+3){
             
@@ -236,19 +237,19 @@ void checkFuncCall(){
                 if(list.get(j).equals("#"+storeAllFuncs.get(i+1))){
                     System.err.println("Function call at: "+j+" = #"+storeAllFuncs.get(i+1));
                     //storeFuncCalls.add(Integer.toString(j));
-                    checkFuncDetails(storeAllFuncs, j);
+                    performFunc = checkFuncDetails(storeAllFuncs, j);
                 }
             }
             
         }
-        System.err.println(symbolTable.table.get(3).actualValue);
         
 }
 
-void checkFuncDetails(ArrayList<String> allFuncs, int j){
+ArrayList<String> checkFuncDetails(ArrayList<String> allFuncs, int j){
     int i, countParam=0;
     int flagError = 0;
     ArrayList<String> funcVerify = new ArrayList<String>();
+    ArrayList<String> ret = new ArrayList<String>();
     
     for(i=j+1; !")".equals(list.get(i+1)); i++){
         if(!",".equals(list.get(i+1))){    
@@ -291,16 +292,28 @@ void checkFuncDetails(ArrayList<String> allFuncs, int j){
     if(flagError!=1){
         //traverse in symbolTable and look for matching calling function and tokenValue
         for(i=0; i<symbolTable.getLast(); i++){
-            for(j=0; j<funcVerify.size()-1;j++){
+           /* for(j=0; j<funcVerify.size();j++){
+                System.err.println("TEST THIS: "+symbolTable.table.get(i).tokenValue + " "+funcVerify.get(j) + symbolTable.table.get(i).scope+callingFunc);
                 if(symbolTable.table.get(i).tokenValue.equals(funcVerify.get(j)) && symbolTable.table.get(i).scope.equals(callingFunc)){
-                    funcVerify.set(j, symbolTable.table.get(i).actualValue);
+                    ret.add(Integer.toString(i));//symbolTable index
+                    ret.add(symbolTable.table.get(i).tokenValue);
+                    ret.add(symbolTable.table.get(i).actualValue);
+                    System.err.println("NISULOD");
+                }
+            }*/
+            int flagCounter = 0;
+            for(j=0; j<funcVerify.size() && flagCounter==0;j++){
+                if(symbolTable.table.get(i).tokenValue.equals(funcVerify.get(j)) && symbolTable.table.get(i).scope.equals(callingFunc)){
+                    flagCounter = 1;
+                    j--;
                 }
             }
-            
+            if(j<funcVerify.size())
+                ret.add(Integer.toString(i));//symbolTable index
         }
     }
-    System.err.println("CHANGED" + funcVerify);
-
+System.err.println("index in symboltable: "+ret);
+    return ret;
 }
 //<editor-fold defaultstate="collapsed" desc="Checking-Old">
 //protected Node checkMain(){
