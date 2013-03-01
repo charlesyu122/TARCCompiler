@@ -241,26 +241,66 @@ void checkFuncCall(){
             }
             
         }
-        //System.err.println("list of Function Calls: " + storeFuncCalls);
+        System.err.println(symbolTable.table.get(3).actualValue);
         
 }
 
 void checkFuncDetails(ArrayList<String> allFuncs, int j){
     int i, countParam=0;
+    int flagError = 0;
+    ArrayList<String> funcVerify = new ArrayList<String>();
+    
     for(i=j+1; !")".equals(list.get(i+1)); i++){
-        if(!",".equals(list.get(i+1)))    
+        if(!",".equals(list.get(i+1))){    
             countParam++;
+            funcVerify.add(list.get(i+1));
+        }
     }
-    System.err.println(countParam);
+    System.err.println(funcVerify);
     
     for(i=0;i<allFuncs.size()-1; i=i+3){
         String FuncName="#"+allFuncs.get(i+1);
         if(FuncName.equals(list.get(j))){
             if(countParam!=Integer.parseInt(allFuncs.get(i+2))){
                 System.err.println("Number of parameters in function call at line "+j+" does not match with function.");
+                flagError = 1;
             }
         }
     }
+    ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
+    String callingFunc = null;
+    
+    //store all indeces of function types found in the arraylist of tokens
+    for(i = 0;i<list.size();i++){
+        if(list.get(i).equals("#func") || list.get(i).equals("#main"))
+            storeFuncInList.add(i);
+    }
+    storeFuncInList.add(list.size()-1);
+    
+    for(i = 0; i<storeFuncInList.size()-1; i++){
+        if(j>storeFuncInList.get(i) && j<storeFuncInList.get(i+1)){
+            if(list.get(storeFuncInList.get(i)).equals("#func"))
+                callingFunc = list.get(storeFuncInList.get(i)+1);
+            
+            else callingFunc = "#main";
+        }
+    }
+     System.err.println("CALLING FUNC : " + callingFunc);   
+
+     //perform function
+    if(flagError!=1){
+        //traverse in symbolTable and look for matching calling function and tokenValue
+        for(i=0; i<symbolTable.getLast(); i++){
+            for(j=0; j<funcVerify.size()-1;j++){
+                if(symbolTable.table.get(i).tokenValue.equals(funcVerify.get(j)) && symbolTable.table.get(i).scope.equals(callingFunc)){
+                    funcVerify.set(j, symbolTable.table.get(i).actualValue);
+                }
+            }
+            
+        }
+    }
+    System.err.println("CHANGED" + funcVerify);
+
 }
 //<editor-fold defaultstate="collapsed" desc="Checking-Old">
 //protected Node checkMain(){
