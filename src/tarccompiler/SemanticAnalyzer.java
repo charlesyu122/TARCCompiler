@@ -8,7 +8,6 @@ import datamodels.Node;
 import datamodels.SymbolTableModel;
 import datamodels.Tree;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 import storage.SymbolTable;
 
 
@@ -18,6 +17,7 @@ public class SemanticAnalyzer {
     private Tree astTree;
     private SymbolTable symbolTable;
     private ArrayList<String> list;
+    private String semanticErrorMessage;
     
     // Constructor
     public SemanticAnalyzer(Tree tree, SymbolTable symTbl, ArrayList<String> list){
@@ -26,9 +26,10 @@ public class SemanticAnalyzer {
         this.symbolTable = symTbl;
         this.list = list;
         storeToken(astTree.getRoot(), list);
+        //this.semanticErrorMessage = "Semanti
         checkDataType();
         checkFuncCall();
-        displaySymbolTable();
+        //displaySymbolTable();
         
         }
     
@@ -179,16 +180,23 @@ void checkDataType(){
             verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
             System.err.println(storeAllDecVar.get(i) +" is a "+ storeAllDecVar.get(i+2)+ 
                     " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
-
+            
             if(verifyDT.equals(true)){
                for(j = 0; j<=symbolTable.getLast(); j++){
                   if(symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i)) && symbolTable.table.get(j).datatype.equals(storeAllDecVar.get(i+2))){
                     symbolTable.table.get(j).actualValue = storeAllDecVar.get(i+1);
                   }
                }
+            } else {
+                
+                if(verifyLR.equals(true))
+                    this.setAssignmentMessage();
+                else
+                    this.setLValueMessage();
             }
         }
-        }
+        }else
+            this.setMainMessage();
 }
 
 Boolean checkType(String value, String dataType){
@@ -296,6 +304,7 @@ ArrayList<String> checkFuncDetails(ArrayList<String> allFuncs, int j){
         if(FuncName.equals(list.get(j))){
             if(countParam!=Integer.parseInt(allFuncs.get(i+2))){
                 System.err.println("Number of parameters in function call at line "+j+" does not match with function.");
+                this.setParameterMessage();
                 flagError = 1;
             }
         }
@@ -339,5 +348,25 @@ System.err.println(funcVerify+ "index in symboltable: ");
 
 void performFunc(){
     
+}
+
+public String getMessage(){
+    return semanticErrorMessage;
+}
+
+private void setAssignmentMessage(){
+    semanticErrorMessage = "Invalid assignment statement.";
+}
+
+private void setParameterMessage(){
+    semanticErrorMessage = "Number of parameters in function call at line does not match with function.";
+}
+
+private void setLValueMessage(){
+    semanticErrorMessage = "LValue required.";
+}
+
+private void setMainMessage(){
+    semanticErrorMessage = "Invalid reserved word.";
 }
 }
