@@ -64,27 +64,22 @@ public class Parser {
             //System.out.println("input stack top: "+tokens.peek().getToken());
             //System.out.println("productions: "+productions+"\n\n");
             try{
-                if(tokens.empty() && !productions.empty()){
-                    errorDetected = true;
-                    errorMessage = "Error found while parsing code.";
-                } else{
-                    if(!tokens.peek().getToken().equals(productions.peek())){
-                        if(productions.peek().equals("epsilon")){            // Peek of production stack is epsilon
-                            adjustTreePtr();
-                            productions.pop();
-                        } else{                                              
-                            if(lookUpTable.isTerminal(productions.peek())){  // Peek of both stacks are terminals and dont match
-                                errorDetected = true;
-                                errorMessage = "Error found while parsing "+tokens.peek().getToken();
-                            } else{                                          // Peek of both stacks dont match and there is a production
-                                errorDetected = splitProductionTop();
-                            }
-                        }
-                    } else {                                                // Peek of input stack is terminal and matches production stack
+                if(!tokens.peek().getToken().equals(productions.peek())){
+                    if(productions.peek().equals("epsilon")){            // Peek of production stack is epsilon
                         adjustTreePtr();
-                        tokens.pop();
                         productions.pop();
+                    } else{                                              
+                        if(lookUpTable.isTerminal(productions.peek())){  // Peek of both stacks are terminals and dont match
+                            errorDetected = true;
+                            errorMessage = "Error found while parsing "+tokens.peek().getToken();
+                        } else{                                          // Peek of both stacks dont match and there is a production
+                            errorDetected = splitProductionTop();
+                        }
                     }
+                } else {                                                // Peek of input stack is terminal and matches production stack
+                    adjustTreePtr();
+                    tokens.pop();
+                    productions.pop();
                 }
             }catch(EmptyStackException ex){ 
                 errorDetected = true;
@@ -92,9 +87,12 @@ public class Parser {
             }
         }while(errorDetected == false && !tokens.empty());
 
-        if(errorDetected == false){
+        if(tokens.empty() && !productions.empty()){
+            errorMessage = "Error found while parsing code.";
+        } else if(errorDetected == false){
             errorMessage = "Syntax check - Success!";
-        }
+        }        
+        
         return errorMessage;
     }
     
