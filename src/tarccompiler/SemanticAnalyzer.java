@@ -154,10 +154,12 @@ void checkDataType(){
                     " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
 
             if(verifyDT.equals(true)){
-               for(j = 0; j<symbolTable.getLast() && (!symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i))
-                        && !symbolTable.table.get(j).datatype.equals(storeAllDecVar.get(i+1))); j++);
-                if(j<symbolTable.getLast())
+               for(j = 0; j<=symbolTable.getLast(); j++){
+                  if(symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i)) && symbolTable.table.get(j).datatype.equals(storeAllDecVar.get(i+2))){
                     symbolTable.table.get(j).actualValue = storeAllDecVar.get(i+1);
+                  }
+               }
+                
             }
         }
 }
@@ -314,5 +316,9 @@ ArrayList<String> checkFuncDetails(ArrayList<String> allFuncs, int j){
     }
 System.err.println("index in symboltable: "+ret);
     return ret;
+}
+
+void performFunc(){
+    
 }
 }
