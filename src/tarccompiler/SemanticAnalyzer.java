@@ -212,8 +212,6 @@ void checkFuncCall(){
         int i, j;
         ArrayList<String> storeAllFuncs = new ArrayList<String>();
         
-        ArrayList<String> storeFuncCalls = new ArrayList<String>();
-        
         for(i = 0;i<list.size()-1 && !"#main".equals(list.get(i)); i++){
             if(list.get(i).equals("#func")){
                 storeAllFuncs.add(Integer.toString(i)); //1st: starting index of function in the list
@@ -238,7 +236,7 @@ void checkFuncCall(){
                 if(list.get(j).equals("#"+storeAllFuncs.get(i+1))){
                     System.err.println("Function call at: "+j+" = #"+storeAllFuncs.get(i+1));
                     //storeFuncCalls.add(Integer.toString(j));
-                    performFunc(storeAllFuncs, j, storeAllFuncs.get(i+1));
+                    checkFuncDetails(storeAllFuncs, j);
                 }
             }
             
@@ -247,23 +245,21 @@ void checkFuncCall(){
         
 }
 
-void performFunc(ArrayList<String> allFuncs, int j, String funcRefer){
+void checkFuncDetails(ArrayList<String> allFuncs, int j){
     int i, countParam=0;
     for(i=j+1; !")".equals(list.get(i+1)); i++){
+        if(!",".equals(list.get(i+1)))    
             countParam++;
-            
     }
     System.err.println(countParam);
     
-    for(i=0;i<allFuncs.size()-1; i=i+3);
-    
-    if(i<allFuncs.size()-1 && allFuncs.get(i+1).equals(funcRefer)){
-        if(countParam!=Integer.parseInt(allFuncs.get(i+2))){
-            System.err.println("Number of parameters in function call at line j does not match with function.");
-        
-    }
-    
-    
+    for(i=0;i<allFuncs.size()-1; i=i+3){
+        String FuncName="#"+allFuncs.get(i+1);
+        if(FuncName.equals(list.get(j))){
+            if(countParam!=Integer.parseInt(allFuncs.get(i+2))){
+                System.err.println("Number of parameters in function call at line "+j+" does not match with function.");
+            }
+        }
     }
 }
 //<editor-fold defaultstate="collapsed" desc="Checking-Old">
