@@ -309,14 +309,23 @@ public class CompilerGUI extends javax.swing.JFrame {
                 // Semantic Analyzer
                 ArrayList<String> s = new ArrayList<String>();
                 SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable, s);
-                // Code Generator
-                CodeGenerator codeG = new CodeGenerator(tokensForParser, symbolTable);
-                codeG.adjustLexemes();
-                codeG.translateToJava();
-                codeG.writeCompileRun();
-                String output = codeG.getOutput();
-                // Display output
-                this.taOutput.setText(output);
+                semAnalyze.checkDataType();
+                semAnalyze.checkFuncCall();
+                message = semAnalyze.getMessage();
+                if(message.equals("Success")){
+                    // Code Generator
+                    CodeGenerator codeG = new CodeGenerator(tokensForParser, symbolTable);
+                    codeG.adjustLexemes();
+                    codeG.translateToJava();
+                    codeG.writeCompileRun();
+                    String output = codeG.getOutput();
+                    // Display output
+                    this.taOutput.setText(output);
+                } else{
+                    // Error
+                    labelStatus.setForeground(Color.RED);
+                    labelStatus.setText(message);
+                }
             } else{
                 // Error
                 labelStatus.setForeground(Color.RED);
