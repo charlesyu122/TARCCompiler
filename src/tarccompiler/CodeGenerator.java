@@ -5,6 +5,11 @@
 package tarccompiler;
 
 import datamodels.Token;
+import files.WriteFile;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import storage.SymbolTable;
 
@@ -19,15 +24,14 @@ public class CodeGenerator {
     SymbolTable symbolTable;
     ArrayList<Token> tokens;
     ArrayList<String> lexemes;
+    String output = "";
     
     // Constructor
     public CodeGenerator(ArrayList<Token> tokens, SymbolTable symbolTbl){
         this.tokens = tokens;
         this.symbolTable = symbolTbl;
         this.lexemes = new ArrayList<String>();
-        this.adjustLexemes();
         //this.displayLexemes();
-        this.translateToJava();
     }
     
     // Methods
@@ -67,7 +71,7 @@ public class CodeGenerator {
             } else if(curLexeme.equals("end")){
                 javaCode+="\n} \n";
             } else if(curLexeme.equals("#func")){
-                javaCode+="\npublic void ";
+                javaCode+="\npublic static void ";
             } else if(curLexeme.equals("#main")){
                 javaCode += "\npublic static void main(String[] args)";
                 i += 2;
@@ -82,7 +86,7 @@ public class CodeGenerator {
                 for(int j=i; check == false && j>0; j--){
                     if(lexemes.get(j).equals("(")){
                         check = true;
-                        if(lexemes.get(j-1).equals("if") && lexemes.get(j-1).equals("while")){
+                        if(lexemes.get(j-1).equals("if") || lexemes.get(j-1).equals("while")){
                             javaCode += "){ \n";
                         } else{
                             javaCode += curLexeme+" ";
@@ -90,14 +94,45 @@ public class CodeGenerator {
                     }
                 } 
             } else if(curLexeme.charAt(0) == '#'){
-                javaCode += curLexeme.substring(1) + " ";
+                javaCode += curLexeme.substring(1);
             } else{
-                javaCode += " "+curLexeme+" ";
+                if(curLexeme.equals("=")){
+                    javaCode += " " +curLexeme + " ";
+                }else{
+                    javaCode += curLexeme;
+                }
             }
         }
         this.javaCode += "}";
-        System.out.println ("Java Code: \n" + javaCode);
     }
     
+    public void writeCompileRun(){
+        WriteFile file = new WriteFile(new File("TARCCode.java"), javaCode); 
+        file.write();
+        try{
+            Process pro;
+            pro = Runtime.getRuntime().exec("javac TARCCode.java");
+            printLines(" stderr:", pro.getErrorStream());
+            pro = Runtime.getRuntime().exec("java TARCCode");
+            printLines(" Output:", pro.getInputStream());
+            printLines(" stderr:", pro.getErrorStream());
+            pro.waitFor();
+            System.out.println(" exitValue() " + pro.exitValue());
+        }catch (Exception e) {
+        }
+    }
+    
+    private void printLines(String name, InputStream ins) throws Exception {
+        String line;
+        BufferedReader in = new BufferedReader(new InputStreamReader(ins));
+        while ((line = in.readLine()) != null) {
+            System.out.println(name + " " + line);
+            this.output += line;
+        }
+    }
+    
+    public String getOutput(){
+        return this.output;
+    }
     
 }

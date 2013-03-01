@@ -148,7 +148,6 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         taOutput.setEditable(false);
         taOutput.setColumns(20);
-        taOutput.setForeground(new java.awt.Color(255, 0, 0));
         taOutput.setRows(5);
         jScrollPane4.setViewportView(taOutput);
 
@@ -312,6 +311,12 @@ public class CompilerGUI extends javax.swing.JFrame {
                 SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable, s);
                 // Code Generator
                 CodeGenerator codeG = new CodeGenerator(tokensForParser, symbolTable);
+                codeG.adjustLexemes();
+                codeG.translateToJava();
+                codeG.writeCompileRun();
+                String output = codeG.getOutput();
+                // Display output
+                this.taOutput.setText(output);
             } else{
                 // Error
                 labelStatus.setForeground(Color.RED);
