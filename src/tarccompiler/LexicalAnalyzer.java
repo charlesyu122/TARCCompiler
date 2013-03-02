@@ -82,7 +82,7 @@ public class LexicalAnalyzer {
             } else if(isNumeric(curLexeme)){                                  // Number
                 container.setToken("int");
                 container.setTokenInfo(curLexeme);
-            } else if(curLexeme.length() == 1 && tokens.get(tokens.size()-1).getToken().equals("'")){    // Character
+            } else if(tokens.size()>0 && curLexeme.length() == 1 && tokens.get(tokens.size()-1).getToken().equals("'")){    // Character
                 container.setToken("char");
                 container.setTokenInfo(curLexeme);
             } else if(tokens.size()>1 && tokens.get(tokens.size()-1).getToken().equals("\"")){   // String

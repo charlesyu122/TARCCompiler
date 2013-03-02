@@ -78,7 +78,7 @@ public class CodeGenerator {
             } else if(curLexeme.equals("#int") || curLexeme.equals("#char") || curLexeme.equals("#boolean")){
                 javaCode += curLexeme.substring(1)+" ";
             } else if(curLexeme.equals("#puts")){
-                javaCode += "System.out.print";
+                javaCode += "System.out.println";
             } else if(curLexeme.equals("else")){
                 javaCode += "\n } else{ \n";
             } else if(curLexeme.equals(")")){
@@ -127,7 +127,7 @@ public class CodeGenerator {
         BufferedReader in = new BufferedReader(new InputStreamReader(ins));
         while ((line = in.readLine()) != null) {
             System.out.println(name + " " + line);
-            this.output += line;
+            this.output += line+"\n";
         }
     }
     
