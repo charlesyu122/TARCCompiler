@@ -29,9 +29,17 @@ public class SemanticAnalyzer {
         //displaySymbolTable();    
     }
     
+    public void checkAllVariables(){
+        
+        int i;
+        
+     
+        
+    }
+    
     // Methods
     //<editor-fold defaultstate="collapsed" desc="Debugging Methods">
-    private void displaySymbolTable(){
+    public void displaySymbolTable(){
         System.out.println("\n\nSymbol Table:");
         System.out.println("token \t\t tokenVal \t\t datatype \t\t scope \t\t actual value");
         for(int i=0; i<symbolTable.table.size(); i++){
@@ -157,11 +165,27 @@ public class SemanticAnalyzer {
                         " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
                 
                 if(verifyDT.equals(true)){
-                    for(j = 0; j<=symbolTable.getLast(); j++){
-                        if(symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i)) && symbolTable.table.get(j).datatype.equals(storeAllDecVar.get(i+2))){
+                    /*for(j = 0; j<=symbolTable.getLast(); j++){
+                        if(symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i)) && symbolTable.table.get(j).scope.equals(storeAllDecVar.get(i+3))){
                             symbolTable.table.get(j).actualValue = storeAllDecVar.get(i+1);
+                        
                         }
+                    }*/
+                    int k, l;
+                    for(k = 0; k<storeAllDecVar.size()-1; k = k+4){
+                        
+                        Boolean out2ndForLoop = false;
+                        for(l = 0; l<=symbolTable.getLast() && out2ndForLoop==false; l++){
+                            //String s = storeAllDecVar.get(k)
+                            if(storeAllDecVar.get(k).contains(symbolTable.table.get(l).tokenValue) && storeAllDecVar.get(k+3).contains(symbolTable.table.get(l).scope)){
+                                symbolTable.table.get(l).actualValue = storeAllDecVar.get(k+1);
+                            }
+                        }
+                    
                     }
+                    
+                    
+                    
                 } else {
                     
                     if(verifyLR.equals(true)){
@@ -249,10 +273,10 @@ public class SemanticAnalyzer {
             
             for(j = 0; j<list.size()-1; j++){
                 
-                if(list.get(j).equals("#"+storeAllFuncs.get(i+1))){
-                    System.err.println("Function call at: "+j+" = #"+storeAllFuncs.get(i+1));
+                if(list.get(j).equals(storeAllFuncs.get(i+1))){
+                    System.err.println("Function call at: "+j+" ="+storeAllFuncs.get(i+1));
                     //storeFuncCalls.add(Integer.toString(j));
-                    performFunc = checkFuncDetails(storeAllFuncs, j);
+                    performFunc = checkFuncCallDetails(storeAllFuncs, j);
                 }
             }
             
@@ -260,7 +284,7 @@ public class SemanticAnalyzer {
     
     }
     
-    private ArrayList<String> checkFuncDetails(ArrayList<String> allFuncs, int j){
+    private ArrayList<String> checkFuncCallDetails(ArrayList<String> allFuncs, int j){
         int i, countParam=0;
         int flagError = 0;
         ArrayList<String> funcVerify = new ArrayList<String>();
@@ -272,7 +296,7 @@ public class SemanticAnalyzer {
                 funcVerify.add(list.get(i+1));
             }
         }
-        System.err.println(funcVerify);
+        System.err.println("Parameters of function call: "+funcVerify);
         
         for(i=0;i<allFuncs.size()-1; i=i+3){
             String FuncName="#"+allFuncs.get(i+1);
@@ -316,7 +340,7 @@ public class SemanticAnalyzer {
                 }
             }
         }
-        System.err.println(funcVerify+ "index in symboltable: ");
+        //System.err.println(funcVerify+ "index in symboltable: ");
         return ret;
     }
     
