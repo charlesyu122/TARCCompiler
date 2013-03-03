@@ -25,7 +25,8 @@ public class SemanticAnalyzer {
         this.astTree = tree;
         this.symbolTable = symTbl;
         this.list = list;
-        this.storeToken(astTree.getRoot(), list);      
+        this.storeToken(astTree.getRoot(), list);
+        System.err.println("NI SUD DIRI");      
         //displaySymbolTable();    
     }
     
@@ -89,6 +90,8 @@ public class SemanticAnalyzer {
     public void checkDataType(){
         int i, j;
         Boolean charTypeChecker = true;
+        Boolean verifyDeclarationOfVariable = true;
+            
         ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
         ArrayList<Integer> storeFuncInST = new ArrayList<Integer>();
         ArrayList<String> storeAllDecVar = new ArrayList<String>();
@@ -141,12 +144,21 @@ public class SemanticAnalyzer {
                                 stopScan = true;
                             }
                         }
+                        
+                        if(dt!=null){
+                        
                         storeAllDecVar.add(dt);
                         storeAllDecVar.add("#"+scopeOfVar);
                         if(dt.equals("#char")){
                             charTypeChecker = (list.get(j+2).equals(";"))?false:true;
+                            System.err.println("NUM"+ list.get(j));
                         }
                     }
+                        else{
+                            verifyDeclarationOfVariable = false;
+                            this.setUndeclaredVarMessage();
+                        }
+                 }
                 }
                 if("#main".equals(list.get(j+1)) || "#func".equals(list.get(j+1))){
                     i++;
@@ -154,11 +166,26 @@ public class SemanticAnalyzer {
             }
             
             System.err.println("\nDEC STATEMENTS: "+storeAllDecVar);
+            /* 
+            Boolean verifyDeclarationOfVariable = true;
             
-            //Type Checking comes in
+            int totalDecStatements = storeAllDecVar.size()/4;
+            int counter = 0;
+            for(i=0; i<storeAllDecVar.size()-1; i=i+4){
+                for(j=0; j<symbolTable.getLast()+1 && verifyDeclarationOfVariable==true; j++){
+                    if(storeAllDecVar.get(i).equals(symbolTable.table.get(j).tokenValue) && storeAllDecVar.get(i+3).equals(symbolTable.table.get(j).scope))
+                        counter++;
+                }
+            }
+            System.err.println(totalDecStatements + " " + counter);
+            */
+            
+           //Type Checking comes in		
+			if(verifyDeclarationOfVariable!=false){
             Boolean verifyDT = true;
             Boolean verifyLR = true;
             for(i=0; i<storeAllDecVar.size(); i=i+4){
+                System.err.println(storeAllDecVar.get(i+1)+storeAllDecVar.get(i+2));
                 verifyDT = (charTypeChecker==false)?false:checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
                 verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
                 System.err.println(storeAllDecVar.get(i) +" is a "+ storeAllDecVar.get(i+2)+
@@ -184,8 +211,6 @@ public class SemanticAnalyzer {
                     
                     }
                     
-                    
-                    
                 } else {
                     
                     if(verifyLR.equals(true)){
@@ -195,13 +220,19 @@ public class SemanticAnalyzer {
                     }
                 }
             }
-        }else{
+			}
+        }
+        
+        
+        else{
             this.setMainMessage();
         }
+        
     }
     
     private Boolean checkType(String value, String dataType){
         //sample: x, add, #int
+        
         Boolean ret = false;
         
         if( "#int".equals(dataType)){
@@ -212,8 +243,10 @@ public class SemanticAnalyzer {
                 return false;
             }
         }
+       
+        
         else if("#char".equals(dataType)){
-            
+             System.err.println(value);
             int charVerifier = 0;
             //ret = (value.length()>1)? false: true;
             try{
@@ -222,7 +255,7 @@ public class SemanticAnalyzer {
             }catch(NumberFormatException e) {
                 charVerifier = 0;
             }
-            ret = (value.length()>1 || charVerifier==1)? false: true;
+            ret = (value.length()>1)? false: true;
         }
         else if("#boolean".equals(dataType)){
             ret = ("false".equals(value)|| "true".equals(value))? true: false;
@@ -266,21 +299,42 @@ public class SemanticAnalyzer {
             }
         }
         System.err.println("Function Information (by 3): "+storeAllFuncs);
-        
+        Boolean verifyDuplication = false;
+          
+        //check for duplicate function names
+        for(i = 0;i<storeAllFuncs.size()-1; i=i+3){
+             for(j = i+3;j<storeAllFuncs.size() && verifyDuplication==false; j=j+3){
+               if(storeAllFuncs.get(i+1).equals(storeAllFuncs.get(j+1))){
+                   verifyDuplication=true;
+                   this.setDuplicateFuncNameMessage();
+               }
+           }
+       
+        }
+        if(verifyDuplication==false){
         ArrayList<String> performFunc = new ArrayList<String>();
         //scan list for function calls
         for(i = 0;i<storeAllFuncs.size(); i=i+3){
             
             for(j = 0; j<list.size()-1; j++){
-                
-                if(list.get(j).equals(storeAllFuncs.get(i+1))){
-                    System.err.println("Function call at: "+j+" ="+storeAllFuncs.get(i+1));
+               if(list.get(j).equals(storeAllFuncs.get(i+1))){
+                   
+                    if(j!=Integer.parseInt(storeAllFuncs.get(i))+1){
+                    
+                    System.err.println("Function call at: "+j+"="+storeAllFuncs.get(i+1));
                     //storeFuncCalls.add(Integer.toString(j));
                     performFunc = checkFuncCallDetails(storeAllFuncs, j);
+                    }
                 }
+               else if(list.get(j).equals("#"+storeAllFuncs.get(i+1))){
+                   this.setInvalidFuncMessage(); 
+                  
+               }
             }
             
         }
+        
+      }
     
     }
     
@@ -299,7 +353,7 @@ public class SemanticAnalyzer {
         System.err.println("Parameters of function call: "+funcVerify);
         
         for(i=0;i<allFuncs.size()-1; i=i+3){
-            String FuncName="#"+allFuncs.get(i+1);
+            String FuncName=allFuncs.get(i+1);
             if(FuncName.equals(list.get(j))){
                 if(countParam!=Integer.parseInt(allFuncs.get(i+2))){
                     System.err.println("Number of parameters in function call at line "+j+" does not match with function.");
@@ -321,6 +375,7 @@ public class SemanticAnalyzer {
         
         for(i = 0; i<storeFuncInList.size()-1; i++){
             if(j>storeFuncInList.get(i) && j<storeFuncInList.get(i+1)){
+                System.err.println("HOY AWA NI: "+storeFuncInList);
                 if(list.get(storeFuncInList.get(i)).equals("#func")){
                     callingFunc = list.get(storeFuncInList.get(i)+1);
                 } else{
@@ -328,7 +383,11 @@ public class SemanticAnalyzer {
                 }
             }
         }
+        
         System.err.println("CALLING FUNC : " + callingFunc);
+        
+        //parameter type matching in function call and function
+        
         
         //perform function
         if(flagError!=1){
@@ -340,7 +399,6 @@ public class SemanticAnalyzer {
                 }
             }
         }
-        //System.err.println(funcVerify+ "index in symboltable: ");
         return ret;
     }
     
@@ -352,8 +410,12 @@ public class SemanticAnalyzer {
         semanticErrorMessage = "Invalid assignment statement.";
     }
     
+    private void setInvalidFuncMessage(){
+        semanticErrorMessage = "Invalid function call.";
+    }
+    
     private void setParameterMessage(){
-        semanticErrorMessage = "Number of parameters in function call at line does not match with function.";
+        semanticErrorMessage = "Number of parameters in a function call does not match with function's default number of parameters.";
     }
     
     private void setLValueMessage(){
@@ -362,5 +424,13 @@ public class SemanticAnalyzer {
     
     private void setMainMessage(){
         semanticErrorMessage = "Invalid reserved word.";
+    }
+    
+    private void setDuplicateFuncNameMessage(){
+        semanticErrorMessage = "Duplicate Function found.";
+    }
+    
+    private void setUndeclaredVarMessage(){
+        semanticErrorMessage = "Undeclared variable used.";
     }
 }
