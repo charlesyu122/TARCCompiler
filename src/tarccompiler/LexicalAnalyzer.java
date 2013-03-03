@@ -79,13 +79,15 @@ public class LexicalAnalyzer {
             String type = tvp.getType(curLexeme);
             if(type != null) {                                                // Keyword
                 container.setToken(curLexeme);      
-            } else if(isNumeric(curLexeme)){                                  // Number
+            } else if(tokens.size()>0 && isNumeric(curLexeme) 
+                    && (!tokens.get(tokens.size()-1).getToken().equals("'") && 
+                    !tokens.get(tokens.size()-1).getToken().equals("\""))){   // Number
                 container.setToken("int");
                 container.setTokenInfo(curLexeme);
             } else if(tokens.size()>0 && curLexeme.length() == 1 && tokens.get(tokens.size()-1).getToken().equals("'")){    // Character
                 container.setToken("char");
                 container.setTokenInfo(curLexeme);
-            } else if(tokens.size()>1 && tokens.get(tokens.size()-1).getToken().equals("\"")){   // String
+            } else if(tokens.size()>0 && tokens.get(tokens.size()-1).getToken().equals("\"")){   // String
                 String string = "";
                 for(; i<lexemes.size() && !lexemes.get(i).equals("\"") ;i++){
                     string += " "+lexemes.get(i);
