@@ -30,14 +30,6 @@ public class SemanticAnalyzer {
         //displaySymbolTable();    
     }
     
-    public void checkAllVariables(){
-        
-        int i;
-        
-     
-        
-    }
-    
     // Methods
     //<editor-fold defaultstate="collapsed" desc="Debugging Methods">
     public void displaySymbolTable(){
@@ -166,68 +158,47 @@ public class SemanticAnalyzer {
             }
             
             System.err.println("\nDEC STATEMENTS: "+storeAllDecVar);
-            /* 
-            Boolean verifyDeclarationOfVariable = true;
-            
-            int totalDecStatements = storeAllDecVar.size()/4;
-            int counter = 0;
-            for(i=0; i<storeAllDecVar.size()-1; i=i+4){
-                for(j=0; j<symbolTable.getLast()+1 && verifyDeclarationOfVariable==true; j++){
-                    if(storeAllDecVar.get(i).equals(symbolTable.table.get(j).tokenValue) && storeAllDecVar.get(i+3).equals(symbolTable.table.get(j).scope))
-                        counter++;
-                }
-            }
-            System.err.println(totalDecStatements + " " + counter);
-            */
-            
+           
            //Type Checking comes in		
-			if(verifyDeclarationOfVariable!=false){
-            Boolean verifyDT = true;
-            Boolean verifyLR = true;
-            for(i=0; i<storeAllDecVar.size(); i=i+4){
-                System.err.println(storeAllDecVar.get(i+1)+storeAllDecVar.get(i+2));
-                verifyDT = (charTypeChecker==false)?false:checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
-                verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
-                System.err.println(storeAllDecVar.get(i) +" is a "+ storeAllDecVar.get(i+2)+
-                        " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
-                
-                if(verifyDT.equals(true)){
-                    /*for(j = 0; j<=symbolTable.getLast(); j++){
-                        if(symbolTable.table.get(j).tokenValue.equals(storeAllDecVar.get(i)) && symbolTable.table.get(j).scope.equals(storeAllDecVar.get(i+3))){
-                            symbolTable.table.get(j).actualValue = storeAllDecVar.get(i+1);
+	    if(verifyDeclarationOfVariable!=false){
+                    Boolean verifyDT = true;
+                    Boolean verifyLR = true;
+                    
+                    for(i=0; i<storeAllDecVar.size(); i=i+4){
                         
-                        }
-                    }*/
-                    int k, l;
-                    for(k = 0; k<storeAllDecVar.size()-1; k = k+4){
-                        
-                        Boolean out2ndForLoop = false;
-                        for(l = 0; l<=symbolTable.getLast() && out2ndForLoop==false; l++){
-                            //String s = storeAllDecVar.get(k)
-                            if(storeAllDecVar.get(k).contains(symbolTable.table.get(l).tokenValue) && storeAllDecVar.get(k+3).contains(symbolTable.table.get(l).scope)){
-                                symbolTable.table.get(l).actualValue = storeAllDecVar.get(k+1);
+                        verifyDT = (charTypeChecker==false)?false:checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
+                        verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
+                        System.err.println(storeAllDecVar.get(i) +" is a "+ storeAllDecVar.get(i+2)+
+                                " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
+
+                        if(verifyDT.equals(true)){
+                           
+                            int k, l;
+                            for(k = 0; k<storeAllDecVar.size()-1; k = k+4){
+                                 Boolean out2ndForLoop = false;
+                                 for(l = 0; l<=symbolTable.getLast() && out2ndForLoop==false; l++){
+                                    //String s = storeAllDecVar.get(k)
+                                    if(storeAllDecVar.get(k).contains(symbolTable.table.get(l).tokenValue) && storeAllDecVar.get(k+3).contains(symbolTable.table.get(l).scope)){
+                                        symbolTable.table.get(l).actualValue = storeAllDecVar.get(k+1);
+                                    }
+                                }
+                            }
+
+                        } else {
+
+                            if(verifyLR.equals(true)){
+                                this.setAssignmentMessage();  
+                            } else{
+                                this.setLValueMessage();
                             }
                         }
-                    
                     }
-                    
-                } else {
-                    
-                    if(verifyLR.equals(true)){
-                        this.setAssignmentMessage();  
-                    } else{
-                        this.setLValueMessage();
-                    }
-                }
             }
-			}
         }
-        
         
         else{
             this.setMainMessage();
         }
-        
     }
     
     private Boolean checkType(String value, String dataType){
@@ -243,7 +214,6 @@ public class SemanticAnalyzer {
                 return false;
             }
         }
-       
         
         else if("#char".equals(dataType)){
              System.err.println(value);
@@ -283,6 +253,7 @@ public class SemanticAnalyzer {
         int i, j;
         ArrayList<String> storeAllFuncs = new ArrayList<String>();
         
+        
         for(i = 0;i<list.size()-1 && !"#main".equals(list.get(i)); i++){
             if(list.get(i).equals("#func")){
                 storeAllFuncs.add(Integer.toString(i)); //1st: starting index of function in the list
@@ -313,6 +284,7 @@ public class SemanticAnalyzer {
         }
         if(verifyDuplication==false){
         ArrayList<String> performFunc = new ArrayList<String>();
+        
         //scan list for function calls
         for(i = 0;i<storeAllFuncs.size(); i=i+3){
             
@@ -331,11 +303,8 @@ public class SemanticAnalyzer {
                   
                }
             }
-            
         }
-        
       }
-    
     }
     
     private ArrayList<String> checkFuncCallDetails(ArrayList<String> allFuncs, int j){
@@ -375,7 +344,6 @@ public class SemanticAnalyzer {
         
         for(i = 0; i<storeFuncInList.size()-1; i++){
             if(j>storeFuncInList.get(i) && j<storeFuncInList.get(i+1)){
-                System.err.println("HOY AWA NI: "+storeFuncInList);
                 if(list.get(storeFuncInList.get(i)).equals("#func")){
                     callingFunc = list.get(storeFuncInList.get(i)+1);
                 } else{
@@ -387,10 +355,13 @@ public class SemanticAnalyzer {
         System.err.println("CALLING FUNC : " + callingFunc);
         
         //parameter type matching in function call and function
-        
-        
-        //perform function
         if(flagError!=1){
+        Boolean paramType = paramTypeMatching(allFuncs, funcVerify, callingFunc,  j);
+        
+        if(paramType==false){
+            this.setFuncParamtypeMismatchMessage();
+        }
+        else{
             for(i=0; i<funcVerify.size(); i++){
                 for(j=0; j<symbolTable.getLast()+1; j++){   
                     if(symbolTable.table.get(j).tokenValue.equals(funcVerify.get(i)) && symbolTable.table.get(j).scope.equals(callingFunc)){
@@ -398,7 +369,43 @@ public class SemanticAnalyzer {
                     }
                 }
             }
+          }
         }
+        return ret;
+    }
+    
+    public Boolean paramTypeMatching(ArrayList<String> funcHeader, ArrayList<String> funcCallVars, String callingFunc, int callIndex){
+        Boolean ret = true;
+        int i, j, k;
+        ArrayList<String> funcMatchType = new ArrayList<String>();
+        
+        for(i=0; i<funcHeader.size(); i=i+3){
+            if(list.get(callIndex).equals(funcHeader.get(i+1))){
+            
+                for(j=Integer.parseInt(funcHeader.get(i))+2; !list.get(j).equals(")"); j++){
+                    if(list.get(j).equals("#int") || list.get(j).equals("#char") || list.get(j).equals("#boolean")){
+                        funcMatchType.add(list.get(j));
+                        funcMatchType.add(list.get(j+1));
+                    }
+                }
+            }
+        }
+        for(i=0, k=0; i<funcMatchType.size() && ret==true; i=i+2, k++){
+            for(j=0; j<symbolTable.getLast()+1; j++){
+                
+                if(!funcCallVars.get(k).equals(funcMatchType.get(i+1))){
+                    ret = false;
+                }
+                
+                else if(symbolTable.table.get(j).tokenValue.equals(funcCallVars.get(k)) && symbolTable.table.get(j).scope.equals(callingFunc)){
+                    if(!symbolTable.table.get(j).datatype.equals(funcMatchType.get(i)))
+                        ret = false;
+                }
+                
+                
+            }
+        }
+        System.err.println(funcMatchType + "+ "+ funcCallVars+ret);
         return ret;
     }
     
@@ -433,4 +440,9 @@ public class SemanticAnalyzer {
     private void setUndeclaredVarMessage(){
         semanticErrorMessage = "Undeclared variable used.";
     }
+    
+    private void setFuncParamtypeMismatchMessage(){
+        semanticErrorMessage = "Function Parameter Type Mismatch.";
+    }
+    
 }
