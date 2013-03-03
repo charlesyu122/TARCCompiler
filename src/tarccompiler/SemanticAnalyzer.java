@@ -250,7 +250,7 @@ public class SemanticAnalyzer {
     
     public void checkFuncCall(){
         //store Function Details in an Array List
-        int i, j;
+        int i, j, k;
         ArrayList<String> storeAllFuncs = new ArrayList<String>();
         
         
@@ -284,26 +284,34 @@ public class SemanticAnalyzer {
         }
         if(verifyDuplication==false){
         ArrayList<String> performFunc = new ArrayList<String>();
-        String verifyFuncName = new String();
+        int count = 0;
+        int countTrue = 0;
         //scan list for function calls
         for(i = 0;i<storeAllFuncs.size(); i=i+3){
             
             for(j = 0; j<list.size()-1; j++){
-               if(list.get(j).equals(storeAllFuncs.get(i+1))){
-                   
-                    if(j!=Integer.parseInt(storeAllFuncs.get(i))+1){
+                
+                if(list.get(j).equals("#"+storeAllFuncs.get(i+1)) || (list.get(j).contains(storeAllFuncs.get(i+1)) && list.get(j).length()!=storeAllFuncs.get(i+1).length())){
+                        this.setInvalidFuncMessage(); 
+                    }
+                else if(list.get(j+1).equals("(") && (list.get(j+3).equals(",")|| list.get(j+2).equals(")")) && !list.get(j).equals("#main") && !list.get(j-1).equals("#func") && !list.get(j).equals("#puts")){
+                  // System.err.println("hi"+list.get(j));
+                    count++;
                     
-                    System.err.println("Function call at: "+j+"="+storeAllFuncs.get(i+1));
-                    //storeFuncCalls.add(Integer.toString(j));
-                    performFunc = checkFuncCallDetails(storeAllFuncs, j);
+                    if(list.get(j).equals(storeAllFuncs.get(i+1))){
+                        if(j!=Integer.parseInt(storeAllFuncs.get(i))+1){
+                        countTrue++;
+                        System.err.println("Function call at: "+j+"="+storeAllFuncs.get(i+1));
+                        performFunc = checkFuncCallDetails(storeAllFuncs, j);
+
+                        }
                     }
                 }
-               else if(list.get(j).equals("#"+storeAllFuncs.get(i+1)) || (list.get(j).contains(storeAllFuncs.get(i+1)) && list.get(j).length()!=storeAllFuncs.get(i+1).length())){
-                   this.setInvalidFuncMessage(); 
-                  
-               }
             }
         }
+        System.err.println(count+""+countTrue);
+        if(count>countTrue)
+              this.setInvalidFuncMessage(); 
       }
     }
     
