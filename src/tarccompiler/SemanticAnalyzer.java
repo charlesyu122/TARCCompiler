@@ -284,7 +284,7 @@ public class SemanticAnalyzer {
         }
         if(verifyDuplication==false){
         ArrayList<String> performFunc = new ArrayList<String>();
-        
+        String verifyFuncName = new String();
         //scan list for function calls
         for(i = 0;i<storeAllFuncs.size(); i=i+3){
             
@@ -298,7 +298,7 @@ public class SemanticAnalyzer {
                     performFunc = checkFuncCallDetails(storeAllFuncs, j);
                     }
                 }
-               else if(list.get(j).equals("#"+storeAllFuncs.get(i+1))){
+               else if(list.get(j).equals("#"+storeAllFuncs.get(i+1)) || (list.get(j).contains(storeAllFuncs.get(i+1)) && list.get(j).length()!=storeAllFuncs.get(i+1).length())){
                    this.setInvalidFuncMessage(); 
                   
                }
