@@ -131,7 +131,7 @@ public class Parser {
         if(prods.length == 1){
             correctProd = prods[0];
         } else{
-            if(prods[0].equals("ASSIGNMENT_STATEMENT")){ // For OTHER_STATEMENT Exception
+            if(prods[0].equals("ASSIGNMENT_STATEMENT")){      // For OTHER_STATEMENT Exception
                 if(tokens.get(tokens.size()-2).getToken().equals("=")){
                     correctProd = prods[0];
                 } else{

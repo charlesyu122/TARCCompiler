@@ -301,7 +301,7 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "VALUE", "null", "null", 
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "true", "false", "null"},
                         
                         //ARITHMETIC_CHOICE
                         {"null", "null", "null", "null", "null",
