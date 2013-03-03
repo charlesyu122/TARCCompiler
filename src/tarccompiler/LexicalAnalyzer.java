@@ -90,7 +90,7 @@ public class LexicalAnalyzer {
             } else if(tokens.size()>0 && tokens.get(tokens.size()-1).getToken().equals("\"")){   // String
                 String string = "";
                 for(; i<lexemes.size() && !lexemes.get(i).equals("\"") ;i++){
-                    string += " "+lexemes.get(i);
+                    string += lexemes.get(i) + " ";
                 }
                 i--;
                 container.setToken("string");

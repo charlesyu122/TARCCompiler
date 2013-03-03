@@ -142,7 +142,7 @@ public class CodeGenerator {
                         if(lexemes.get(j-1).equals("if") || lexemes.get(j-1).equals("while")){
                             javaCode += "){ \n";
                         } else{
-                            javaCode += curLexeme+" ";
+                            javaCode += curLexeme;
                         }
                     }
                 } 
