@@ -4,6 +4,8 @@
  */
 package tarccompiler;
 
+import datamodels.Declaration;
+import datamodels.SymbolTableModel;
 import datamodels.Token;
 import files.WriteFile;
 import java.io.BufferedReader;
@@ -25,13 +27,16 @@ public class CodeGenerator {
     ArrayList<Token> tokens;
     ArrayList<String> lexemes;
     String output = "";
+    ArrayList<Declaration> declarations;
     
     // Constructor
     public CodeGenerator(ArrayList<Token> tokens, SymbolTable symbolTbl){
         this.tokens = tokens;
         this.symbolTable = symbolTbl;
         this.lexemes = new ArrayList<String>();
+        this.declarations = new ArrayList<Declaration>();
         //this.displayLexemes();
+        this.displaySymbolTable();
     }
     
     // Methods
@@ -40,6 +45,14 @@ public class CodeGenerator {
         System.out.println("CODE GENERATOR ");
         for(int i=0; i < this.lexemes.size(); i++){
             System.out.println(lexemes.get(i));
+        }
+    }
+    private void displaySymbolTable(){
+        System.out.println("\n\nSymbol Table:");
+        System.out.println("token \t\t tokenVal \t\t datatype \t\t scope \t\t actual value");
+        for(int i=0; i<symbolTable.table.size(); i++){
+            SymbolTableModel temp = symbolTable.table.get(i);
+            System.out.println(temp.token+" \t\t "+temp.tokenValue+" \t\t\t "+temp.datatype+" \t\t\t "+temp.scope+"\t\t\t"+temp.actualValue);
         }
     }
     //</editor-fold>
@@ -57,8 +70,46 @@ public class CodeGenerator {
         }
     }
     
+    @SuppressWarnings("empty-statement")
+    private void getMainDeclarations(){
+        // Find main
+        int i;
+        for(i=0; i<this.lexemes.size() && !lexemes.get(i).equals("#main") ;i++);
+        i+=4;
+        String startDec = this.lexemes.get(i);
+        while(startDec.equals("#int") || startDec.equals("#char") || startDec.equals("#boolean")){
+            this.declarations.add(new Declaration(startDec.substring(1), lexemes.get(i+1)));
+            // Delete global declarations
+            for(int ctr=0; ctr<3; ctr++){
+                this.lexemes.remove(i);
+            }
+            startDec = this.lexemes.get(i);
+        }
+    }
+    
+    private void setGlobalVars(){
+        for(int i=0; i<this.declarations.size() ;i++){
+            Declaration temp = declarations.get(i);
+            this.javaCode += "static " + temp.getDatatype() + " " + temp.getVariable() + ";";
+        }
+        this.javaCode += "\n";
+    }
+    
+    private boolean checkIfFunction(String lexeme){
+        boolean functionCheck = false;
+        for(int i=0; functionCheck == false && i<symbolTable.table.size(); i++){
+            if(lexeme.equals(symbolTable.table.get(i).tokenValue) && symbolTable.table.get(i).datatype.equals("#func")){
+                functionCheck = true;
+            }
+        }
+        return functionCheck;
+    }
+    
+    @SuppressWarnings("empty-statement")
     public void translateToJava(){
-        this.javaCode = "public class TARCCode{";
+        this.getMainDeclarations();
+        this.javaCode = "public class TARCCode{\n";
+        this.setGlobalVars();
         for(int i=0; i<this.lexemes.size(); i++){
             String curLexeme = lexemes.get(i);
             // Convert to java
@@ -71,7 +122,9 @@ public class CodeGenerator {
             } else if(curLexeme.equals("end")){
                 javaCode+="\n} \n";
             } else if(curLexeme.equals("#func")){
-                javaCode+="\npublic static void ";
+                javaCode+="\npublic static void " + lexemes.get(++i) + lexemes.get(++i);
+                // Remove function parameters
+                for(i++; !lexemes.get(i+1).equals(")"); i++);
             } else if(curLexeme.equals("#main")){
                 javaCode += "\npublic static void main(String[] args)";
                 i += 2;
@@ -99,7 +152,13 @@ public class CodeGenerator {
                 if(curLexeme.equals("=")){
                     javaCode += " " +curLexeme + " ";
                 }else{
-                    javaCode += curLexeme;
+                    if(checkIfFunction(curLexeme)){
+                        javaCode += curLexeme + "(";
+                        // Remove parameters
+                        for(i+=1; !lexemes.get(i+1).equals(")"); i++);
+                    } else{
+                        javaCode += curLexeme;
+                    }
                 }
             }
         }
