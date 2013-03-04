@@ -123,27 +123,31 @@ public class SemanticAnalyzer {
                                 stopScan = true;
                             }
                         }
-                        
+                        Boolean checkAssignment = true;
                         if(dt!=null){
-                        
-                        storeAllDecVar.add(dt);
-                        storeAllDecVar.add("#"+scopeOfVar);
-                        if(dt.equals("#char")){
-                            charTypeChecker = (list.get(j+2).equals(";"))?false:true;
+                            storeAllDecVar.add(dt);
+                            storeAllDecVar.add("#"+scopeOfVar);
                             
+                            if(dt.equals("#char"))
+                                charTypeChecker = (list.get(j+2).equals(";"))?false:true;
+
+                            checkAssignment = checkAssignmentStatement(dt, list.get(j-1),list.get(j+valIncrementer), scopeOfVar);
                         }
-                    }
-                        else{
+                        if(dt!=null && checkAssignment==false){
+                            this.setAssignmentMessage();
+                        }
+                        else if(dt==null){
                             verifyDeclarationOfVariable = false;
                             this.setUndeclaredVarMessage();
                         }
                  }
                 }
+                        
                 if("#main".equals(list.get(j+1)) || "#func".equals(list.get(j+1))){
                     i++;
                 }
             }
-           
+            
            //Type Checking comes in		
 	    if(verifyDeclarationOfVariable!=false){
                     Boolean verifyDT = true;
@@ -152,8 +156,7 @@ public class SemanticAnalyzer {
                     for(i=0; i<storeAllDecVar.size(); i=i+4){
                         
                         verifyDT = (charTypeChecker==false)?false:checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
-                        verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
-       
+                       
                         if(verifyDT.equals(true)){
                            
                             int k, l;
@@ -165,14 +168,7 @@ public class SemanticAnalyzer {
                                     }
                                 }
                             }
-                        } else {
-
-                            if(verifyLR.equals(true)){
-                                this.setAssignmentMessage();  
-                            } else{
-                                this.setLValueMessage();
-                            }
-                        }
+                        } 
                     }
             }
         }
@@ -199,20 +195,6 @@ public class SemanticAnalyzer {
         else if("#boolean".equals(dataType)){
             ret = ("false".equals(value)|| "true".equals(value))? true: false;
         }
-        return ret;
-    }
-    
-    private Boolean LRCheck(String leftVal, String dataType){
-        Boolean ret = false;
-        int i;
-        //first: traverse symbolTable, and look for the tokenValue that matches leftVal
-        for(i = 0; i<symbolTable.getLast()+1 && ret==false; i++){
-            if(symbolTable.table.get(i).tokenValue.equals(leftVal) &&symbolTable.table.get(i).datatype.equals(dataType)){
-                ret = true;
-            }
-        }
-        //if loop ended and i is still less than the last index of symbolTable, it means there was a match
-        //leftVal is a variable
         return ret;
     }
     
@@ -437,6 +419,23 @@ public class SemanticAnalyzer {
         return ret;
     }
     
+    private Boolean checkAssignmentStatement(String dt, String left, String right, String scopeOfLeft) {
+        Boolean ret = true;
+        int i;
+        if(scopeOfLeft.equals("main"))
+            scopeOfLeft = "#main";
+        
+        for(i=0; i<symbolTable.getLast()+1; i++){
+           
+            if(symbolTable.table.get(i).tokenValue.equals(right) && symbolTable.table.get(i).scope.equals(scopeOfLeft)){
+                if(!symbolTable.table.get(i).datatype.equals(dt)){
+                    ret = false;
+                }
+            }
+        }
+        return ret;
+    }
+    
     public String getMessage(){
         return semanticErrorMessage;
     }
@@ -476,5 +475,6 @@ public class SemanticAnalyzer {
     private void setFuncParamtypeMismatchMessage(){
         semanticErrorMessage = "Function Parameter Type Mismatch.";
     }
+
     
 }
