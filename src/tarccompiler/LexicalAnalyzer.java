@@ -51,7 +51,7 @@ public class LexicalAnalyzer {
                 }                
             }
         }   
-        //this.displayLexemes();
+        this.displayLexemes();
     }
     
     public Boolean checkDoubleDelim(String curDelim){
@@ -84,9 +84,15 @@ public class LexicalAnalyzer {
                     container.setToken("char");
                     container.setTokenInfo(curLexeme);
                 }
-                if(tokens.size()>0 && tokens.size()<lexemes.size() && tokens.get(tokens.size()-1).getToken().equals("\"") && lexemes.get(i+1).equals("\"")){
+                if(tokens.size()>0 && tokens.size()<lexemes.size() && tokens.get(tokens.size()-1).getToken().equals("\"") && !curLexeme.equals(")")){
+                    System.out.println("ENTERED"+curLexeme);
+                    String string = "";
+                    for(; i<lexemes.size() && !lexemes.get(i).equals("\"") ;i++){
+                        string += lexemes.get(i) + " ";
+                    }
+                    i--;
                     container.setToken("string");
-                    container.setTokenInfo(curLexeme);
+                    container.setTokenInfo(string);
                 }
                 if(curLexeme.equals("\"") && tokens.size()>0 && tokens.get(tokens.size()-1).getToken().equals("\"")){
                     container.setToken("string");

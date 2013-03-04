@@ -59,7 +59,7 @@ public class SemanticAnalyzer {
         
         for(i=0; i<symbolTable.getLast()+1; i++){
             for(j=0; j<symbolTable.getLast()+1; j++){
-                if(i!=j && symbolTable.table.get(i).tokenValue.equals(symbolTable.table.get(i).tokenValue)){
+                if(i!=j && symbolTable.table.get(i).tokenValue.equals(symbolTable.table.get(j).tokenValue)){
                     if(symbolTable.table.get(i).scope.equals(symbolTable.table.get(j).scope)){
                         this.setDuplicateVarMessage();
                     }
@@ -478,8 +478,11 @@ public class SemanticAnalyzer {
                   ret=true;
               }
           }
-          System.err.println(callingFunc+ret);
-        
+          
+          if(list.get(callIndex+2).equals("\"")){
+              ret = true;
+          }
+          
         return ret;
     }
     
