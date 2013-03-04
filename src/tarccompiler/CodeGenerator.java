@@ -146,8 +146,6 @@ public class CodeGenerator {
                         }
                     }
                 } 
-            } else if(curLexeme.charAt(0) == '#'){
-                javaCode += curLexeme.substring(1);
             } else{
                 if(curLexeme.equals("=")){
                     javaCode += " " +curLexeme + " ";

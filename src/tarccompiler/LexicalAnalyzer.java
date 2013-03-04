@@ -77,8 +77,12 @@ public class LexicalAnalyzer {
             }
             Token container = new Token();
             String type = tvp.getType(curLexeme);
-            if(type != null) {                                                // Keyword
+            if(type != null) {                                    // Keyword
                 container.setToken(curLexeme);      
+                if(tokens.size()>0 && tokens.size()<lexemes.size() && tokens.get(tokens.size()-1).getToken().equals("'") && lexemes.get(i+1).equals("'")){
+                    container.setToken("char");
+                    container.setTokenInfo(curLexeme);
+                }
             } else if(tokens.size()>0 && isNumeric(curLexeme) 
                     && (!tokens.get(tokens.size()-1).getToken().equals("'") && 
                     !tokens.get(tokens.size()-1).getToken().equals("\""))){   // Number
@@ -87,7 +91,7 @@ public class LexicalAnalyzer {
             } else if(tokens.size()>0 && curLexeme.length() == 1 && tokens.get(tokens.size()-1).getToken().equals("'")){    // Character
                 container.setToken("char");
                 container.setTokenInfo(curLexeme);
-            } else if(tokens.size()>0 && tokens.get(tokens.size()-1).getToken().equals("\"")){   // String
+            } else if(tokens.size()>0 && tokens.get(tokens.size()-1).getToken().equals("\"")){                  // String
                 String string = "";
                 for(; i<lexemes.size() && !lexemes.get(i).equals("\"") ;i++){
                     string += lexemes.get(i) + " ";
@@ -95,7 +99,7 @@ public class LexicalAnalyzer {
                 i--;
                 container.setToken("string");
                 container.setTokenInfo(string);
-            } else{                                                           // Identifier
+            } else{                                                                                             // Identifier
                 // Get datatype if declaration or function
                 if(i!=0 && lexemes.get(i-1).contains("#")){
                     String datatype = lexemes.get(i-1);
