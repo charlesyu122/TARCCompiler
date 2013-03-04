@@ -48,7 +48,8 @@ public class LookUpTable {
                                  "/", "%", "<", ">", "<=", ">=", "==",
                                  "!=", "&", "|", "=", "(", ")", "{",
                                  "}", ";", ",", "'", "#getInt", "#getChar",
-                                 "#getBoolean", "#puts", "true", "false", "\""};
+                                 "#getBoolean", "#puts", "true", "false", "\"", 
+                                 "string"};
     }
     
     //Initialize our row header
@@ -81,7 +82,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //MAIN
                         {"null", "null", "null", "#main ( ) { STATEMENT_LIST }", "null",
@@ -91,7 +93,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //FUNCTION_LIST
                         {"epsilon", "epsilon", "epsilon", "epsilon", "FUNCTION FUNCTION_LIST",
@@ -101,7 +104,8 @@ public class LookUpTable {
                          "epsilon", "epsilon", "epsilon", "epsilon", "epsilon", 
                          "epsilon", "epsilon", "epsilon", "epsilon", "epsilon", 
                          "epsilon", "epsilon", "epsilon", "epsilon", "epsilon",
-                         "epsilon", "epsilon", "epsilon", "epsilon", "epsilon"},
+                         "epsilon", "epsilon", "epsilon", "epsilon", "epsilon",
+                         "epsilon"},
                         
                         //FUNCTION
                         {"null", "null", "null", "null", "#func id ( PARAMETER_LIST ) { STATEMENT_LIST }",
@@ -111,7 +115,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //PARAMETER_LIST
                         {"null", "null", "null", "null", "null",
@@ -121,7 +126,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "epsilon", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //PARAMETER_OPTION
                         {"null", "null", "null", "null", "null",
@@ -131,7 +137,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "epsilon", "null", "null", 
                          "null", ", PARAMETER PARAMETER_OPTION ", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //PARAMETER
                         {"null", "null", "null", "null", "null",
@@ -141,7 +148,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //DATATYPE
                         {"null", "null", "null", "null", "null",
@@ -151,7 +159,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //STATEMENT_LIST
                         {"STATEMENT", "null", "null", "null", "null",
@@ -161,7 +170,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "epsilon", 
                          "null", "null", "null", "STATEMENT", "STATEMENT", 
-                         "STATEMENT", "STATEMENT", "null", "null", "null"},
+                         "STATEMENT", "STATEMENT", "null", "null", "null",
+                         "null"},
                         
                         //DECLARATION_LIST
                         {"epsilon", "epsilon", "epsilon", "epsilon", "epsilon",
@@ -171,7 +181,8 @@ public class LookUpTable {
                          "epsilon", "epsilon", "epsilon", "epsilon", "epsilon", 
                          "epsilon", "epsilon", "epsilon", "epsilon", "epsilon",
                          "epsilon", "epsilon", "epsilon", "epsilon", "epsilon",
-                         "epsilon", "epsilon", "epsilon", "epsilon", "epsilon"},
+                         "epsilon", "epsilon", "epsilon", "epsilon", "epsilon",
+                         "null"},
                         
                         //DECLARATION
                         {"null", "null", "null", "null", "null",
@@ -181,7 +192,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //STATEMENT
                         {"OTHER_STATEMENT STATEMENT", "epsilon", "epsilon", "epsilon", "epsilon",
@@ -191,7 +203,8 @@ public class LookUpTable {
                          "epsilon", "epsilon", "epsilon", "epsilon", "epsilon", 
                          "epsilon", "epsilon", "epsilon", "epsilon", "epsilon", 
                          "epsilon", "epsilon", "epsilon", "OTHER_STATEMENT STATEMENT", "OTHER_STATEMENT STATEMENT", 
-                         "OTHER_STATEMENT STATEMENT", "OTHER_STATEMENT STATEMENT", "epsilon", "epsilon", "epsilon"},
+                         "OTHER_STATEMENT STATEMENT", "OTHER_STATEMENT STATEMENT", "epsilon", "epsilon", "epsilon",
+                         "epsilon"},
                         
                         //OTHER_STATEMENT
                         {"ASSIGNMENT_STATEMENT8FUNCTION_CALL", "null", "null", "null", "null",
@@ -201,7 +214,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "INPUT", "INPUT", 
-                         "INPUT", "OUTPUT", "null", "null", "null"},
+                         "INPUT", "OUTPUT", "null", "null", "null",
+                         "null"},
                         
                         //ITERATION_STATEMENT
                         {"null", "null", "null", "null", "null",
@@ -211,7 +225,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //CONDITIONAL_LIST
                         {"CONDITION CONDITIONAL_OPTION", "null", "null", "null", "null",
@@ -221,7 +236,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
-                         "null", "null", "CONDITION CONDITIONAL_OPTION", "CONDITION CONDITIONAL_OPTION","null"},
+                         "null", "null", "CONDITION CONDITIONAL_OPTION", "CONDITION CONDITIONAL_OPTION","null",
+                         "null"},
                         
                         //CONDITIONAL_OPTION
                         {"null", "null", "null", "null", "null",
@@ -231,7 +247,8 @@ public class LookUpTable {
                          "null", "null", "null", "LOGICAL_OPERATOR CONDITION CONDITIONAL_OPTION", "LOGICAL_OPERATOR CONDITION CONDITIONAL_OPTION", 
                          "null", "null", "epsilon", "null", "null", 
                          "null", "null", "null", "null", "null", 
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //CONDITION
                         {"id RELATIONAL_OPERATOR VALUE", "null", "null", "null", "null",
@@ -241,7 +258,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
-                         "null", "null", "BOOLEAN", "BOOLEAN", "null"},
+                         "null", "null", "BOOLEAN", "BOOLEAN", "null",
+                         "null"},
                         
                         //VALUE
                         {"id", "int", "null", "null", "null",
@@ -251,7 +269,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "' char '", "null", "null", 
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //BOOLEAN
                         {"null", "null", "null", "null", "null",
@@ -261,7 +280,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
-                         "null", "null", "true", "false", "null"},
+                         "null", "null", "true", "false", "null",
+                         "null"},
                         
                         //RELATIONAL_OPERATOR
                         {"null", "null", "null", "null", "null",
@@ -271,7 +291,8 @@ public class LookUpTable {
                          ">=", "==", "!=", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //LOGICAL_OPERATOR
                         {"null", "null", "null", "null", "null",
@@ -281,7 +302,8 @@ public class LookUpTable {
                          "null", "null", "null", "&", "|",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //ASSIGNMENT_STATEMENT
                         {"id = ASSIGNMENT_VALUE ;", "null", "null", "null", "null",
@@ -291,7 +313,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null", 
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null", 
+                         "null"},
                         
                         //ASSIGNMENT_VALUE
                         {"VALUE8VARNUM ARITHMETIC_CHOICE", "VALUE8VARNUM ARITHMETIC_CHOICE", "null", "null", "null",
@@ -301,7 +324,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "VALUE", "null", "null", 
-                         "null", "null", "true", "false", "null"},
+                         "null", "null", "true", "false", "null",
+                         "null"},
                         
                         //ARITHMETIC_CHOICE
                         {"null", "null", "null", "null", "null",
@@ -311,7 +335,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "epsilon", "null", "null", "null", "null", 
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //VARNUM
                         {"id", "int", "null", "null", "null",
@@ -321,7 +346,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //ARITHMETIC OPERATOR
                         {"null", "null", "null", "null", "null",
@@ -331,7 +357,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //IF_ELSE_STATEMENT
                         {"null", "null", "null", "null", "null",
@@ -341,7 +368,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //ELSE_PART
                         {"null", "null", "null", "null", "null",
@@ -351,7 +379,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //FUNCTION_CALL
                         {"id ( CALL_PARAM_LIST ) ;", "null", "null", "null", "null",
@@ -361,7 +390,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //CALL_PARAM_LIST
                         {"VALUE CALL_PARAM_OPTION", "VALUE CALL_PARAM_OPTION", "null", "null", "null",
@@ -371,7 +401,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "epsilon", "null", "null", 
                          "null", "null", "VALUE CALL_PARAM_OPTION", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //CALL_PARAM_OPTION
                         {"null", "null", "null", "null", "null",
@@ -381,7 +412,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "epsilon", "null", "null", 
                          "null", ", VALUE CALL_PARAM_OPTION", "null", "null", "null",
-                         "null", "null", "null", "null", "null"},
+                         "null", "null", "null", "null", "null",
+                         "null"},
                         
                         //INPUT
                         {"null", "null", "null", "null", "null",
@@ -391,7 +423,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "#getInt ( id ) ;", "#getChar ( id ) ;",
-                         "#getBoolean ( id ) ;", "null", "null", "null", "null"},
+                         "#getBoolean ( id ) ;", "null", "null", "null", "null",
+                         "null"},
                         
                         //OUTPUT
                         {"null", "null", "null", "null", "null",
@@ -401,7 +434,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "#puts ( OUTPUT_OPTION ) ;", "null", "null", "null"},
+                         "null", "#puts ( OUTPUT_OPTION ) ;", "null", "null", "null",
+                         "null"},
                         
                         //OUTPUT OPTION
                         {"id", "null", "null", "null", "null",
@@ -411,7 +445,8 @@ public class LookUpTable {
                          "null", "null", "null", "null", "null",
                          "null", "null", "null", "null", "null", 
                          "null", "null", "null", "null", "null",
-                         "null", "null", "null", "null", "\" string \""},
+                         "null", "null", "null", "null", "\" string \"",
+                         "null"},
                     };
     }
     
