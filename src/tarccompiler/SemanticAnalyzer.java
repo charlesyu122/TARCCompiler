@@ -26,7 +26,6 @@ public class SemanticAnalyzer {
         this.symbolTable = symTbl;
         this.list = list;
         this.storeToken(astTree.getRoot(), list);
-        System.err.println("NI SUD DIRI");      
         displaySymbolTable();    
     }
     
@@ -54,7 +53,6 @@ public class SemanticAnalyzer {
     }
     
     public void checkDuplicateVars(){
-        
         int i, j;
         
         for(i=0; i<symbolTable.getLast()+1; i++){
@@ -67,32 +65,6 @@ public class SemanticAnalyzer {
             }
         }
     }
-    
-    // Returns the Node containing #main
-    public Boolean checkMain(Node root){
-        Boolean verifyFunc = true;
-        ArrayList<String> allTokens = new ArrayList<String>();
-        storeToken(root, allTokens);
-        System.err.println(allTokens);
-        // Check if there's main
-        if(allTokens.contains("#main"))
-        {
-            System.err.println(allTokens);
-            int index  = allTokens.indexOf("#main")+1;
-            System.err.println(index);
-            for(; index<allTokens.size() && !allTokens.get(index).equals("#func"); index++){
-                System.out.print("\n" + index + allTokens.get(index));
-                if(allTokens.get(index).equals("#func")){
-                    System.err.println("There is a function after #main");
-                    verifyFunc = false;
-                } else{ 
-                    verifyFunc = true;
-                }
-            }
-        }
-        System.err.println(allTokens);
-        return verifyFunc;
-    }   
     
     public void checkDataType(){
         int i, j;
@@ -158,7 +130,7 @@ public class SemanticAnalyzer {
                         storeAllDecVar.add("#"+scopeOfVar);
                         if(dt.equals("#char")){
                             charTypeChecker = (list.get(j+2).equals(";"))?false:true;
-                            System.err.println("NUM"+ list.get(j));
+                            
                         }
                     }
                         else{
@@ -171,8 +143,6 @@ public class SemanticAnalyzer {
                     i++;
                 }
             }
-            
-            System.err.println("\nDEC STATEMENTS: "+storeAllDecVar);
            
            //Type Checking comes in		
 	    if(verifyDeclarationOfVariable!=false){
@@ -183,22 +153,18 @@ public class SemanticAnalyzer {
                         
                         verifyDT = (charTypeChecker==false)?false:checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
                         verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
-                        System.err.println(storeAllDecVar.get(i) +" is a "+ storeAllDecVar.get(i+2)+
-                                " variable with a value of "+ storeAllDecVar.get(i+1)+ " STATUS: "+verifyDT + ", LR Check: " + verifyLR);
-
+       
                         if(verifyDT.equals(true)){
                            
                             int k, l;
                             for(k = 0; k<storeAllDecVar.size()-1; k = k+4){
                                  Boolean out2ndForLoop = false;
                                  for(l = 0; l<=symbolTable.getLast() && out2ndForLoop==false; l++){
-                                    //String s = storeAllDecVar.get(k)
                                     if(storeAllDecVar.get(k).contains(symbolTable.table.get(l).tokenValue) && storeAllDecVar.get(k+3).contains(symbolTable.table.get(l).scope)){
                                         symbolTable.table.get(l).actualValue = storeAllDecVar.get(k+1);
                                     }
                                 }
                             }
-
                         } else {
 
                             if(verifyLR.equals(true)){
@@ -210,15 +176,12 @@ public class SemanticAnalyzer {
                     }
             }
         }
-        
         else{
             this.setMainMessage();
         }
     }
     
     private Boolean checkType(String value, String dataType){
-        //sample: x, add, #int
-        
         Boolean ret = false;
         
         if( "#int".equals(dataType)){
@@ -229,17 +192,8 @@ public class SemanticAnalyzer {
                 return false;
             }
         }
-        
         else if("#char".equals(dataType)){
              System.err.println(value);
-            int charVerifier = 0;
-            //ret = (value.length()>1)? false: true;
-            try{
-                Integer.parseInt(value);
-                charVerifier = 1;
-            }catch(NumberFormatException e) {
-                charVerifier = 0;
-            }
             ret = (value.length()>1)? false: true;
         }
         else if("#boolean".equals(dataType)){
@@ -250,7 +204,6 @@ public class SemanticAnalyzer {
     
     private Boolean LRCheck(String leftVal, String dataType){
         Boolean ret = false;
-        System.err.println("LRCHECK!: " + leftVal + dataType);
         int i;
         //first: traverse symbolTable, and look for the tokenValue that matches leftVal
         for(i = 0; i<symbolTable.getLast()+1 && ret==false; i++){
@@ -284,7 +237,6 @@ public class SemanticAnalyzer {
                 storeAllFuncs.add(Integer.toString(numOfParam)); // Number of Parameters
             }
         }
-        System.err.println("Function Information (by 3): "+storeAllFuncs);
         Boolean verifyDuplication = false;
           
         //check for duplicate function names
@@ -295,7 +247,6 @@ public class SemanticAnalyzer {
                    this.setDuplicateFuncNameMessage();
                }
            }
-       
         }
         if(verifyDuplication==false){
         ArrayList<String> performFunc = new ArrayList<String>();
@@ -310,35 +261,33 @@ public class SemanticAnalyzer {
         
          for(j = 0; j<list.size()-1; j++){
                if(list.get(j+1).equals("(") && (list.get(j+3).equals(",")|| list.get(j+2).equals(")")) && !list.get(j).equals("#main") && !list.get(j-1).equals("#func") && !list.get(j).equals("#puts")){
-                  // System.err.println("hi"+list.get(j));
                     verifyFuncName.add(list.get(j));
                 }
          }
-        
         //scan list for function calls
         int count = 0;
         int counter = 0;
         for(i = 0;i<storeAllFuncs.size(); i=i+3){
             
             for(j = 0; j<list.size()-1; j++){
+                if(list.get(j).charAt(0)=='#' && !list.get(j).substring(1).equals("func")&& !list.get(j).substring(1).equals("puts") && !list.get(j).substring(1).equals("main") && list.get(j+1).equals("(")){
+                    if(!storeAllFuncs.contains(list.get(j).substring(1)))
+                        this.setInvalidFuncMessage(); 
+                }
                 if(list.get(j).equals("#"+storeAllFuncs.get(i+1)) || (list.get(j).contains(storeAllFuncs.get(i+1)) && list.get(j).length()!=storeAllFuncs.get(i+1).length())){
                         this.setInvalidFuncMessage(); 
                     }
-                else if(list.get(j+1).equals("(") && (list.get(j+3).equals(",")|| list.get(j+2).equals(")")) && !list.get(j).equals("#main") && !list.get(j-1).equals("#func") && !list.get(j).equals("#puts")){
-                  // System.err.println("hi"+list.get(j));
+                if(list.get(j+1).equals("(") && ((list.get(j+3).equals(",")|| list.get(j+3).equals(")"))) && !list.get(j).equals("#main") && !list.get(j-1).equals("#func") && !list.get(j).equals("#puts")){
                     verifyFuncName.add(list.get(j));
                     count++;
                     
                     if(list.get(j).equals(storeAllFuncs.get(i+1))){
                         if(j!=Integer.parseInt(storeAllFuncs.get(i))+1){
                         counter++;
-                        System.err.println("Function call at: "+j+"="+storeAllFuncs.get(i+1));
                         performFunc = checkFuncCallDetails(storeAllFuncs, j);
-
                         }
                     }
                 }
-                
             }
         }
         if(count==0 && verifyFuncName.size()>0){
@@ -359,7 +308,6 @@ public class SemanticAnalyzer {
                 funcVerify.add(list.get(i+1));
             }
         }
-        System.err.println("Parameters of function call: "+funcVerify);
         
         for(i=0;i<allFuncs.size()-1; i=i+3){
             String FuncName=allFuncs.get(i+1);
@@ -392,8 +340,6 @@ public class SemanticAnalyzer {
             }
         }
         
-        System.err.println("CALLING FUNC : " + callingFunc);
-        
         //parameter type matching in function call and function
         if(flagError!=1){
         Boolean paramType = paramTypeMatching(allFuncs, funcVerify, callingFunc,  j);
@@ -416,9 +362,10 @@ public class SemanticAnalyzer {
     
     public Boolean paramTypeMatching(ArrayList<String> funcHeader, ArrayList<String> funcCallVars, String callingFunc, int callIndex){
         Boolean ret = true;
+        Boolean foundVar = false;
         int i, j, k;
         ArrayList<String> funcMatchType = new ArrayList<String>();
-        
+         
         for(i=0; i<funcHeader.size(); i=i+3){
             if(list.get(callIndex).equals(funcHeader.get(i+1))){
             
@@ -436,16 +383,20 @@ public class SemanticAnalyzer {
                 if(!funcCallVars.get(k).equals(funcMatchType.get(i+1))){
                     ret = false;
                 }
-                
-                else if(symbolTable.table.get(j).tokenValue.equals(funcCallVars.get(k)) && symbolTable.table.get(j).scope.equals(callingFunc)){
-                    if(!symbolTable.table.get(j).datatype.equals(funcMatchType.get(i)))
-                        ret = false;
+                else if(symbolTable.table.get(j).tokenValue.equals(funcCallVars.get(k))){
+                    if(symbolTable.table.get(j).scope.equals(callingFunc)){
+                        foundVar = true;
+                        
+                        if(!symbolTable.table.get(j).datatype.equals(funcMatchType.get(i)))
+                            ret = false;
+                        }
+                    
                 }
-                
-                
+            }
+            if(foundVar==false){
+                ret = false;
             }
         }
-        System.err.println(funcMatchType + "+ "+ funcCallVars+ret);
         return ret;
     }
     
