@@ -69,6 +69,7 @@ public class SemanticAnalyzer {
     public void checkDataType(){
         int i, j;
         Boolean charTypeChecker = true;
+        Boolean checkAssignment = true;
         Boolean verifyDeclarationOfVariable = true;
             
         ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
@@ -123,7 +124,6 @@ public class SemanticAnalyzer {
                                 stopScan = true;
                             }
                         }
-                        Boolean checkAssignment = true;
                         if(dt!=null){
                             storeAllDecVar.add(dt);
                             storeAllDecVar.add("#"+scopeOfVar);
@@ -147,7 +147,6 @@ public class SemanticAnalyzer {
                     i++;
                 }
             }
-            
            //Type Checking comes in		
 	    if(verifyDeclarationOfVariable!=false){
                     Boolean verifyDT = true;
@@ -155,8 +154,12 @@ public class SemanticAnalyzer {
                     
                     for(i=0; i<storeAllDecVar.size(); i=i+4){
                         
-                        verifyDT = (charTypeChecker==false)?false:checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
-                       
+                       verifyDT = (charTypeChecker==false)?false:checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
+                       if(checkAssignment==true){
+                           verifyLR = false;
+                       }else
+                           verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
+                        
                         if(verifyDT.equals(true)){
                            
                             int k, l;
@@ -169,6 +172,13 @@ public class SemanticAnalyzer {
                                 }
                             }
                         } 
+                        else {
+
+                            if(verifyLR.equals(true)){
+                                this.setAssignmentMessage();  
+                            } 
+                            
+                        }
                     }
             }
         }
@@ -195,6 +205,20 @@ public class SemanticAnalyzer {
         else if("#boolean".equals(dataType)){
             ret = ("false".equals(value)|| "true".equals(value))? true: false;
         }
+        return ret;
+    }
+    
+    private Boolean LRCheck(String leftVal, String dataType){
+        Boolean ret = false;
+        int i;
+        //first: traverse symbolTable, and look for the tokenValue that matches leftVal
+        for(i = 0; i<symbolTable.getLast()+1 && ret==false; i++){
+            if(symbolTable.table.get(i).tokenValue.equals(leftVal) &&symbolTable.table.get(i).datatype.equals(dataType)){
+                ret = true;
+            }
+        }
+        //if loop ended and i is still less than the last index of symbolTable, it means there was a match
+        //leftVal is a variable
         return ret;
     }
     
@@ -376,7 +400,20 @@ public class SemanticAnalyzer {
                 }
             }
             if(foundVar==false){
-                ret = false;
+                if(funcMatchType.get(i).equals("#int")){
+                     try{
+                        Integer.parseInt(funcCallVars.get(k));
+                        ret = true;
+                        }catch(NumberFormatException e) {
+                                    ret = false;
+                        }   
+                }
+                else if(funcMatchType.get(i).equals("#char")){
+                    ret = (funcCallVars.get(k).length()>1)? false: true;
+                }
+                else if(funcMatchType.get(i).equals("#boolean")){
+                       ret = ("false".equals(funcCallVars.get(k))|| "true".equals(funcCallVars.get(k)))? true: false;
+                }
             }
         }
         return ret;
