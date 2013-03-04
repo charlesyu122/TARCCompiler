@@ -27,7 +27,7 @@ public class SemanticAnalyzer {
         this.list = list;
         this.storeToken(astTree.getRoot(), list);
         System.err.println("NI SUD DIRI");      
-        //displaySymbolTable();    
+        displaySymbolTable();    
     }
     
     // Methods
@@ -51,6 +51,21 @@ public class SemanticAnalyzer {
             }
             storeToken(new_n, s);
         } 
+    }
+    
+    public void checkDuplicateVars(){
+        
+        int i, j;
+        
+        for(i=0; i<symbolTable.getLast()+1; i++){
+            for(j=0; j<symbolTable.getLast()+1; j++){
+                if(i!=j && symbolTable.table.get(i).tokenValue.equals(symbolTable.table.get(i).tokenValue)){
+                    if(symbolTable.table.get(i).scope.equals(symbolTable.table.get(j).scope)){
+                        this.setDuplicateVarMessage();
+                    }
+                }
+            }
+        }
     }
     
     // Returns the Node containing #main
@@ -252,7 +267,7 @@ public class SemanticAnalyzer {
         //store Function Details in an Array List
         int i, j, k;
         ArrayList<String> storeAllFuncs = new ArrayList<String>();
-        
+        ArrayList<String> verifyFuncName = new ArrayList<String>();
         
         for(i = 0;i<list.size()-1 && !"#main".equals(list.get(i)); i++){
             if(list.get(i).equals("#func")){
@@ -284,35 +299,52 @@ public class SemanticAnalyzer {
         }
         if(verifyDuplication==false){
         ArrayList<String> performFunc = new ArrayList<String>();
-        int count = 0;
-        int countTrue = 0;
+       
+        for(j=0; j<list.size()-1; j++){
+                if(list.get(j).equals("#puts")){
+                    Boolean validVar = checkVariable(j, list.get(j+2));
+                    if(validVar == false)
+                        this.setUndeclaredVarMessage();
+                }
+        }
+        
+         for(j = 0; j<list.size()-1; j++){
+               if(list.get(j+1).equals("(") && (list.get(j+3).equals(",")|| list.get(j+2).equals(")")) && !list.get(j).equals("#main") && !list.get(j-1).equals("#func") && !list.get(j).equals("#puts")){
+                  // System.err.println("hi"+list.get(j));
+                    verifyFuncName.add(list.get(j));
+                }
+         }
+        
         //scan list for function calls
+        int count = 0;
+        int counter = 0;
         for(i = 0;i<storeAllFuncs.size(); i=i+3){
             
             for(j = 0; j<list.size()-1; j++){
-                
                 if(list.get(j).equals("#"+storeAllFuncs.get(i+1)) || (list.get(j).contains(storeAllFuncs.get(i+1)) && list.get(j).length()!=storeAllFuncs.get(i+1).length())){
                         this.setInvalidFuncMessage(); 
                     }
                 else if(list.get(j+1).equals("(") && (list.get(j+3).equals(",")|| list.get(j+2).equals(")")) && !list.get(j).equals("#main") && !list.get(j-1).equals("#func") && !list.get(j).equals("#puts")){
                   // System.err.println("hi"+list.get(j));
+                    verifyFuncName.add(list.get(j));
                     count++;
                     
                     if(list.get(j).equals(storeAllFuncs.get(i+1))){
                         if(j!=Integer.parseInt(storeAllFuncs.get(i))+1){
-                        countTrue++;
+                        counter++;
                         System.err.println("Function call at: "+j+"="+storeAllFuncs.get(i+1));
                         performFunc = checkFuncCallDetails(storeAllFuncs, j);
 
                         }
                     }
                 }
+                
             }
         }
-        System.err.println(count+""+countTrue);
-        if(count>countTrue)
-              this.setInvalidFuncMessage(); 
-      }
+        if(count==0 && verifyFuncName.size()>0){
+             this.setInvalidFuncMessage();
+        }
+       }
     }
     
     private ArrayList<String> checkFuncCallDetails(ArrayList<String> allFuncs, int j){
@@ -417,6 +449,40 @@ public class SemanticAnalyzer {
         return ret;
     }
     
+    private Boolean checkVariable(int callIndex, String tokenVal){
+        Boolean ret = false;
+        String callingFunc = new String();
+        
+        ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
+        int i;
+        
+         for(i = 0;i<list.size();i++){
+            if(list.get(i).equals("#func") || list.get(i).equals("#main")){
+                storeFuncInList.add(i);
+            }
+        }
+        storeFuncInList.add(list.size()-1);
+        
+          for(i = 0; i<storeFuncInList.size()-1; i++){
+            if(callIndex>storeFuncInList.get(i) && callIndex<storeFuncInList.get(i+1)){
+                if(list.get(storeFuncInList.get(i)).equals("#func")){
+                    callingFunc = list.get(storeFuncInList.get(i)+1);
+                } else{
+                    callingFunc = "#main";
+                }
+            }
+        }
+          
+          for(i=0; i<symbolTable.getLast()+1 && ret==false; i++){
+              if(symbolTable.table.get(i).tokenValue.equals(tokenVal) && symbolTable.table.get(i).scope.equals(callingFunc)){
+                  ret=true;
+              }
+          }
+          System.err.println(callingFunc+ret);
+        
+        return ret;
+    }
+    
     public String getMessage(){
         return semanticErrorMessage;
     }
@@ -430,7 +496,7 @@ public class SemanticAnalyzer {
     }
     
     private void setParameterMessage(){
-        semanticErrorMessage = "Number of parameters in a function call does not match with function's default number of parameters.";
+        semanticErrorMessage = "Parameter Mismatch.";
     }
     
     private void setLValueMessage(){
@@ -443,6 +509,10 @@ public class SemanticAnalyzer {
     
     private void setDuplicateFuncNameMessage(){
         semanticErrorMessage = "Duplicate Function found.";
+    }
+    
+    private void setDuplicateVarMessage(){
+        semanticErrorMessage = "Duplicate Variable found.";
     }
     
     private void setUndeclaredVarMessage(){
