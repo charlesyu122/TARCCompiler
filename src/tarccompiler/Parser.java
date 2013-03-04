@@ -59,7 +59,7 @@ public class Parser {
     //</editor-fold>
     
     public String methodLLParser(){
-        this.displayTokenStack();
+        //this.displayTokenStack();
         do{
             //System.out.println("input stack top: "+tokens.peek().getToken());
             //System.out.println("productions: "+productions+"\n\n");
