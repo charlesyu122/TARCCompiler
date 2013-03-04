@@ -26,7 +26,8 @@ public class SemanticAnalyzer {
         this.symbolTable = symTbl;
         this.list = list;
         this.storeToken(astTree.getRoot(), list);
-        displaySymbolTable();    
+        displaySymbolTable();  
+        //System.err.println(list);
     }
     
     // Methods
@@ -52,138 +53,311 @@ public class SemanticAnalyzer {
         } 
     }
     
-    public void checkDuplicateVars(){
+    private ArrayList<String> storeAllFunc(int index){
+        ArrayList<String> ret = new ArrayList<String>();
+        int j=index+1;
+        int numOfComma = 0;
+        
+        //first store functionName
+        ret.add(list.get(j));
+        for(; !list.get(j).equals(")"); j++){
+        
+            if(list.get(j).equals("#int") || list.get(j).equals("#char") || list.get(j).equals("#boolean")){
+                ret.add(list.get(j)+"^"+list.get(j+1));
+            }
+            if(list.get(j).equals(","))
+                numOfComma++;
+        }//end of for loop
+        
+        ret.add(Integer.toString(numOfComma+1));
+        return ret;
+    }
+    
+    public void semAnt(){
+     
+        ArrayList<String> listOfDecStms = new ArrayList<String>();
+        ArrayList<String> listOfFuncWIndex = new ArrayList<String>();
+        ArrayList<String> listOfFunc = new ArrayList<String>();
+        ArrayList<String> listOfFuncCalls = new ArrayList<String>();
+        ArrayList<String> listOfPuts = new ArrayList<String>();
+        
+        int i, j, exit = 0;
+        
+       //traverse in the list and store all necessary terminals 
+       for(i=0; i<list.size(); i++){
+           
+           if(list.get(0).equals("#main")){
+               exit = 1;
+           }
+           /***********  storing of indeces of functions and main *********/
+           if(list.get(i).equals("#main")){
+               listOfFuncWIndex.add(Integer.toString(i));
+               listOfFuncWIndex.add(list.get(i));
+           }
+           
+           /***********  storing of function information  *********/
+           if(list.get(i).equals("#func")){
+               
+               /***********  storing of indeces of functions and main *********/
+               listOfFuncWIndex.add(Integer.toString(i+1));
+               listOfFuncWIndex.add(list.get(i+1));
+               
+               String concat = new String();
+               int numOfComma = 0;
+               j = i+1;
+                //first store functionName
+                listOfFunc.add(list.get(j));
+                
+                if(list.get(j+2).equals(")"))
+                    numOfComma = -1;
+                for(; !list.get(j).equals(")"); j++){
+
+                    if(list.get(j).equals("#int") || list.get(j).equals("#char") || list.get(j).equals("#boolean")){
+                        concat = concat + list.get(j)+"^"+list.get(j+1)+"~"; 
+                    }
+                    if(list.get(j).equals(","))
+                        numOfComma++;
+                }//end of for loop
+                listOfFunc.add(concat);
+                listOfFunc.add(Integer.toString(numOfComma+1));
+           }
+           /*********** END OF:   storing of function information  *********/
+           
+            /*********** storing of declaration statements  *********/
+           else if(list.get(i).equals("=")){
+               //check first if variable is of type #char, type char have special case: the use of ''
+                    int incrementer = 2;
+                    int valIncrementer = 1;
+                    int verifyIfIn = 0;
+                    
+                     if(list.get(i+1).equals("'")){
+                        incrementer = 4;
+                        valIncrementer = 2;
+                    }
+                     
+                    if(list.get(i+incrementer).equals(";")){
+                        listOfDecStms.add(list.get(i-1)); //left
+                        
+                        if(valIncrementer==2){
+                            listOfDecStms.add("~"+list.get(i+valIncrementer)); //right
+                        }
+                        else listOfDecStms.add(list.get(i+valIncrementer));
+                        
+                        listOfDecStms.add(listOfFuncWIndex.get(listOfFuncWIndex.size()-1)); //left_DeclaredIn
+                        
+                        for(j=0; j<symbolTable.getLast()+1; j++){
+                            if(symbolTable.table.get(j).tokenValue.equals(list.get(i-1)) 
+                                    && symbolTable.table.get(j).scope.equals(listOfFuncWIndex.get(listOfFuncWIndex.size()-1))){
+                               //System.err.println(list.get(i-1));
+                                listOfDecStms.add(symbolTable.table.get(j).datatype);
+                                verifyIfIn = 1;
+                            }
+                        }
+                        if(verifyIfIn==0)
+                                listOfDecStms.add("");
+                        }
+           }
+           /***********END OF: storing of declaration statements  *********/
+           
+           if(list.get(i).equals("#puts")){
+               if(!list.get(i+2).equals("\"")){
+               listOfPuts.add(list.get(i+2));
+               listOfPuts.add(listOfFuncWIndex.get(listOfFuncWIndex.size()-1));
+               }
+           }
+           
+           int incrementer = 1;
+           if(exit!=1){
+               incrementer = 2;
+           }
+               /*********** storing of function call info  *********/
+               if(list.get(i).equals("(")&& !list.get(i-incrementer).equals("#func") && !list.get(i-1).equals("#main") && !list.get(i-1).equals("#puts") && !list.get(i-1).equals("while")
+                        && !list.get(i-1).equals("if")){
+                   if(!list.get(i+1).equals("#int") && !list.get(i+1).equals("#char") && !list.get(i+1).equals("#boolean")){
+
+                       listOfFuncCalls.add(Integer.toString(i-1)); //index of function call
+                       listOfFuncCalls.add(list.get(i-1));          //name of function call
+                       listOfFuncCalls.add(listOfFuncWIndex.get(listOfFuncWIndex.size()-1)); //caller
+
+                       String concat = new String();
+                       for(j=i; !list.get(j).equals(")") && j<list.size()-1; j++){
+                           if(!list.get(j).equals(",") && !list.get(j).equals("("))
+                                concat = concat + list.get(j)+"~"; 
+                        }
+                       listOfFuncCalls.add(concat); //func call arguments
+                   }
+                }//end of for loop
+           /*********** END OF: storing of function call info  *********/
+           
+    }
+       /******** adding the end index and last********/
+       listOfFuncWIndex.add(Integer.toString(list.size()-1));
+       listOfFuncWIndex.add("last");
+         
+        /*********** SEMANTIC PHASE START: checking of duplicate variables in a function/main **********/
+        checkDuplicateVars();
+        
+        /*********** SEMANTIC PHASE START: checking of declaration statements **********/
+        if(checkDuplicateVars()!=true)
+            checkDeclarationStatements(listOfDecStms);
+        
+        /*********** SEMANTIC PHASE START: checking of duplicate functions **********/
+        checkDuplicateFuncs();
+        
+        /*********** SEMANTIC PHASE START: checking validity of function calls **********/
+        checkValidFuncCalls(listOfFunc, listOfFuncCalls);
+        
+        putsChecker(listOfPuts);
+    }
+    
+    private void putsChecker(ArrayList<String> putsList){
         int i, j;
+        Boolean check = false;
+        for(i=0; i<putsList.size();i=i+2){
+            for(j=0; j<symbolTable.getLast()+1; j++){
+                if(symbolTable.table.get(j).tokenValue.equals(putsList.get(i)) && symbolTable.table.get(j).scope.equals(putsList.get(i+1))){
+                    check = true;
+                }
+            }
+            if(check==false)
+                this.setUndeclaredVarMessage();
+        }
+    }
+    private Boolean checkDuplicateVars(){
+        int i, j;
+        Boolean ret = false;
         
         for(i=0; i<symbolTable.getLast()+1; i++){
             for(j=0; j<symbolTable.getLast()+1; j++){
                 if(i!=j && symbolTable.table.get(i).tokenValue.equals(symbolTable.table.get(j).tokenValue)){
                     if(symbolTable.table.get(i).scope.equals(symbolTable.table.get(j).scope)){
                         this.setDuplicateVarMessage();
+                        ret = true;
                     }
+                }
+            }
+        }
+        return ret;
+    }
+    public void checkDuplicateFuncs(){
+        int i, j;
+        
+        for(i=0; i<symbolTable.getLast()+1; i++){
+            for(j=0; j<symbolTable.getLast()+1; j++){
+                if(i!=j && symbolTable.table.get(i).tokenValue.equals(symbolTable.table.get(j).tokenValue)
+                        && symbolTable.table.get(i).datatype.equals(symbolTable.table.get(j).datatype)){
+                    if(symbolTable.table.get(i).scope.equals("#func") && symbolTable.table.get(i).scope.equals(symbolTable.table.get(j).scope))
+                       this.setDuplicateFuncNameMessage();
                 }
             }
         }
     }
     
-    public void checkDataType(){
+    private void checkValidFuncCalls(ArrayList<String> allFuncs, ArrayList<String> allFuncCalls){
         int i, j;
-        Boolean charTypeChecker = true;
-        Boolean checkAssignment = true;
-        Boolean verifyDeclarationOfVariable = true;
-            
-        ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
-        ArrayList<Integer> storeFuncInST = new ArrayList<Integer>();
-        ArrayList<String> storeAllDecVar = new ArrayList<String>();
+        Boolean validFunc = false;
         
-        //store all indeces of function types found in the arraylist of tokens
-        for(i = 0;i<list.size();i++){
-            if(list.get(i).equals("#func") || list.get(i).equals("#main")){
-                storeFuncInList.add(i);
-            }
-        }
-        //store all indeces of function types found in symboltable
-        for(j = 0; j<symbolTable.getLast(); j++){
-            if( "#func".equals(symbolTable.table.get(j).datatype)){
-                storeFuncInST.add(j);
-            }
-        }
-        
-        if(storeFuncInList.isEmpty()!=true){
-            for(i=0, j = storeFuncInList.get(i); i<storeFuncInList.size() && j<list.size()-1; j++){
-                //traverse in symbol table, check for char variables, verify if there's ''
-                if(list.get(j).equals("=")){
-                    //check first if variable is of type #char, type char have special case: the use of ''
-                    int incrementer = 2;
-                    int valIncrementer = 1;
+        for(i=0; i<allFuncCalls.size(); i=i+4){
+            for(j=0; j<allFuncs.size(); j=j+3){
+                if(allFuncCalls.get(i+1).equals(allFuncs.get(j))){
+                    validFunc = true;
                     
-                    if(list.get(j+1).equals("'")){
-                        incrementer = 4;
-                        valIncrementer = 2;
-                    }
+                    if(allFuncCalls.get(i+3).equals("") && allFuncs.get(j+2).equals(Integer.toString(0)))
+                        System.err.println("func has 0 parameters");
                     
-                    if(list.get(j+incrementer).equals(";")){
-                        String scopeOfVar;
-                        String dt = null;
-                        storeAllDecVar.add(list.get(j-1)); //varName
-                        storeAllDecVar.add(list.get(j+valIncrementer)); //actualValue
-                        scopeOfVar = ("#func".equals(list.get(storeFuncInList.get(i))))? (list.get(storeFuncInList.get(i)+1)):"main";
-                        
-                        //traverse in symbolTable to find out the datatype of the variable with declaration statement
-                        int k = 0;
-                        Boolean stopScan = false;
-                        for(; stopScan!=true && k<=symbolTable.getLast(); k++){
-                            String scopeWithHash = scopeOfVar;
-                            if("main".equals(scopeOfVar)){
-                                scopeWithHash = "#main";
+                    else if(allFuncCalls.get(i+3).equals("") && !allFuncs.get(j+2).equals(Integer.toString(0)))
+                        validFunc = false;
+                    
+                    else if(!allFuncCalls.get(i+3).equals("") && !allFuncs.get(j+2).equals(Integer.toString(0))){
+                        int k, l;
+                        String split_parameters[] = allFuncs.get(j+1).split("\\~");
+                        String split_arguments[]=allFuncCalls.get(i+3).split("\\~");
+                            for(l = 0; l<split_parameters.length; l++){
+                                System.err.println("SPLIT"+split_parameters[l]);
                             }
-                            
-                            if(symbolTable.table.get(k).scope.equals(scopeWithHash) && symbolTable.table.get(k).tokenValue.equals(list.get(j-1)))
-                            {
-                                dt = symbolTable.table.get(k).datatype;
-                                stopScan = true;
+                            for(k =0; k<split_arguments.length; k++){
+                                int err = 0;
+                                try{
+                                    Integer.parseInt(split_arguments[k]);
+                                    err = 1;
+                                }catch(NumberFormatException e) {
+                                    err = 0;
+                                }
+                                
+                                if("'".equals(split_arguments[k]) || err==1)
+                                    this.setFuncParamtypeMismatchMessage();
+                                
+                                
+                                System.err.println("SPLIT"+split_arguments[k]);
                             }
-                        }
-                        if(dt!=null){
-                            storeAllDecVar.add(dt);
-                            storeAllDecVar.add("#"+scopeOfVar);
-                            
-                            if(dt.equals("#char"))
-                                charTypeChecker = (list.get(j+2).equals(";"))?false:true;
-
-                            checkAssignment = checkAssignmentStatement(dt, list.get(j-1),list.get(j+valIncrementer), scopeOfVar);
-                        }
-                        if(dt!=null && checkAssignment==false){
-                            this.setAssignmentMessage();
-                        }
-                        else if(dt==null){
-                            verifyDeclarationOfVariable = false;
-                            this.setUndeclaredVarMessage();
-                        }
-                 }
-                }
-                        
-                if("#main".equals(list.get(j+1)) || "#func".equals(list.get(j+1))){
-                    i++;
-                }
-            }
-           //Type Checking comes in		
-	    if(verifyDeclarationOfVariable!=false){
-                    Boolean verifyDT = true;
-                    Boolean verifyLR = true;
-                    
-                    for(i=0; i<storeAllDecVar.size(); i=i+4){
-                        
-                       verifyDT = (charTypeChecker==false)?false:checkType(storeAllDecVar.get(i+1), storeAllDecVar.get(i+2));
-                       if(checkAssignment==true){
-                           verifyLR = false;
-                       }else
-                           verifyLR = LRCheck(storeAllDecVar.get(i), storeAllDecVar.get(i+2));
-                        
-                        if(verifyDT.equals(true)){
-                           
-                            int k, l;
-                            for(k = 0; k<storeAllDecVar.size()-1; k = k+4){
-                                 Boolean out2ndForLoop = false;
-                                 for(l = 0; l<=symbolTable.getLast() && out2ndForLoop==false; l++){
-                                    if(storeAllDecVar.get(k).contains(symbolTable.table.get(l).tokenValue) && storeAllDecVar.get(k+3).contains(symbolTable.table.get(l).scope)){
-                                        symbolTable.table.get(l).actualValue = storeAllDecVar.get(k+1);
+                        //function call have the same no. of arguments as the function header; datatype and variable matching    
+                        if(l==k){
+                            for(k=0; k<split_arguments.length; k++){
+                                for(l=0; l<split_parameters.length; l++){
+                                    if(split_arguments[k].equals(split_parameters[k].substring(split_parameters[k].length()-1))){
+                                        for(int m=0; m<symbolTable.getLast()+1; m++){
+                                            if(symbolTable.table.get(m).tokenValue.equals(split_arguments[k]) &&
+                                                    symbolTable.table.get(m).scope.equals(allFuncCalls.get(i+2))){
+                                                    String dt = symbolTable.table.get(m).datatype;
+                                                    
+                                                    if(!split_parameters[k].contains(dt))
+                                                        this.setFuncParamtypeMismatchMessage();
+                                            }
+                                           
+                                        }
                                     }
                                 }
                             }
-                        } 
-                        else {
-
-                            if(verifyLR.equals(true)){
-                                this.setAssignmentMessage();  
-                            } 
                             
                         }
+                        else this.setParameterMessage();
                     }
+                    
+                }
             }
+            if(validFunc==false)
+                this.setInvalidFuncMessage();
         }
-        else{
-            this.setMainMessage();
+    }
+    
+    private void checkDeclarationStatements(ArrayList<String> DecStatements){
+        int i, j, k, in = 0;
+        //ArrayList<String> errors = new ArrayList<String>();
+        Boolean verifyIfDeclared = false;
+        Boolean verifyAnotherVar = false;
+        
+        for(i=0; i<DecStatements.size(); i=i+4){
+            for(j=0; j<symbolTable.getLast()+1; j++){
+                //first check if left is a declared variable
+                if(symbolTable.table.get(j).tokenValue.equals(DecStatements.get(i)) && symbolTable.table.get(j).scope.equals(DecStatements.get(i+2))){
+                    verifyIfDeclared = true;
+                }
+                //after verifying validity of variable, check the assignment statement, TYPE CHECKING
+                if(verifyIfDeclared==true){
+                    for(k = 0; k<symbolTable.getLast()+1;k++){
+                        if(DecStatements.get(i+1).equals(symbolTable.table.get(k).tokenValue) && DecStatements.get(i+2).equals(symbolTable.table.get(k).scope)){
+                            in = 1;
+                            if(DecStatements.get(i+3).equals(symbolTable.table.get(k).datatype))
+                                verifyAnotherVar=true;
+                            else verifyAnotherVar = false;
+                            }
+                    }
+                    //to-be-assigned value is an actual value (not a variable)
+                     if(in!=1 && verifyAnotherVar==false){
+                         Boolean checktype = checkType(DecStatements.get(i+1),DecStatements.get(i+3));
+                         if(checktype==false)
+                             this.setAssignmentMessage();
+                         
+                         else symbolTable.table.get(j).actualValue = DecStatements.get(i+1);
+                     }
+                     if(in==1 && verifyAnotherVar==false){
+                        this.setAssignmentMessage();
+                    }
+                }
+            }
+            if(verifyIfDeclared==false){
+                this.setUndeclaredVarMessage();
+            }
         }
     }
     
@@ -199,276 +373,11 @@ public class SemanticAnalyzer {
             }
         }
         else if("#char".equals(dataType)){
-             System.err.println(value);
+            value = value.substring(1);
             ret = (value.length()>1)? false: true;
         }
         else if("#boolean".equals(dataType)){
             ret = ("false".equals(value)|| "true".equals(value))? true: false;
-        }
-        return ret;
-    }
-    
-    private Boolean LRCheck(String leftVal, String dataType){
-        Boolean ret = false;
-        int i;
-        //first: traverse symbolTable, and look for the tokenValue that matches leftVal
-        for(i = 0; i<symbolTable.getLast()+1 && ret==false; i++){
-            if(symbolTable.table.get(i).tokenValue.equals(leftVal) &&symbolTable.table.get(i).datatype.equals(dataType)){
-                ret = true;
-            }
-        }
-        //if loop ended and i is still less than the last index of symbolTable, it means there was a match
-        //leftVal is a variable
-        return ret;
-    }
-    
-    public void checkFuncCall(){
-        //store Function Details in an Array List
-        int i, j, k;
-        ArrayList<String> storeAllFuncs = new ArrayList<String>();
-        ArrayList<String> verifyFuncName = new ArrayList<String>();
-        
-        for(i = 0;i<list.size()-1 && !"#main".equals(list.get(i)); i++){
-            if(list.get(i).equals("#func")){
-                storeAllFuncs.add(Integer.toString(i)); //1st: starting index of function in the list
-                storeAllFuncs.add(list.get(i+1)); //Name of Function
-                
-                //count no. of parameters
-                int numOfParam = 0;
-                for(j = i; j<list.size() && !list.get(j).equals(")"); j++){
-                    if(list.get(j).equals("#int") || list.get(j).equals("#char") || list.get(j).equals("#boolean")){
-                        numOfParam++;
-                    }
-                }
-                storeAllFuncs.add(Integer.toString(numOfParam)); // Number of Parameters
-            }
-        }
-        Boolean verifyDuplication = false;
-          
-        //check for duplicate function names
-        for(i = 0;i<storeAllFuncs.size()-1; i=i+3){
-             for(j = i+3;j<storeAllFuncs.size() && verifyDuplication==false; j=j+3){
-               if(storeAllFuncs.get(i+1).equals(storeAllFuncs.get(j+1))){
-                   verifyDuplication=true;
-                   this.setDuplicateFuncNameMessage();
-               }
-           }
-        }
-        if(verifyDuplication==false){
-        ArrayList<String> performFunc = new ArrayList<String>();
-       
-        for(j=0; j<list.size()-1; j++){
-                if(list.get(j).equals("#puts")){
-                    Boolean validVar = checkVariable(j, list.get(j+2));
-                    if(validVar == false)
-                        this.setUndeclaredVarMessage();
-                }
-        }
-        
-         for(j = 0; j<list.size()-1; j++){
-               if(list.get(j+1).equals("(") && (list.get(j+3).equals(",")|| list.get(j+2).equals(")")) && !list.get(j).equals("#main") && !list.get(j-1).equals("#func") && !list.get(j).equals("#puts")){
-                    verifyFuncName.add(list.get(j));
-                }
-         }
-        //scan list for function calls
-        int count = 0;
-        int counter = 0;
-        for(i = 0;i<storeAllFuncs.size(); i=i+3){
-            
-            for(j = 0; j<list.size()-1; j++){
-                if(list.get(j).charAt(0)=='#' && !list.get(j).substring(1).equals("func")&& !list.get(j).substring(1).equals("puts") && !list.get(j).substring(1).equals("main") && list.get(j+1).equals("(")){
-                    if(!storeAllFuncs.contains(list.get(j).substring(1)))
-                        this.setInvalidFuncMessage(); 
-                }
-                if(list.get(j).equals("#"+storeAllFuncs.get(i+1)) || (list.get(j).contains(storeAllFuncs.get(i+1)) && list.get(j).length()!=storeAllFuncs.get(i+1).length())){
-                        this.setInvalidFuncMessage(); 
-                    }
-                if(list.get(j+1).equals("(") && ((list.get(j+3).equals(",")|| list.get(j+3).equals(")"))) && !list.get(j).equals("#main") && !list.get(j-1).equals("#func") && !list.get(j).equals("#puts")){
-                    verifyFuncName.add(list.get(j));
-                    count++;
-                    
-                    if(list.get(j).equals(storeAllFuncs.get(i+1))){
-                        if(j!=Integer.parseInt(storeAllFuncs.get(i))+1){
-                        counter++;
-                        performFunc = checkFuncCallDetails(storeAllFuncs, j);
-                        }
-                    }
-                }
-            }
-        }
-        if(count==0 && verifyFuncName.size()>0){
-             this.setInvalidFuncMessage();
-        }
-       }
-    }
-    
-    private ArrayList<String> checkFuncCallDetails(ArrayList<String> allFuncs, int j){
-        int i, countParam=0;
-        int flagError = 0;
-        ArrayList<String> funcVerify = new ArrayList<String>();
-        ArrayList<String> ret = new ArrayList<String>();
-        
-        for(i=j+1; !")".equals(list.get(i+1)); i++){
-            if(!",".equals(list.get(i+1))){
-                countParam++;
-                funcVerify.add(list.get(i+1));
-            }
-        }
-        
-        for(i=0;i<allFuncs.size()-1; i=i+3){
-            String FuncName=allFuncs.get(i+1);
-            if(FuncName.equals(list.get(j))){
-                if(countParam!=Integer.parseInt(allFuncs.get(i+2))){
-                    System.err.println("Number of parameters in function call at line "+j+" does not match with function.");
-                    this.setParameterMessage();
-                    flagError = 1;
-                }
-            }
-        }
-        ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
-        String callingFunc = null;
-        
-        //store all indeces of function types found in the arraylist of tokens
-        for(i = 0;i<list.size();i++){
-            if(list.get(i).equals("#func") || list.get(i).equals("#main")){
-                storeFuncInList.add(i);
-            }
-        }
-        storeFuncInList.add(list.size()-1);
-        
-        for(i = 0; i<storeFuncInList.size()-1; i++){
-            if(j>storeFuncInList.get(i) && j<storeFuncInList.get(i+1)){
-                if(list.get(storeFuncInList.get(i)).equals("#func")){
-                    callingFunc = list.get(storeFuncInList.get(i)+1);
-                } else{
-                    callingFunc = "#main";
-                }
-            }
-        }
-        
-        //parameter type matching in function call and function
-        if(flagError!=1){
-        Boolean paramType = paramTypeMatching(allFuncs, funcVerify, callingFunc,  j);
-        
-        if(paramType==false){
-            this.setFuncParamtypeMismatchMessage();
-        }
-        else{
-            for(i=0; i<funcVerify.size(); i++){
-                for(j=0; j<symbolTable.getLast()+1; j++){   
-                    if(symbolTable.table.get(j).tokenValue.equals(funcVerify.get(i)) && symbolTable.table.get(j).scope.equals(callingFunc)){
-                        ret.add(Integer.toString(j));
-                    }
-                }
-            }
-          }
-        }
-        return ret;
-    }
-    
-    public Boolean paramTypeMatching(ArrayList<String> funcHeader, ArrayList<String> funcCallVars, String callingFunc, int callIndex){
-        Boolean ret = true;
-        Boolean foundVar = false;
-        int i, j, k;
-        ArrayList<String> funcMatchType = new ArrayList<String>();
-         
-        for(i=0; i<funcHeader.size(); i=i+3){
-            if(list.get(callIndex).equals(funcHeader.get(i+1))){
-            
-                for(j=Integer.parseInt(funcHeader.get(i))+2; !list.get(j).equals(")"); j++){
-                    if(list.get(j).equals("#int") || list.get(j).equals("#char") || list.get(j).equals("#boolean")){
-                        funcMatchType.add(list.get(j));
-                        funcMatchType.add(list.get(j+1));
-                    }
-                }
-            }
-        }
-        for(i=0, k=0; i<funcMatchType.size() && ret==true; i=i+2, k++){
-            for(j=0; j<symbolTable.getLast()+1; j++){
-                
-                if(!funcCallVars.get(k).equals(funcMatchType.get(i+1))){
-                    ret = false;
-                }
-                else if(symbolTable.table.get(j).tokenValue.equals(funcCallVars.get(k))){
-                    if(symbolTable.table.get(j).scope.equals(callingFunc)){
-                        foundVar = true;
-                        
-                        if(!symbolTable.table.get(j).datatype.equals(funcMatchType.get(i)))
-                            ret = false;
-                        }
-                    
-                }
-            }
-            if(foundVar==false){
-                if(funcMatchType.get(i).equals("#int")){
-                     try{
-                        Integer.parseInt(funcCallVars.get(k));
-                        ret = true;
-                        }catch(NumberFormatException e) {
-                                    ret = false;
-                        }   
-                }
-                else if(funcMatchType.get(i).equals("#char")){
-                    ret = (funcCallVars.get(k).length()>1)? false: true;
-                }
-                else if(funcMatchType.get(i).equals("#boolean")){
-                       ret = ("false".equals(funcCallVars.get(k))|| "true".equals(funcCallVars.get(k)))? true: false;
-                }
-            }
-        }
-        return ret;
-    }
-    
-    private Boolean checkVariable(int callIndex, String tokenVal){
-        Boolean ret = false;
-        String callingFunc = new String();
-        
-        ArrayList<Integer> storeFuncInList = new ArrayList<Integer>();
-        int i;
-        
-         for(i = 0;i<list.size();i++){
-            if(list.get(i).equals("#func") || list.get(i).equals("#main")){
-                storeFuncInList.add(i);
-            }
-        }
-        storeFuncInList.add(list.size()-1);
-        
-          for(i = 0; i<storeFuncInList.size()-1; i++){
-            if(callIndex>storeFuncInList.get(i) && callIndex<storeFuncInList.get(i+1)){
-                if(list.get(storeFuncInList.get(i)).equals("#func")){
-                    callingFunc = list.get(storeFuncInList.get(i)+1);
-                } else{
-                    callingFunc = "#main";
-                }
-            }
-        }
-          
-          for(i=0; i<symbolTable.getLast()+1 && ret==false; i++){
-              if(symbolTable.table.get(i).tokenValue.equals(tokenVal) && symbolTable.table.get(i).scope.equals(callingFunc)){
-                  ret=true;
-              }
-          }
-          
-          if(list.get(callIndex+2).equals("\"")){
-              ret = true;
-          }
-          
-        return ret;
-    }
-    
-    private Boolean checkAssignmentStatement(String dt, String left, String right, String scopeOfLeft) {
-        Boolean ret = true;
-        int i;
-        if(scopeOfLeft.equals("main"))
-            scopeOfLeft = "#main";
-        
-        for(i=0; i<symbolTable.getLast()+1; i++){
-           
-            if(symbolTable.table.get(i).tokenValue.equals(right) && symbolTable.table.get(i).scope.equals(scopeOfLeft)){
-                if(!symbolTable.table.get(i).datatype.equals(dt)){
-                    ret = false;
-                }
-            }
         }
         return ret;
     }

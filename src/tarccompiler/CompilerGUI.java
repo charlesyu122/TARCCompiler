@@ -336,9 +336,7 @@ public class CompilerGUI extends javax.swing.JFrame {
                 // Semantic Analyzer
                 ArrayList<String> s = new ArrayList<String>();
                 SemanticAnalyzer semAnalyze = new SemanticAnalyzer(parserTree, symbolTable, s);
-                semAnalyze.checkDataType();
-                semAnalyze.checkFuncCall();
-                semAnalyze.checkDuplicateVars();
+                semAnalyze.semAnt();
                 message = semAnalyze.getMessage();
                 pbProgress.setValue(75); //Set value
                 pbProgress.setStringPainted(true);
