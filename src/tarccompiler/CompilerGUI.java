@@ -58,6 +58,10 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         fcOpenFile = new javax.swing.JFileChooser();
         fcSaveAs = new javax.swing.JFileChooser();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu2 = new javax.swing.JMenu();
+        jMenu3 = new javax.swing.JMenu();
         jScrollPane1 = new javax.swing.JScrollPane();
         fileTree = fileTree = new JTree(new FileSelectorModel("/Users/charles_yu102/Documents"));
         // For Windows:
@@ -83,8 +87,17 @@ public class CompilerGUI extends javax.swing.JFrame {
         itemOpenFile = new javax.swing.JMenuItem();
         itemSave = new javax.swing.JMenuItem();
         itemQuit = new javax.swing.JMenuItem();
-        menuAbout = new javax.swing.JMenu();
         menuHelp = new javax.swing.JMenu();
+        itemHelp = new javax.swing.JMenuItem();
+        itemAbout = new javax.swing.JMenuItem();
+
+        jMenu1.setText("jMenu1");
+
+        jMenu2.setText("File");
+        jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Edit");
+        jMenuBar1.add(jMenu3);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("TARC Compiler");
@@ -224,10 +237,24 @@ public class CompilerGUI extends javax.swing.JFrame {
 
         menuBar.add(menuFile);
 
-        menuAbout.setText("About");
-        menuBar.add(menuAbout);
-
         menuHelp.setText("Help");
+
+        itemHelp.setText("Help Content");
+        itemHelp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemHelpActionPerformed(evt);
+            }
+        });
+        menuHelp.add(itemHelp);
+
+        itemAbout.setText("About Us");
+        itemAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemAboutActionPerformed(evt);
+            }
+        });
+        menuHelp.add(itemAbout);
+
         menuBar.add(menuHelp);
 
         setJMenuBar(menuBar);
@@ -455,6 +482,18 @@ public class CompilerGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowClosing
 
+    private void itemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemAboutActionPerformed
+        // TODO add your handling code here:
+        AboutGUI about = new AboutGUI();
+        about.setVisible(true);
+    }//GEN-LAST:event_itemAboutActionPerformed
+
+    private void itemHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemHelpActionPerformed
+        // TODO add your handling code here:
+        HelpGUI help = new HelpGUI();
+        help.setVisible(true);
+    }//GEN-LAST:event_itemHelpActionPerformed
+
     // Methods
     
     private void initFileTree(){
@@ -632,17 +671,22 @@ public class CompilerGUI extends javax.swing.JFrame {
     private javax.swing.JFileChooser fcOpenFile;
     private javax.swing.JFileChooser fcSaveAs;
     private javax.swing.JTree fileTree;
+    private javax.swing.JMenuItem itemAbout;
+    private javax.swing.JMenuItem itemHelp;
     private javax.swing.JMenuItem itemNewFile;
     private javax.swing.JMenuItem itemOpenFile;
     private javax.swing.JMenuItem itemQuit;
     private javax.swing.JMenuItem itemSave;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JLabel labelStatus;
-    private javax.swing.JMenu menuAbout;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuFile;
     private javax.swing.JMenu menuHelp;
