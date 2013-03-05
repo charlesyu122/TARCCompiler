@@ -314,10 +314,17 @@ public class CompilerGUI extends javax.swing.JFrame {
             LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(this.tarcFiles.get(position).getCode().getText(), this.symbolTable);
             lexicalAnalyzer.getLexemes();
             ArrayList<Token> tokensForParser = lexicalAnalyzer.getTokensFormSymbolTable();
+            /* Naming convention check
+            for(SymbolTableModel stm : lexicalAnalyzer.symbolTable.table){
+                if(lexicalAnalyzer.namingConvention(stm.getTokenValue()) == false){
+                    // ERROR IN NAMING CONVENTION
+                    break;
+                }
+            }
+            */
             pbProgress.setValue(25); //Set value
             pbProgress.setStringPainted(true);
             pbProgress.setForeground(Color.GREEN);
-            //pbProgress.repaint(); //Refresh graphics
             // Syntax Analyzer/Parser
             Parser parser = new Parser(tokensForParser);
             String message = parser.methodLLParser();
@@ -329,7 +336,6 @@ public class CompilerGUI extends javax.swing.JFrame {
                 pbProgress.setValue(50); //Set value
                 pbProgress.setStringPainted(true);
                 pbProgress.setForeground(Color.GREEN);
-                //pbProgress.repaint(); //Refresh graphics
                 // AST Construction
                 ASTConstruction astTree = new ASTConstruction();
                 astTree.minimizeTree(parserTree.getRoot());
@@ -341,7 +347,6 @@ public class CompilerGUI extends javax.swing.JFrame {
                 pbProgress.setValue(75); //Set value
                 pbProgress.setStringPainted(true);
                 pbProgress.setForeground(Color.GREEN);
-                //pbProgress.repaint(); //Refresh graphics
                 if(message.equals("Success")){
                     // Code Generator
                     CodeGenerator codeG = new CodeGenerator(tokensForParser, symbolTable);
@@ -354,7 +359,7 @@ public class CompilerGUI extends javax.swing.JFrame {
                     pbProgress.setValue(100); //Set value
                     pbProgress.setStringPainted(true);
                     pbProgress.setForeground(Color.GREEN);
-                    //pbProgress.repaint(); //Refresh graphics
+                    labelStatus.setText("Success!");
                 } else{
                     // Error
                     labelStatus.setForeground(Color.RED);

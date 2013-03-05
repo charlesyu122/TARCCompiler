@@ -141,7 +141,7 @@ public class LexicalAnalyzer {
     }
     
     // Display lexemes
-    private void displayLexemes(){
+    public void displayLexemes(){
         System.out.println("LEXEMES");
         for(int i=0; i<this.lexemes.size(); i++){
             System.out.println("Lexeme "+i+": "+this.lexemes.get(i));
