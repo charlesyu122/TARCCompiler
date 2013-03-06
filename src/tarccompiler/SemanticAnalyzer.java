@@ -211,8 +211,7 @@ public class SemanticAnalyzer {
         
         putsChecker(listOfPuts);
         
-        System.err.println("FUNCS: "+listOfFunc + "\n"+"CALLS:" + listOfFuncCalls);
-    }
+       }
     
     private void emptyFuncParam(ArrayList<String> allFuncs){
         int i;
@@ -305,11 +304,21 @@ public class SemanticAnalyzer {
                                 
                                 System.err.println("SPLIT"+split_arguments[k]);
                             }
+                            
                         //function call have the same no. of arguments as the function header; datatype and variable matching    
                         if(l==k){
                             for(k=0; k<split_arguments.length; k++){
                                 for(l=0; l<split_parameters.length; l++){
-                                    if(split_arguments[k].equals(split_parameters[k].substring(split_parameters[k].length()-1))){
+                                    
+                                    int n = 0;
+                                    if(split_parameters[k].contains("#int"))
+                                        n = 5;
+                                    else if(split_parameters[k].contains("#char"))
+                                        n = 6;
+                                    else if(split_parameters[k].contains("#boolean"))
+                                        n = 9;
+                                    
+                                    if(split_arguments[k].equals(split_parameters[k].substring(n))){
                                         for(int m=0; m<symbolTable.getLast()+1; m++){
                                             if(symbolTable.table.get(m).tokenValue.equals(split_arguments[k]) &&
                                                     symbolTable.table.get(m).scope.equals(allFuncCalls.get(i+2))){
