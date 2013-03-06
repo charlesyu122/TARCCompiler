@@ -80,7 +80,8 @@ public class SemanticAnalyzer {
         ArrayList<String> listOfFunc = new ArrayList<String>();
         ArrayList<String> listOfFuncCalls = new ArrayList<String>();
         ArrayList<String> listOfPuts = new ArrayList<String>();
-        
+        ArrayList<String> listOfOperations = new ArrayList<String>();
+                   
         int i, j, exit = 0;
         
        //traverse in the list and store all necessary terminals 
@@ -125,6 +126,21 @@ public class SemanticAnalyzer {
            
             /*********** storing of declaration statements  *********/
            else if(list.get(i).equals("=")){
+               listOfOperations = new ArrayList<String>();
+                   
+               if(!list.get(i+1).equals("'") && !list.get(i+2).equals(";")){
+                   listOfOperations.add(list.get(i-1));
+                   
+                   for(int q = i+1; !list.get(q).equals(";"); q++){
+                      if(!list.get(q).equals("=") && !list.get(q).equals("+") && !list.get(q).equals("-") && !list.get(q).equals("/") && !list.get(q).equals("%") && !list.get(q).equals("*")){ 
+                        listOfOperations.add(list.get(q));
+                      }
+                   }
+                   listOfOperations.add(listOfFuncWIndex.get(listOfFuncWIndex.size()-1));
+                   
+               checkOperations(listOfOperations);
+            }
+               
                //check first if variable is of type #char, type char have special case: the use of ''
                     int incrementer = 2;
                     int valIncrementer = 1;
@@ -156,6 +172,7 @@ public class SemanticAnalyzer {
                         if(verifyIfIn==0)
                                 listOfDecStms.add("");
                         }
+               
            }
            /***********END OF: storing of declaration statements  *********/
            
@@ -190,6 +207,7 @@ public class SemanticAnalyzer {
            /*********** END OF: storing of function call info  *********/
            
     }
+       
        /******** adding the end index and last********/
        listOfFuncWIndex.add(Integer.toString(list.size()-1));
        listOfFuncWIndex.add("last");
@@ -207,8 +225,15 @@ public class SemanticAnalyzer {
         /*********** SEMANTIC PHASE START: checking validity of function calls **********/
         checkValidFuncCalls(listOfFunc, listOfFuncCalls);
         
-        
         putsChecker(listOfPuts);
+        
+        
+        
+        System.err.println("Dec statements:"+ listOfDecStms);
+        System.err.println("all funcs including main:"+ listOfFuncWIndex);
+        System.err.println("all funcs:"+ listOfFunc);
+        System.err.println("all func calls:"+ listOfFuncCalls);
+        System.err.println("all Operational:"+ listOfOperations);
         
        }
     
@@ -224,6 +249,47 @@ public class SemanticAnalyzer {
             if(check==false)
                 this.setUndeclaredVarMessage();
         }
+    }
+    
+    private void checkOperations(ArrayList<String> allOperands){
+        int i, j;
+        ArrayList<String> dts = new ArrayList<String>();
+        String left_dt = new String();
+        Boolean isInteger = false;
+        Boolean compatible=true;
+        
+        for(i=0; i<allOperands.size()-1;i++){
+            for(j=0; j<symbolTable.getLast()+1; j++){
+                  
+                if(symbolTable.table.get(j).tokenValue.equals(allOperands.get(0)) && symbolTable.table.get(j).scope.equals(allOperands.get(allOperands.size()-1))){
+                    left_dt = symbolTable.table.get(j).datatype;
+                }
+                if(i!=0){
+                        try{
+                            Integer.parseInt(allOperands.get(i));
+                            isInteger=true;
+                        }catch(NumberFormatException e) {
+                            isInteger=false;
+                        }
+                        
+                     if(isInteger==false && symbolTable.table.get(j).tokenValue.equals(allOperands.get(i)) && symbolTable.table.get(j).scope.equals(allOperands.get(allOperands.size()-1))){
+                            dts.add(symbolTable.table.get(j).datatype);
+                     }
+                     
+                     else if(isInteger==true)
+                         dts.add("#int");
+               }
+            }
+        }
+        
+        for(i=0; compatible==true && i<dts.size(); i++){
+            if(!dts.get(i).equals(left_dt)){
+                compatible=false;
+                this.setIncompatibleMessage();
+            }
+        }
+        
+        
     }
     private Boolean checkDuplicateVars(){
         int i, j;
@@ -417,6 +483,10 @@ public class SemanticAnalyzer {
     
     private void setMainMessage(){
         semanticErrorMessage = "Invalid reserved word.";
+    }
+    
+    private void setIncompatibleMessage(){
+        semanticErrorMessage = "Incompatible operand types.";
     }
     
     private void setDuplicateFuncNameMessage(){
