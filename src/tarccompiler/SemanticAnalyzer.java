@@ -205,9 +205,24 @@ public class SemanticAnalyzer {
         checkDuplicateFuncs();
         
         /*********** SEMANTIC PHASE START: checking validity of function calls **********/
+        emptyFuncParam(listOfFunc);
         checkValidFuncCalls(listOfFunc, listOfFuncCalls);
         
+        
         putsChecker(listOfPuts);
+        
+        System.err.println("FUNCS: "+listOfFunc + "\n"+"CALLS:" + listOfFuncCalls);
+    }
+    
+    private void emptyFuncParam(ArrayList<String> allFuncs){
+        int i;
+        Boolean flag = false;
+        
+        for(i=0; i<allFuncs.size() && flag==false; i=i+3){
+            if(allFuncs.get(i+2).equals(Integer.toString(0)))
+                this.setNoParamMessage();
+        }
+        
     }
     
     private void putsChecker(ArrayList<String> putsList){
@@ -306,6 +321,7 @@ public class SemanticAnalyzer {
                                            
                                         }
                                     }
+                                    else this.setParameterMessage();
                                 }
                             }
                             
@@ -384,6 +400,10 @@ public class SemanticAnalyzer {
     
     public String getMessage(){
         return semanticErrorMessage;
+    }
+    
+    private void setNoParamMessage(){
+        semanticErrorMessage = "A function has no parameters.";
     }
     
     private void setAssignmentMessage(){
