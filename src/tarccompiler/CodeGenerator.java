@@ -124,7 +124,9 @@ public class CodeGenerator {
             } else if(curLexeme.equals("#func")){
                 javaCode+="\npublic static void " + lexemes.get(++i) + lexemes.get(++i);
                 // Remove function parameters
-                for(i++; !lexemes.get(i+1).equals(")"); i++);
+                if(!lexemes.get(i+1).equals(")")){
+                    for(i++; !lexemes.get(i+1).equals(")"); i++);
+                }
             } else if(curLexeme.equals("#main")){
                 javaCode += "\npublic static void main(String[] args)";
                 i += 2;
@@ -153,7 +155,9 @@ public class CodeGenerator {
                     if(checkIfFunction(curLexeme)){
                         javaCode += curLexeme + "(";
                         // Remove parameters
-                        for(i+=1; !lexemes.get(i+1).equals(")"); i++);
+                        if(!lexemes.get(i+1).equals(")")){
+                            for(i+=1; !lexemes.get(i+1).equals(")"); i++);
+                        }
                     } else{
                         javaCode += curLexeme;
                     }
