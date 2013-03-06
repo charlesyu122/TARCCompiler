@@ -63,9 +63,10 @@ public class CompilerGUI extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
         jScrollPane1 = new javax.swing.JScrollPane();
-        fileTree = fileTree = new JTree(new FileSelectorModel("/Users/charles_yu102/Documents"));
+        fileTree = // For Mac:
+        fileTree = new JTree(new FileSelectorModel("/Users/charles_yu102/Documents"));
         // For Windows:
-        // fileTree = new JTree(new FileSelectorModel("C://"));
+        //fileTree = new JTree(new FileSelectorModel("C://"));
         btnCompile = new javax.swing.JButton();
         btnOpenFile = new javax.swing.JButton();
         btnNewFile = new javax.swing.JButton();
