@@ -219,7 +219,7 @@
       <SubComponents>
         <Component class="javax.swing.JTree" name="fileTree">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="fileTree = new JTree(new FileSelectorModel(&quot;/Users/charles_yu102/Documents&quot;));&#xa;// For Windows:&#xa;// fileTree = new JTree(new FileSelectorModel(&quot;C://&quot;));"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="// For Mac:&#xa;fileTree = new JTree(new FileSelectorModel(&quot;/Users/charles_yu102/Documents&quot;));&#xa;// For Windows:&#xa;//fileTree = new JTree(new FileSelectorModel(&quot;C://&quot;));"/>
           </AuxValues>
         </Component>
       </SubComponents>
